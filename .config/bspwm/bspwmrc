@@ -1,0 +1,83 @@
+#! /bin/sh
+
+# redirect output of this script and all others to file
+test -d ~/.cache/bspwm || mkdir -p ~/.cache/bspwm
+test -f ~/.cache/bspwm/bspwm.log && mv ~/.cache/bspwm/bspwm.log ~/.cache/bspwm/bspwm.log.0
+exec > ~/.cache/bspwm/bspwm.log
+exec 2>&1
+
+log()
+{
+    date "+%T $*"
+}
+
+launch()
+{
+    local cmd=$(basename $1)
+    ( $* | ts "%H:%M:%S $cmd: " ) &
+    echo $(pidof ${cmd}) > ~/.cache/bspwm/${cmd}.pid
+    echo "*** $1: Started ***"
+}
+
+log " *** Session Starts *** "
+
+setxkbmap -option "terminate:ctrl_alt_bksp"
+
+eval $(gnome-keyring-daemon -s -c pkcs11,secrets,ssh)
+export SSH_AUTH_SOCK
+export GNOME_KEYRING_CONTROL
+export PRIMARY=HDMI-A-0
+export SECONDARY=DisplayPort-0
+export DMENU_DEFAULTS='-fn sans:fontformat=truetype:pixelsize=20 -nb #44475a -sb #bd93f9'
+
+xrdb -merge ~/.Xresources
+
+~/.config/bspwm/xrandr.sh dual & # also launches polybar(s)
+
+# configs
+bspc config border_width         2
+bspc config window_gap          12
+bspc config focused_border_color    '#a76E7D'
+bspc config focus_follows_pointer   true
+bspc config split_ratio             0.60
+bspc config borderless_monocle      true # see also polybar.sh
+bspc config gapless_monocle         true
+bspc config single_monocle          true
+bspc config pointer_follows_monitor false
+bspc config pointer_follows_focus   false
+
+# rules
+bspc rule -r '*'
+bspc rule -a "Gimp" desktop=vid state=floating follow=on
+bspc rule -a "Gmpc" desktop=aud
+bspc rule -a "MPlayer" desktop=vid state=floating follow=on
+bspc rule -a "*:Hotkeys" state=floating
+bspc rule -a "*:bspwm-log" desktop=log follow=off focus=off
+bspc rule -a "Pavucontrol" state=floating
+bspc rule -a "Pavumeter" state=floating
+bspc rule -a "Hamster" state=floating
+bspc rule -a "Arandr" state=floating
+bspc rule -a "xfreerdp" desktop=rem state=tiled
+bspc rule -a "Microsoft Teams - Preview" border=off
+
+# backdrop
+~/.config/bspwm/renitrogen.sh &
+
+# closure in sysmenu.sh
+launch xsettingsd -c ~/.config/bspwm/xsettings.conf
+launch compton
+launch dunst 
+launch mpDris2 
+launch blueman-applet
+#launch unclutter -not "$PRIMARY $SECONDARY" -reset -keystroke -idle 15
+launch light-locker
+launch sxhkd -c ~/.config/bspwm/sxhkd.conf
+xsetroot -cursor_name left_ptr
+urxvt -name bspwm-log -title Log -e /usr/bin/tail -f ~/.cache/bspwm/bspwm.log -n 1000 &
+log "+++ Startup complete +++"
+
+# await all processes
+wait
+
+log "--- Session Ends ---"
+

@@ -1,0 +1,21 @@
+- Adding a monitor needs:
+  - xrandr command
+  - kill and restart bar
+  - add desktops and/or rename
+  - nitrogen --restore
+
+- lemonbar needs:
+  - severe script overhaul
+  - bspc as lua lib?
+  - xft patch (bug: monospace fonts only)
+
+- bspwmbar needs:
+  - MPD plugin 
+  - refresh / reload on monitor change 
+  - clickability
+
+- polybar needs:
+  - hamster plugin
+  
+- sxhkd needs:
+  - printonly patch
