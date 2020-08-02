@@ -1,0 +1,4 @@
+# this is a shell fragment specific for host putzl
+export PRIMARY=HDMI-A-0
+export SECONDARY=DisplayPort-0
+
