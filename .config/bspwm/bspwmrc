@@ -30,7 +30,8 @@ export DMENU_DEFAULTS='-fn sans:fontformat=truetype:pixelsize=20 -nb #44475a -sb
 export PRIMARY=HDMI-A-0
 export SECONDARY=DisplayPort-0
 # host-specific overrides
-. ~/.config/bspwm/bspwmrc-${HOSTNAME}.conf || true
+read HOSTNAME < /etc/hostname
+. ~/.config/bspwm/bspwmrc-${HOSTNAME} || true
 
 xrdb -merge ~/.config/bspwm/Xresources
 
