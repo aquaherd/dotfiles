@@ -26,6 +26,7 @@ closeall()
         local cmd=$(basename -s .pid $f)
         read pid < $f
         kill $pid || pkill $cmd || pkill $cmd -9 || echo "could not kill $pid:$cmd"
+        rm $f
         echo "*** $pid:$cmd Ended ***"
     done
     
@@ -36,7 +37,7 @@ closeall()
     $*
 }
 
-# requires an efi gummiboot/systemd-boot multiboot setup
+# requires an efi where each kernel is booted directly
 ask_boot()
 {
     efibootmgr | grep Boot0 | cut -d' ' -f2- | dmenu -i -p 'boot:' $DMENU_DEFAULTS || die

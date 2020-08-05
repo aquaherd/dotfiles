@@ -15,7 +15,7 @@ launch()
 {
     local cmd=$(basename $1)
     ( $* | ts "%H:%M:%S $cmd: " ) &
-    echo $(pidof ${cmd}) > ~/.cache/bspwm/${cmd}.pid
+    pgrep ${cmd} > ~/.cache/bspwm/${cmd}.pid
     echo "*** $1: Started ***"
 }
 
