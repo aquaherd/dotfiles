@@ -1,4 +1,4 @@
-# Default config for sway
+#!/bin/sh Default config for sway - shebang for micro
 #
 # Copy this to ~/.config/sway/config and edit it to your liking.
 #
@@ -10,7 +10,7 @@ set $gnome-schema org.gnome.desktop.interface
 
 exec_always {
     gsettings set $gnome-schema gtk-theme 'Dracula'
-    gsettings set $gnome-schema icon-theme 'Paper'
+    gsettings set $gnome-schema icon-theme 'Faba'
     gsettings set $gnome-schema font-name 'Cantarell 11'
     gsettings set $gnome-schema cursor-theme 'Adwaita'
     xrdb .Xresources
@@ -43,8 +43,8 @@ set {
 	$menu wofi --show=drun | xargs swaymsg exec --
     
     #monitors
-    $primary $DP-1
-    $secondary HDMI-A-1
+    $primary $HDMI-A-1
+    $secondary DP-1
 }
 ### Output configuration
 #
