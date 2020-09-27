@@ -78,6 +78,7 @@ test -f /var/run/lightdm.pid && launch light-locker
 launch sxhkd -c ~/.config/bspwm/sxhkd.conf
 xsetroot -cursor_name left_ptr
 urxvt -name bspwm-log -title Log -e /usr/bin/tail -f ~/.cache/bspwm/bspwm.log -n 1000 &
+~/.config/bspwm/update-appcache.sh &
 log "+++ Startup complete +++"
 
 # await all processes
