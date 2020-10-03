@@ -32,7 +32,7 @@ set $right l
 # Preferred applications
 set {
     # terminal
-    $term xfce4-terminal
+    $term alacritty
 
     #web browser
     $browser firefox --new-window
