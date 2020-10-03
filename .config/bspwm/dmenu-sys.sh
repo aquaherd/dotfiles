@@ -48,7 +48,7 @@ boot()
     res=$(ask_boot)
     next=$(efibootmgr|grep $res|cut -c5-8)
     sudo efibootmgr -n $next
-    closeall systemctl reboot
+    closeall $ctl reboot
 }
 
 reload()
@@ -69,16 +69,22 @@ ask_sys()
     echo $prompt|tr " " "\n"|dmenu -i -p 'sys:' $DMENU_DEFAULTS || die
 }
 
+# determine init system
 res=$(ask_sys)
+read r < /proc/1/comm
+case $r in
+systemd)    ctl=systemctl;; # insane
+*)          ctl=loginctl;;  # sane
+esac
 
-echo "dmenu-sys.sh: $res"
+echo "dmenu-sys.sh: ${res}@${ctl}"
 
 case $res in
     logout)             closeall bspc quit;;
-    reboot|poweroff)    closeall systemctl $res;;
+    reboot|poweroff)    closeall $ctl $res;;
     single|dual)        .config/bspwm/xrandr.sh $res;;
     lock)               dm-tool lock;;
-    sleep)              systemctl suspend;;
+    sleep)              $ctl suspend;;
     reload)             reload;;
     boot)               boot;;
 esac
