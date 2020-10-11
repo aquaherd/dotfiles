@@ -23,7 +23,7 @@ else
     name=$(grep ^Name= "$f" | head -n1 | cut -b6-)
     if [ -n "$name" ]; then
         echo -n "${name}\t${f}\t" >> ${cache}.new
-        grep ^Exec= "$f" | head -n1 | cut -b6- >> $cache || echo broken: $name: $f
+        grep ^Exec= "$f" | head -n1 | cut -b6- >> $cache.new || echo broken: $name: $f
         echo add: $name $f
     fi
 fi
