@@ -1,0 +1,4 @@
+# this is a shell fragment specific for host pc198
+export PRIMARY=DP-1
+export SECONDARY=DP-3
+
