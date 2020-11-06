@@ -2,3 +2,11 @@
 export PRIMARY=HDMI-A-0
 export SECONDARY=DisplayPort-0
 
+autostart()
+{
+    launch mpDris2 
+    launch blueman-applet
+    launch redshift-gtk
+}
+
+

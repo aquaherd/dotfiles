@@ -19,6 +19,14 @@ launch()
     echo "*** $1: Started ***"
 }
 
+autostart()
+{
+    launch mpDris2 
+    launch blueman-applet
+    #launch unclutter -not "$PRIMARY $SECONDARY" -reset -keystroke -idle 15
+    launch redshift-gtk
+}
+
 log " *** Session Starts *** "
 
 setxkbmap -option "terminate:ctrl_alt_bksp"
@@ -70,9 +78,8 @@ bspc rule -a "Microsoft Teams - Preview" border=off
 launch xsettingsd -c ~/.config/bspwm/xsettings.conf
 launch compton
 launch dunst 
-launch mpDris2 
-launch blueman-applet
-#launch unclutter -not "$PRIMARY $SECONDARY" -reset -keystroke -idle 15
+
+autostart
 
 test -f /var/run/lightdm.pid && launch light-locker
 launch sxhkd -c ~/.config/bspwm/sxhkd.conf
