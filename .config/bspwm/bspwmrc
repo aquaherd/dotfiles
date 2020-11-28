@@ -78,6 +78,7 @@ bspc rule -a "Microsoft Teams - Preview" border=off
 launch xsettingsd -c ~/.config/bspwm/xsettings.conf
 launch compton
 launch dunst 
+launch /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
 
 autostart
 
