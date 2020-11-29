@@ -2,6 +2,8 @@
 
 managers="apk apt dnf kiss pacman swupd xbps-install yum"
 
+. ~/.local/lib/chroot.sh
+
 action_get() {
     case $1 in
     apk) echo 'apk upgrade && cp -vu /boot/*-lts /boot/efi/EFI/alpine/' ;;
@@ -24,15 +26,10 @@ chroot_upgrade() {
         return
     fi
     sudo fsck -y $1
-    sudo mkdir -p /run/mount/$2
-    sudo mount -t auto $1 /run/mount/$2
-
+	
+	chroot_mount $1 $2
+    
     if [ -f /run/mount/$2/bin/sh ]; then
-        for d in boot/efi dev etc/resolv.conf proc sys; do
-            if [ -e /run/mount/$2/$d ]; then
-                sudo mount -o bind /$d /run/mount/$2/$d
-            fi
-        done
 
         for u in $managers; do
             a=$(sudo chroot /run/mount/$2 which $u 2>/dev/null) || continue
@@ -45,9 +42,8 @@ chroot_upgrade() {
             break
         done
     fi
-    #sudo fstrim -v /run/mount/$2
-    sudo umount --recursive /run/mount/$2 && sudo rmdir /run/mount/$2
-    echo
+    
+    chroot_umount $1 $2
 }
 
 local_upgrade() {
@@ -87,7 +83,10 @@ chroot_upgrade_one() {
 
 chroot_upgrade_all() {
     for f in /dev/disk/by-label/*; do
+		echo "*** $(basename $f) begin ***"
         chroot_upgrade_one $f || echo FAIL
+		echo "*** $(basename $f) end ***"
+		echo
     done
 }
 
@@ -97,7 +96,9 @@ usage() {
 
 chroot_upgrade_args() {
     while [ $# -gt 0 ]; do
+		echo "*** $(basename $1) begin ***"
         chroot_upgrade_one /dev/disk/by-label/$1 || echo FAIL
+		echo "*** $(basename $1) end ***"
         shift 
     done
 }
