@@ -20,5 +20,5 @@ Possibly not worth much, however an attempt at modularity and portability is mad
 
 ## sway
 * Under research
-* does not work on debian, ubuntu
-* wotrks on on void and alpine but not yet harmonized
+* does not work good on debian, ubuntu
+* works on on void and alpine but not yet harmonized

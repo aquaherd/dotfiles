@@ -19,6 +19,14 @@ launch()
     echo "*** $1: Started ***"
 }
 
+autostart()
+{
+    #launch mpDris2 
+    #launch blueman-applet
+    #launch unclutter -not "$PRIMARY $SECONDARY" -reset -keystroke -idle 15
+    launch redshift-gtk
+}
+
 log " *** Session Starts *** "
 
 setxkbmap -option "terminate:ctrl_alt_bksp"
@@ -70,14 +78,15 @@ bspc rule -a "Microsoft Teams - Preview" border=off
 launch xsettingsd -c ~/.config/bspwm/xsettings.conf
 launch compton
 launch dunst 
-launch mpDris2 
-launch blueman-applet
-#launch unclutter -not "$PRIMARY $SECONDARY" -reset -keystroke -idle 15
+launch /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
+
+autostart
 
 test -f /var/run/lightdm.pid && launch light-locker
 launch sxhkd -c ~/.config/bspwm/sxhkd.conf
 xsetroot -cursor_name left_ptr
 urxvt -name bspwm-log -title Log -e /usr/bin/tail -f ~/.cache/bspwm/bspwm.log -n 1000 &
+~/.config/bspwm/update-appcache.sh &
 log "+++ Startup complete +++"
 
 # await all processes

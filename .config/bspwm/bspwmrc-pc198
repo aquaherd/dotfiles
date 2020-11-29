@@ -1,0 +1,12 @@
+# this is a shell fragment specific for host pc198
+export PRIMARY=DP-1
+export SECONDARY=DP-3
+
+autostart()
+{
+    launch mpDris2 
+    #launch blueman-applet
+    #launch unclutter -not "$PRIMARY $SECONDARY" -reset -keystroke -idle 15
+    launch redshift-gtk
+}
+

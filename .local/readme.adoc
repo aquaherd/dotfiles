@@ -1,0 +1,1 @@
+efibootmgr --disk /dev/sda --part 6 --create-only --label kiss --loader '\EFI\kiss\vmlinuz' --unicode 'root=LABEL=kiss initrd=\EFI\kiss\initramfs ro quiet splash rootfstype=ext4' --verbose
