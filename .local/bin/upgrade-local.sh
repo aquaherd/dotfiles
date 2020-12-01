@@ -75,7 +75,7 @@ chroot_upgrade_one()
 	local n
 	local d
     if [ -e $1 ]; then
-        t=$(lsblk -lno FSTYPE $1)
+        t=$(sudo lsblk -lno FSTYPE $1)
         n=$(basename $1)
         d=$(readlink -f $1)
         # skip local
