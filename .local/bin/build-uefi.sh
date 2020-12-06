@@ -1,19 +1,21 @@
 #!/bin/sh
-
-OS_RELEASE=/usr/lib/os-release
+# Original: https://github.com/ErnyTech/Unified-Kernel-Image
+OS_RELEASE=$MTP/etc/os-release
 . $OS_RELEASE
 
+echo "Building image for $PRETTY_NAME"
+
 # Create file for kernel command line, provide at least the root parameter
-echo "root=LABEL=$ID rw quiet splash" > /tmp/kernel-command-line.txt
+echo "root=LABEL=$ID rw quiet splash rootfstype=ext4" > /tmp/kernel-command-line.txt
 
 # Set the splash image, /sys/firmware/acpi/bgrt/image is the vendor logo taken from ACPI in BMP image format
-SPLASH="$HOME/.local/lib/efi.bmp"
+SPLASH="/sys/firmware/acpi/bgrt/image"
 
 # Set the kernel image path (enter the path for your operating system)
-VMLINUZ="/vmlinuz"
+VMLINUZ="$MTP/vmlinuz"
 
 # Set the initrd image path (enter the path for your operating system)
-INITRD="/initrd.img"
+INITRD="$MTP/initrd.img"
 
 # Set the EFI STUB path, the default value should be good for the most users 
 STUB="$HOME/.local/lib/linuxx64.efi.stub"
