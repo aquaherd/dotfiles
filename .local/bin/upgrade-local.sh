@@ -8,7 +8,7 @@ action_get()
 {
     case $1 in
     apk)			echo 'apk upgrade && cp -vu /boot/*-lts /boot/efi/EFI/alpine/' ;;
-    apt) 			echo 'apt update && apt full-upgrade -y && apt autoremove --purge -y && apt-get autoclean' ;;
+    apt) 			echo 'apt-get update && apt-get dist-upgrade -y && apt-get autoremove --purge -y && apt-get autoclean' ;;
     dnf) 			echo 'dnf upgrade && dnf autoremove' ;;
     kiss) 			echo 'KISS_PROMPT=0 kiss u && KISS_PROMPT=0 kiss u' ;;
     pacman) 		echo 'pacman -Syua' ;;
@@ -35,18 +35,22 @@ chroot_upgrade()
 	
 	chroot_mount $1 $2
     
-    if [ -f /run/mount/$2/bin/sh ]; then
-
+    if [ -f /run/mount/$2/etc/os-release ]; then
+		. /run/mount/$2/etc/os-release
+		echo "Found $PRETTY_NAME"
+		
         for u in $managers; do
             a=$(sudo chroot /run/mount/$2 which $u 2>/dev/null) || continue
 
             echo --- $u ---
             if c=$(action_get $u); then
                 echo Action: $c
-                sudo chroot /run/mount/$2 sh -lc "$c"
+                sudo chroot /run/mount/$2 sh -lc "$c" > /dev/null
             fi
             break
         done
+    else
+		echo "Skipped non-linux"
     fi
     
     chroot_umount $1 $2
