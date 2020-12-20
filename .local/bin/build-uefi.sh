@@ -48,3 +48,10 @@ objcopy \
     "$STUB" "/tmp/$ID.efi" || echo FAIL && exit 1
 
 sudo cp -vu /tmp/$ID.efi $TARGET && rm /tmp/$ID.efi
+
+if efibootmgr | cut -d' ' -f 2 | grep -q $ID; then
+	echo "EFI entry already present"
+else
+	echo "Add EFI entry for $ID"
+	sudo efibootmgr --disk /dev/sda --part 6 --create-only --label $ID --verbose --loader "\\EFI\\Linux\\$ID.efi"
+fi
