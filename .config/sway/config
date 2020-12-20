@@ -17,8 +17,10 @@ exec_always {
 }
 
 # autostart
-exec dbus-launch --exit-with-session mako
+exec mako
 exec mpd
+exec mpDris2
+exec gammastep-indicator
 
 ### Variables
 #
@@ -32,10 +34,10 @@ set $right l
 # Preferred applications
 set {
     # terminal
-    $term alacritty
+    $term foot
 
     #web browser
-    $browser firefox --new-window
+    $browser MOZ_ENABLE_WAYLAND=1 firefox --new-window
 
     # application launchers
     # Note: it's recommended that you pass the final command to sway
@@ -95,9 +97,15 @@ exec swayidle -w \
 #
 # Basics:
 #
-# start a terminal
-bindsym $mod+Return exec $term
-bindsym $mod+Shift+Return $browser
+# programs
+bindsym {
+	$mod+Return exec $term
+	$mod+Mod1+f exec $browser
+	$mod+Mod1+n exec nautilus
+	$mod+Mod1+t exec thunar
+	$mod+Mod1+c exec code
+	$mod+Mod1+g exec geany
+}
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -214,6 +222,9 @@ bindsym $mod+minus scratchpad show
 bindsym XF86AudioNext exec mpc next
 bindsym XF86AudioPrev exec mpc prev
 bindsym XF86AudioPlay exec mpc toggle
+bindsym Mod1+q exec mpc prev
+bindsym Mod1+w exec mpc toggle
+bindsym Mod1+e exec mpc next
 #bindsym XF86AudioRaiseVolume exec
 #XF86AudioLowerVolume
 #XF86AudioMute
