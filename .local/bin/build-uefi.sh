@@ -45,7 +45,7 @@ objcopy \
     --add-section .splash="$SPLASH" --change-section-vma .splash=0x40000 \
     --add-section .linux="$VMLINUZ" --change-section-vma .linux=0x2000000 \
     --add-section .initrd="$INITRD" --change-section-vma .initrd=0x3000000 \
-    "$STUB" "/tmp/$ID.efi" || echo FAIL && exit 1
+    "$STUB" "/tmp/$ID.efi" || ( echo FAIL && exit 1 )
 
 sudo cp -vu /tmp/$ID.efi $TARGET && rm /tmp/$ID.efi
 

@@ -27,11 +27,10 @@ chroot_upgrade()
 	
     echo "Checking $1 $2"
     if mount | grep -q $1; then
-        echo unmount $1
-        sudo umount $1 || echo cant unmount $1
-        return
+		echo will not fsck $1
+	else
+		sudo fsck -y $1
     fi
-    sudo fsck -y $1
 	
 	chroot_mount $1 $2
     
@@ -45,7 +44,7 @@ chroot_upgrade()
             echo --- $u ---
             if c=$(action_get $u); then
                 echo Action: $c
-                sudo chroot /run/mount/$2 sh -lc "$c" > /dev/null
+                sudo chroot /run/mount/$2 sh -lc "$c"
             fi
             break
         done
@@ -89,14 +88,19 @@ chroot_upgrade_one()
 
         case $t in
         ext*)
-            chroot_upgrade $d $n && return 0 || return 1
+            chroot_upgrade $d $n || return 1
             ;;
         *)
+			echo "$n: type $t unhandled $d"
+			return 1
             ;;
+        vfat|swap)
+			echo "Skip $n: type $t at $d"
+			;;
         esac
     fi
 
-    return 1
+    return 0
 }
 
 chroot_upgrade_all() 
