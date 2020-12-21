@@ -9,11 +9,15 @@
 set $gnome-schema org.gnome.desktop.interface
 
 exec_always {
+	# picked up by gtk3
     gsettings set $gnome-schema gtk-theme 'Dracula'
     gsettings set $gnome-schema icon-theme 'Faba'
     gsettings set $gnome-schema font-name 'Cantarell 11'
     gsettings set $gnome-schema cursor-theme 'Adwaita'
+    # x11
     xrdb .Xresources
+    # gtk2
+    xsettingsd -c ~/.config/bspwm/xsettings.conf
 }
 
 # autostart
@@ -34,7 +38,7 @@ set $right l
 # Preferred applications
 set {
     # terminal
-    $term foot
+    $term xfce4-terminal
 
     #web browser
     $browser MOZ_ENABLE_WAYLAND=1 firefox --new-window
@@ -57,7 +61,8 @@ output DP-3 disable
 
 
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+#output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+output * bg ~/Pictures/Backdrops/dracula/debian.png fill
 #
 # Example configuration:
 #
@@ -112,6 +117,7 @@ bindsym $mod+Shift+q kill
 
 # start your launcher
 bindsym $mod+d exec $menu
+#bindsym $mod+d exec j4-dmenu-desktop --dmenu="dmenu-wl -i -fn 'Cantarell 15' -nb '#44475a' -sb '#bd93f9' -b -h 24 -m 1" | xargs swaymsg exec --
 
 # Drag floating windows by holding down $mod and left mouse button.
 # Resize them with right mouse button + $mod.
@@ -138,6 +144,8 @@ bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
+# poor mans alt+tab
+bindsym $mod+Tab ~/.config/sway/alttab.sh
 
 # _move_ the focused window with the same, but add Shift
 bindsym $mod+Shift+$left move left
@@ -163,8 +171,8 @@ bindsym $mod+7 workspace 7
 bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
-bindsym Mod1+Ctrl+Left workspace prev
-bindsym Mod1+Ctrl+Right workspace next
+bindsym $mod+BracketLeft workspace prev
+bindsym $mod+BracketRight workspace next
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace 1
@@ -185,8 +193,8 @@ bindsym $mod+Shift+0 move container to workspace 10
 # You can "split" the current object of your focus with
 # $mod+b or $mod+v, for horizontal and vertical splits
 # respectively.
-bindsym $mod+b splith
-bindsym $mod+v splitv
+bindsym $mod+Ctrl+Right splith
+bindsym $mod+Ctrl+Down splitv
 
 # Switch the current container between different layout styles
 bindsym $mod+s layout stacking

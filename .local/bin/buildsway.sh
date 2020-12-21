@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+BUILD=~/Projects/wayland
 
 if [ $(id -u) -eq 0 ]; then
 	echo 'Please execute this script as a regular user.'
@@ -17,6 +18,7 @@ function reconfig_meson() {
 		sudo rm -r build/meson-logs
 		meson build --wipe
 	else
+		meson configure -Dwerror=false -DWno-error=deprecated-declarations
 		meson build
 	fi
 }
@@ -25,7 +27,7 @@ echo 'Enabling contrib and non-free repositories'
 sudo sed -i -e 's/main$/main contrib non-free/g' /etc/apt/sources.list
 sudo apt update
 
-mkdir -p ~/sway-src
+mkdir -p ${BUILD}
 
 echo 'Installing wlroots...'
 
@@ -36,7 +38,7 @@ sudo apt install -y build-essential cmake meson libwayland-dev wayland-protocols
  libxcb-image0-dev libxcb-render-util0-dev libx11-xcb-dev libxcb-icccm4-dev \
  freerdp2-dev libwinpr2-dev libpng-dev libavutil-dev libavcodec-dev \
  libavformat-dev universal-ctags git
-cd ~/sway-src
+cd ${BUILD}
 [ ! -d wlroots ] && git clone https://github.com/swaywm/wlroots.git
 cd wlroots
 git fetch
@@ -50,7 +52,7 @@ sudo ldconfig
 echo 'Installing json-c...'
 
 sudo apt install -y autoconf libtool
-cd ~/sway-src
+cd ${BUILD}
 [ ! -d json-c ] && git clone https://github.com/json-c/json-c.git
 cd json-c
 git fetch
@@ -65,7 +67,7 @@ sudo ldconfig
 
 echo 'Installing scdoc'
 
-cd ~/sway-src
+cd ${BUILD}
 [ ! -d scdoc ] && git clone https://git.sr.ht/~sircmpwn/scdoc
 cd scdoc
 git fetch
@@ -77,7 +79,7 @@ sudo make PREFIX=/usr/local install
 echo 'Installing sway'
 
 sudo apt install -y libpcre3-dev libcairo2-dev libpango1.0-dev libgdk-pixbuf2.0-dev xwayland
-cd ~/sway-src
+cd ${BUILD}
 [ ! -d sway ] && git clone https://github.com/swaywm/sway.git
 cd sway
 git fetch
@@ -89,7 +91,7 @@ sudo ninja -C build install
 
 echo 'Installing swaybg'
 
-cd ~/sway-src
+cd ${BUILD}
 [ ! -d swaybg ] && git clone https://github.com/swaywm/swaybg.git
 cd swaybg
 git fetch
