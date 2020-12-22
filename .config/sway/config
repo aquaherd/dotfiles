@@ -38,7 +38,8 @@ set $right l
 # Preferred applications
 set {
     # terminal
-    $term xfce4-terminal
+    #$term xfce4-terminal
+    $term foot
 
     #web browser
     $browser MOZ_ENABLE_WAYLAND=1 firefox --new-window
@@ -110,14 +111,19 @@ bindsym {
 	$mod+Mod1+t exec thunar
 	$mod+Mod1+c exec code
 	$mod+Mod1+g exec geany
+	# Take a screenshot with all output and save it into screenshots
+	Print exec grim -t jpeg ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).jpg
+
+	# Take a Screenshot with the region select
+	$mod+Print exec grim -t jpeg -g "$(slurp)" ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).jpg
 }
 
 # kill focused window
 bindsym $mod+Shift+q kill
 
 # start your launcher
-bindsym $mod+d exec $menu
-#bindsym $mod+d exec j4-dmenu-desktop --dmenu="dmenu-wl -i -fn 'Cantarell 15' -nb '#44475a' -sb '#bd93f9' -b -h 24 -m 1" | xargs swaymsg exec --
+bindsym $mod+Shift+d exec $menu
+bindsym $mod+d exec j4-dmenu-desktop --wrapper='swaymsg exec ' --dmenu="dmenu-wl -i -fn 'Cantarell 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m 1" 
 
 # Drag floating windows by holding down $mod and left mouse button.
 # Resize them with right mouse button + $mod.
