@@ -25,6 +25,7 @@ exec mako
 exec mpd
 exec mpDris2
 exec gammastep-indicator
+exec foot --server
 
 ### Variables
 #
@@ -39,7 +40,7 @@ set $right l
 set {
     # terminal
     #$term xfce4-terminal
-    $term foot
+    $term footclient
 
     #web browser
     $browser MOZ_ENABLE_WAYLAND=1 firefox --new-window
