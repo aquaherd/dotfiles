@@ -48,6 +48,8 @@ chroot_upgrade()
             fi
             break
         done
+        
+        MTP=/run/mount/$2 build-uefi.sh
     else
 		echo "Skipped non-linux"
     fi
@@ -70,6 +72,8 @@ local_upgrade()
 		fi
 		break
 	done
+	
+	build-uefi.sh
 }
 
 chroot_upgrade_one() 
@@ -84,6 +88,7 @@ chroot_upgrade_one()
         # skip local
         if mount | grep -q "$d on / type"; then
             local_upgrade
+            return 0
         fi
 
         case $t in
