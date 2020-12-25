@@ -22,7 +22,7 @@ STUB="$HOME/.local/lib/linuxx64.efi.stub"
 
 TARGET=/boot/efi/EFI/Linux/$ID.efi
 
-if [ ! -f $VMLINUZ -o ! -f $INITRD ]; then
+if [ ! -e $VMLINUZ -o ! -e $INITRD ]; then
 	echo "Setup invalid"
 	exit 1
 fi
