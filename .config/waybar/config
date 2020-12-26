@@ -10,15 +10,9 @@
     // Modules configuration
     "sway/workspaces": {
          "disable-scroll": false,
-         "all-outputs": true,
+         "all-outputs": false,
 	 "current-only": false,
 	 "disable-scroll-wraparound": true,
-	 "persistent_workspaces": {
-           "1": [],
-           "2": [],
-           "3": [],
-           "4": []
-	   },
          "format": "{name}: {icon}",
          "format-icons": {
              "1": "",
@@ -33,7 +27,7 @@
     },
     //"sway/mode": {"format": "<span style=\"italic\">{}</span>" },
     "sway/mode": {
-		"format": " {}",
+		"format": " {}",
 		"max-length": 50
     },
     "sway/window" : {
