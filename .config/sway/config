@@ -43,7 +43,8 @@ set {
     $term footclient
 
     #web browser
-    $browser MOZ_ENABLE_WAYLAND=1 firefox --new-window
+    $browser env MOZ_ENABLE_WAYLAND= firefox --new-window
+    #MOZ_ENABLE_WAYLAND=1 firefox --new-window
 
     # application launchers
     # Note: it's recommended that you pass the final command to sway
@@ -362,3 +363,7 @@ client.urgent           #44475A #FF5555 #F8F8F2 #FF5555   #FF5555
 client.placeholder      #282A36 #282A36 #F8F8F2 #282A36   #282A36
 
 include /etc/sway/config.d/*
+
+# Floating rules
+for_window [class="XEyes"] floating enable
+
