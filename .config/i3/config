@@ -179,17 +179,28 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
+set $mode_mpd mpd (t)oggle (n)ext (p)rev (s)onata
+mode "$mode_mpd" {
+	bindsym n exec mpc next;
+	bindsym p exec mpc prev;
+	bindsym t exec mpc toggle;
+	bindsym s exec sonata; mode "default";
+	bindsym Return mode "default";
+	bindsym Escape mode "default";
+}
+bindsym $mod+m mode "$mode_mpd"
+
 # pm
 set $mode_system system (s)uspend (h)alt (r)eboot (l)ock (e) logout
 mode  "$mode_system" {
-        bindsym e exec i3-msg exit; mode "default"
-        bindsym s exec systemctl suspend; mode "default"
-        bindsym h exec systemctl poweroff; mode "default"
-        bindsym r exec systemctl reboot; mode "default"
-#        bindsym l exec i3lock -f -p default -i ~/Pictures/Backdrops/dual/9abcddccea11f745343dc17dee9c1a5f.jpg; mode "default"
-        bindsym l exec dm-tool lock; mode "default";
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
+	bindsym e exec i3-msg exit; mode "default"
+	bindsym s exec systemctl suspend; mode "default"
+	bindsym h exec systemctl poweroff; mode "default"
+	bindsym r exec systemctl reboot; mode "default"
+#	bindsym l exec i3lock -f -p default -i ~/Pictures/Backdrops/dual/9abcddccea11f745343dc17dee9c1a5f.jpg; mode "default"
+	bindsym l exec dm-tool lock; mode "default";
+	bindsym Return mode "default"
+	bindsym Escape mode "default"
 }
 bindsym $mod+Escape mode "$mode_system"
 
@@ -217,13 +228,13 @@ bar {
 	i3bar_command i3bar
         #status_command i3blocks
         #status_command i3status -c ~/.config/i3/i3status.conf
-	status_command py3status -c ~/.config/i3/i3status.conf
+	status_command py3status -c ~/.config/i3/py3status.conf
 	#status_command ./.local/bin/bumblebee-status -m kernel spacer xrandr cpu memory disk pasource pasink layout date time -p time.format="%H:%M" date.format="%V: %a, %b %d %Y" mpd.format="{artist} - {title}" mpd.layout="mpd.main" cpu.format="{:02.00f}%" memory.format="mem" disk.format="disk" -t onedark-powerline 
     position top
 	output primary
 	font pango:Cantarell 13
 	tray_output primary
-    mode hide
+    #mode hide
     modifier $mod
     colors {
 		background $background
@@ -239,11 +250,12 @@ bar {
 }
 
 bar {
-	i3bar_command i3bar
+	#i3bar_command i3bar
+	status_command i3status -c ~/.config/i3/i3status.conf
 	output $secondary
 	font pango:Cantarell 13
 	tray_output none
-    mode hide
+    #mode hide
     modifier $mod
     position top
     colors {
