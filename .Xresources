@@ -14,8 +14,8 @@ Xcursor.theme: "DMZ-Black"
 ! --------------------------------------------------
 URxvt.iso14755: false
 URxvt.iso14755_52: false
-URxvt.font: xft:Fira Code Retina:size=12
-URXVT.font: xft:Fira Code Retina:bold:size=12
+URxvt.font: xft:Fira Code Retina:size=13
+URXVT.font: xft:Fira Code Retina:bold:size=13
 URxvt.letterSpace:0 
 URxvt.lineSpace: 0
 URxvt.internalBorder: 20
@@ -66,3 +66,27 @@ rofi.show-icons: true
 *.color7:     #f8f8f2
 *.color15:    #f8f8f2
 
+! --------------------------------------------------
+! Displays
+! --------------------------------------------------
+! home:
+#ifdef SRVR_rocky
+	#define PRIMARY HDMI-A-0
+	#define SECONDARY DisplayPort-0
+	#define TEMP /sys/class/hwmon/hwmon1/temp2_input
+! work:
+#elif SRVR_pc198 // work
+	#define PRIMARY DP-1
+	#define SECONDARY DP-3
+	#define TEMP /sys/class/hwmon/hwmon0/temp1_input
+! fixme:
+#else // dunno
+	#define PRIMARY DisplayPort-0
+	#define SECONDARY DisplayPort-1
+	#define TEMP /sys/class/hwmon/hwmon0/temp1_input
+#endif
+Xdisplay.primary: PRIMARY
+Xdisplay.secondary: SECONDARY
+Xdsiplay.serverhost: SERVERHOST
+Xdsiplay.clienthost: CLIENTHOST
+hwmon.temperature: TEMP
