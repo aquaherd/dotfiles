@@ -7,6 +7,11 @@ autostart()
     launch mpDris2 
     launch blueman-applet
     launch redshift-gtk
+    
+    . /etc/os-release
+    case #ID in
+    void) launch mpd;;
+    esac
 }
 
 
