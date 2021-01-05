@@ -16,7 +16,7 @@ if [ $# -eq 0 ];then
     mv -vf ${cache}.new ${cache} # atomic
 else
     f=$*
-    if [ -z "$f" -o ! -f "$f" ] || grep -q '^OnlyShowIn=\|^DontShowIn=' "$f"; then 
+    if [ -z "$f" -o ! -f "$f" ] || grep -q '^OnlyShowIn=\|^DontShowIn=\|^NoDisplay=true' "$f"; then 
         echo skip: $f
         exit 0
     fi
