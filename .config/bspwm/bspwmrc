@@ -70,6 +70,7 @@ bspc rule -a "Hamster" state=floating
 bspc rule -a "Arandr" state=floating
 bspc rule -a "xfreerdp" desktop=rem state=tiled
 bspc rule -a "Microsoft Teams - Preview" border=off
+bspc rule -a "Xfce4-panel" state=floating
 
 # backdrop
 ~/.config/bspwm/renitrogen.sh &
