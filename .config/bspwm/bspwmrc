@@ -41,7 +41,7 @@ export SECONDARY=DisplayPort-0
 read HOSTNAME < /etc/hostname
 . ~/.config/bspwm/bspwmrc-${HOSTNAME} || true
 
-xrdb -merge ~/.config/bspwm/Xresources
+xrdb -merge ~/.Xresources
 
 ~/.config/bspwm/xrandr.sh dual & # also launches bar(s)
 
