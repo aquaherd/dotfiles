@@ -58,7 +58,7 @@ reload()
     #did not work since pid is prefork
     pkill -USR1 sxhkd
     
-    killall -HUP xsettingsd
+    killall -sSIGHUP xsettingsd
     
     #bspc wm reload
     #to do

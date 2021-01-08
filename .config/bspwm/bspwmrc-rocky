@@ -9,7 +9,7 @@ autostart()
     launch redshift-gtk
     
     . /etc/os-release
-    case #ID in
+    case $ID in
     void) launch mpd;;
     esac
 }
