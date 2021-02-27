@@ -19,15 +19,24 @@ settings:
     global: 15000
   auto_save.session:
     global: false
+  bindings.commands:
+    global:
+      normal:
+        pe: spawn -m -u qute-bitwarden -e
+        pp: open -- {clipboard}
+        pq: spawn -m -u qute-bitwarden
+        pw: spawn -m -u qute-bitwarden -w
   colors.webpage.preferred_color_scheme:
     global: dark
   content.proxy:
     global: system
   fonts.default_family:
     global: Iosevka Term
+  fonts.default_size:
+    global: 12pt
   fonts.web.family.fixed:
     global: Iosevka Term
   statusbar.show:
-    global: in-mode
+    global: always
   tabs.show:
     global: multiple
