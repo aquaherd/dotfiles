@@ -39,6 +39,7 @@ fi
 if [ -n "$MTP"  ]; then
 	cd $MTP
 fi
+sudo chmod +r $VMLINUZ $INITRD
 objcopy \
     --add-section .osrel="$OS_RELEASE" --change-section-vma .osrel=0x20000 \
     --add-section .cmdline="/tmp/kernel-command-line.txt" --change-section-vma .cmdline=0x30000 \
