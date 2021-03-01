@@ -28,6 +28,8 @@ settings:
         pw: spawn -m -u qute-bitwarden -w
   colors.webpage.preferred_color_scheme:
     global: dark
+  content.notifications:
+    https://teams.microsoft.com: true
   content.proxy:
     global: system
   fonts.default_family:
@@ -39,4 +41,4 @@ settings:
   statusbar.show:
     global: always
   tabs.show:
-    global: multiple
+    global: never

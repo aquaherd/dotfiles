@@ -1,8 +1,8 @@
 #/bin/sh
 
 #dmenu_path | dmenu -i $DMENU_DEFAULTS | ${SHELL:-"/bin/sh"} &
-res=$(cut -f1 ~/.cache/applications | sort -u  | dmenu -i $DMENU_DEFAULTS) || exit 0
-desktop=$(basename $(grep "$res" ~/.cache/applications | cut -f2))
+res=$(cut -f1 ~/.cache/bspwm/applications | sort -u  | dmenu -i $DMENU_DEFAULTS) || exit 0
+desktop=$(basename $(grep "$res" ~/.cache/bspwm/applications | cut -f2))
 echo "dmenu-run.sh: $desktop"
 gtk-launch $desktop
 fail=$?
