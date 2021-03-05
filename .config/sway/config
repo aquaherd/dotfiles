@@ -43,7 +43,8 @@ set {
     $term footclient
 
     #web browser
-    $browser env MOZ_ENABLE_WAYLAND= firefox --new-window
+    #$browser env MOZ_ENABLE_WAYLAND= firefox --new-window
+    $browser /home/herd/.local/bin/qutebrowser
     #MOZ_ENABLE_WAYLAND=1 firefox --new-window
 
     # application launchers
