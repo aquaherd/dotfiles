@@ -40,6 +40,8 @@ settings:
     global: 12pt
   fonts.web.family.fixed:
     global: Iosevka Term
+  fonts.web.family.sans_serif:
+    global: null
   statusbar.show:
     global: always
   tabs.show:
