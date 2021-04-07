@@ -8,7 +8,7 @@ die ()
     kill $$
 }
 
-closeall()
+closeall_bspwm()
 {
     # save session
     bspc wm -d >.cache/bspwm/state.json
@@ -25,7 +25,7 @@ closeall()
     for f in ~/.cache/bspwm/*.pid; do
         local cmd=$(basename -s .pid $f)
         read pid < $f
-        kill $pid || pkill $cmd || pkill $cmd -9 || echo "could not kill $pid:$cmd"
+        kill $pid || pkill $cmd || pkill $cmd -9 || zenity --error --text "could not kill $pid:$cmd"
         rm $f
         echo "*** $pid:$cmd Ended ***"
     done
@@ -33,8 +33,30 @@ closeall()
     # let go of panel last
     polybar-msg cmd quit
     
-    # run logout/reboot/poweroff command
-    $*
+    # let go of session
+    bspc quit
+}
+
+closeall_i3()
+{
+    # Kindly close all regular windows
+    i3-msg '[class=.*] kill'
+    # wait until closed
+    while [ $(i3-msg -t get_tree|jq 'recurse(.nodes[]) | select(.window_type=="normal").window'|wc -l) -gt 0 ];
+    do
+        sleep 1
+    done
+    i3-msg exit
+}
+
+closeall_xfce()
+{
+    xfce4-session-logout -lf
+}
+
+closeall()
+{
+    closeall_${DESKTOP_SESSION} || notify-send -i error "Dont know how to exit session: $DESKTOP_SESSION"
 }
 
 # requires an efi where each kernel is booted directly
@@ -80,8 +102,8 @@ esac
 echo "dmenu-sys.sh: ${res}@${ctl}"
 
 case $res in
-    logout)             closeall bspc quit;;
-    reboot|poweroff)    closeall $ctl $res;;
+    logout)             closeall;;
+    reboot|poweroff)    closeall && $ctl $res;;
     single|dual)        .config/bspwm/xrandr.sh $res;;
     lock)               dm-tool lock;;
     sleep)              $ctl suspend;;
