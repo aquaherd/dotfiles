@@ -5,6 +5,7 @@ dmenu="dmenu -i -p sys $DMENU_DEFAULTS"
 
 die ()
 {
+    notify-send -i error "$* failed"
     kill $$
 }
 
@@ -34,7 +35,9 @@ closeall_bspwm()
     polybar-msg cmd quit
     
     # let go of session
-    bspc quit
+    case $1 in
+    quit) bspc quit;;
+    esac
 }
 
 closeall_i3()
@@ -46,17 +49,32 @@ closeall_i3()
     do
         sleep 1
     done
-    i3-msg exit
+    # let go of session
+    case $1 in
+    quit) i3-msg exit;;
+    esac
 }
 
 closeall_xfce()
 {
-    xfce4-session-logout -lf
+    case $1 in
+    quit) xfce4-session-logout -lf;;
+    esac
 }
 
 closeall()
 {
-    closeall_${DESKTOP_SESSION} || notify-send -i error "Dont know how to exit session: $DESKTOP_SESSION"
+    closeall_${DESKTOP_SESSION} $* || die
+}
+
+randr_bspwm()
+{
+    .config/bspwm/xrandr.sh $res
+}
+
+randr()
+{
+    randr_${DESKTOP_SESSION} $* || die
 }
 
 # requires an efi where each kernel is booted directly
@@ -73,7 +91,7 @@ boot()
     closeall $ctl reboot
 }
 
-reload()
+reload_bspwm()
 {
     polybar-msg cmd restart
     #pkill -USR1 -F ~/.cache/bspwm/sxhkd.pid
@@ -102,13 +120,13 @@ esac
 echo "dmenu-sys.sh: ${res}@${ctl}"
 
 case $res in
-    logout)             closeall;;
+    logout)             closeall quit;;
     reboot|poweroff)    closeall && $ctl $res;;
-    single|dual)        .config/bspwm/xrandr.sh $res;;
+    single|dual)        randr $res;;
     lock)               dm-tool lock;;
     sleep)              $ctl suspend;;
-    reload)             reload;;
-    boot)               boot;;
+    reload)             reload_${DESKTOP_SESSION};;
+    boot)               boot && $ctl reboot;;
 esac
 
 
