@@ -13,7 +13,7 @@ closeall_bspwm()
 {
     # save session
     bspc wm -d >.cache/bspwm/state.json
-    
+
     # graceful kill
     for d in $(bspc query -N);do 
         bspc node $d -c
@@ -21,19 +21,19 @@ closeall_bspwm()
     while [ $(bspc query -N|wc -l) -gt 0 ]; do
         sleep 1
     done
-    
+
     # from bspwmrc
     for f in ~/.cache/bspwm/*.pid; do
         local cmd=$(basename -s .pid $f)
         read pid < $f
-        kill $pid || pkill $cmd || pkill $cmd -9 || zenity --error --text "could not kill $pid:$cmd"
+        kill $pid || pkill $cmd || pkill $cmd -9 || true
         rm $f
         echo "*** $pid:$cmd Ended ***"
     done
-    
+
     # let go of panel last
     polybar-msg cmd quit
-    
+
     # let go of session
     case $1 in
     quit) bspc quit;;
@@ -52,6 +52,21 @@ closeall_i3()
     # let go of session
     case $1 in
     quit) i3-msg exit;;
+    esac
+}
+
+closeall_sway()
+{
+    # Kindly close all regular windows
+    swaymsg '[class=.*] kill'
+    # wait until closed
+    while [ $(swaymsg -t get_tree|grep -ce 'type.*con') -gt 0 ];
+    do
+        sleep 1
+    done
+    # let go of session
+    case $1 in
+    quit) swaymsg exit;;
     esac
 }
 
