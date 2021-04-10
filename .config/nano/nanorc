@@ -26,7 +26,7 @@
 ## Automatically indent a newly created line to the same number of
 ## tabs and/or spaces as the preceding line -- or as the next line
 ## if the preceding line is the beginning of a paragraph.
-# set autoindent
+set autoindent
 
 ## Back up files to the current filename plus a tilde.
 # set backup
@@ -40,7 +40,7 @@
 ## The characters treated as closing brackets when justifying paragraphs.
 ## This may not include any blank characters.  Only closing punctuation,
 ## optionally followed by these closing brackets, can end sentences.
-# set brackets ""')>]}"
+set brackets ""')>]}"
 
 ## Do case-sensitive searches by default.
 # set casesensitive
@@ -62,7 +62,7 @@
 set historylog
 
 ## Display line numbers to the left of the text.
-# set linenumbers
+set linenumbers
 
 ## Enable vim-style lock-files.  This is just to let a vim user know you
 ## are editing a file [s]he is trying to edit and vice versa.  There are
@@ -72,16 +72,16 @@ set locking
 ## The opening and closing brackets that can be found by bracket
 ## searches.  They cannot contain blank characters.  The former set must
 ## come before the latter set, and both must be in the same order.
-# set matchbrackets "(<[{)>]}"
+set matchbrackets "(<[{)>]}"
 
 ## Use the blank line below the title bar as extra editing space.
-# set morespace
+set morespace
 
 ## Enable mouse support, if available for your system.  When enabled,
 ## mouse clicks can be used to place the cursor, set the mark (with a
 ## double click), and execute shortcuts.  The mouse will work in the X
 ## Window System, and on the console when gpm is running.
-# set mouse
+set mouse
 
 ## Switch on multiple file buffers (inserting a file will put it into
 ## a separate buffer).
@@ -140,17 +140,17 @@ set nowrap
 
 ## Put the cursor on the highlighted item in the file browser;
 ## useful for people who use a braille display.
-# set showcursor
+set showcursor
 
 ## Make the Home key smarter.  When Home is pressed anywhere but at the
 ## very beginning of non-whitespace characters on a line, the cursor
 ## will jump to that beginning (either forwards or backwards).  If the
 ## cursor is already at that position, it will jump to the true
 ## beginning of the line.
-# set smarthome
+set smarthome
 
 ## Use smooth scrolling as the default.
-# set smooth
+set smooth
 
 ## Enable soft line wrapping (AKA full-line display).
 # set softwrap
@@ -163,10 +163,10 @@ set nowrap
 set suspend
 
 ## Use this tab size instead of the default; it must be greater than 0.
-# set tabsize 8
+set tabsize 4
 
 ## Convert typed tabs to spaces.
-# set tabstospaces
+set tabstospaces
 
 ## Save automatically on exit; don't prompt.
 # set tempfile
@@ -198,12 +198,12 @@ set suspend
 
 ## Paint the interface elements of nano.  These are examples;
 ## by default there are no colors, except for errorcolor.
-# set titlecolor brightwhite,blue
-# set statuscolor brightwhite,green
+set titlecolor brightwhite,blue
+set statuscolor brightwhite,green
 # set errorcolor brightwhite,red
 # set selectedcolor brightwhite,magenta
-# set numbercolor cyan
-# set keycolor cyan
+set numbercolor white
+set keycolor cyan
 # set functioncolor green
 ## In root's .nanorc you might want to use:
 # set titlecolor brightwhite,magenta
