@@ -79,7 +79,7 @@ closeall_xfce()
 
 closeall()
 {
-    closeall_${DESKTOP_SESSION} $* || die
+    closeall_${DESKTOP_SESSION} $* || die $*
 }
 
 randr_bspwm()
@@ -89,13 +89,13 @@ randr_bspwm()
 
 randr()
 {
-    randr_${DESKTOP_SESSION} $* || die
+    randr_${DESKTOP_SESSION} $* || die $*
 }
 
 # requires an efi where each kernel is booted directly
 ask_boot()
 {
-    efibootmgr | grep Boot0 | cut -d' ' -f2- | dmenu -i -p 'boot:' $DMENU_DEFAULTS || die
+    efibootmgr | grep Boot0 | cut -d' ' -f2- | dmenu -i -p 'boot:' $DMENU_DEFAULTS || die $*
 }
 
 boot()
@@ -112,16 +112,16 @@ reload_bspwm()
     #pkill -USR1 -F ~/.cache/bspwm/sxhkd.pid
     #did not work since pid is prefork
     pkill -USR1 sxhkd
-    
+
     killall -sSIGHUP xsettingsd
-    
+
     #bspc wm reload
     #to do
-}    
+}
 
 ask_sys()
 {
-    echo $prompt|tr " " "\n"|dmenu -i -p 'sys:' $DMENU_DEFAULTS || die
+    echo $prompt|tr " " "\n"|dmenu -i -p 'sys:' $DMENU_DEFAULTS || true
 }
 
 # determine init system
