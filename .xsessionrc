@@ -1,6 +1,6 @@
 #!/bin/sh
 case $DESKTOP_SESSION in
-i3)
+i3|sway)
     export DMENU_DEFAULTS='-fn Cantarell:bold:pixelsize=20 -sb #bd93f9'
     ;;
 bspwm) 
@@ -12,4 +12,4 @@ xfce)
     ;;
 esac
 
-PATH=$PATH:~/.local/bin
+export PATH=$PATH:~/.local/bin

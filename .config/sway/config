@@ -291,17 +291,7 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-set $sys [n]arrow [w]ide [r]eboot [h]alt sus[p]end [e]xit
-mode "$sys" {
-    bindsym w output $primary pos 0 0 ;output $secondary pos 2560 0 res 2560x1440; mode "default"
-    bindsym n output $secondary disable; mode "default"
-    bindsym r exec loginctl reboot; mode "default"
-    bindsym h exec loginctl poweroff; mode "default"
-    bindsym p exec loginctl suspend; mode "default"
-    bindsym e exit; mode "default"
-    bindsym Escape mode "default"
-}
-bindsym $mod+Escape mode "$sys"
+bindsym $mod+Escape exec dmenu-sys.sh
 
 #
 # Status Bar:
