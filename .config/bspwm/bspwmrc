@@ -37,6 +37,8 @@ export GNOME_KEYRING_CONTROL
 export DMENU_DEFAULTS='-fn sans:fontformat=truetype:pixelsize=20 -nb #44475a -sb #bd93f9'
 export PRIMARY=HDMI-A-0
 export SECONDARY=DisplayPort-0
+export DESKTOP_SESSION=bspwm
+command -v dmenu-sys.sh > /dev/null || export PATH=$HOME/.local/bin:$PATH
 # host-specific overrides
 read HOSTNAME < /etc/hostname
 . ~/.config/bspwm/bspwmrc-${HOSTNAME} || true
@@ -75,10 +77,10 @@ bspc rule -a "Xfce4-panel" state=floating
 # backdrop
 ~/.config/bspwm/renitrogen.sh &
 
-# closure in sysmenu.sh
+# closure in dmenu-sys.sh
 launch xsettingsd -c ~/.config/bspwm/xsettings.conf
 launch compton
-launch dunst 
+launch dunst
 launch /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
 
 autostart
