@@ -85,7 +85,8 @@ closeall_xfce()
 
 closeall()
 {
-    closeall_${DESKTOP_SESSION} $* || die $*
+	fix_desktop
+    closeall_${DESKTOP_SESSION} $* || die closeall_${DESKTOP_SESSION} $* 
 }
 
 randr_bspwm()
@@ -95,13 +96,13 @@ randr_bspwm()
 
 randr()
 {
-    randr_${DESKTOP_SESSION} $* || die $*
+    randr_${DESKTOP_SESSION} $* || die randr
 }
 
 # requires an efi where each kernel is booted directly
 ask_boot()
 {
-    efibootmgr | grep Boot0 | cut -d' ' -f2- | ask 'boot:' || die $*
+    efibootmgr | grep Boot0 | cut -d' ' -f2- | ask 'boot:' || die ask_boot
 }
 
 boot()
@@ -125,6 +126,17 @@ reload_bspwm()
     #to do
 }
 
+reload_sway()
+{
+	swaymsg reload
+}
+
+reload()
+{
+	fix_desktop
+	reload_${DESKTOP_SESSION} $* || die reload $*
+}
+
 ask_sys()
 {
     echo $prompt|tr " " "\n"|ask "sys:"|| true
@@ -146,6 +158,6 @@ case $res in
     single|dual)        randr $res;;
     lock)               dm-tool lock;;
     sleep)              $ctl suspend;;
-    reload)             reload_${DESKTOP_SESSION};;
+    reload)             reload;;
     boot)               boot && $ctl reboot;;
 esac
