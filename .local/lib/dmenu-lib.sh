@@ -4,16 +4,18 @@ ask()
     case $DESKTOP_SESSION in
     sway)
         m=0
+        # dmenu-wl does not use current focused monitor as dmenu-x11 does
         for p in $(swaymsg -t get_outputs | jq -r '.[] ' | jq -r '.focused'); do
             if $p; then
                 break
             fi
             m=$((1+m))
         done
-        dmenu-wl -i -p $1 -fn 'Cantarell 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m $m
+        dmenu-wl -i -p $1 -fn 'Iosevka Term 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m $m -b
         ;;
     hikari)
-        dmenu-wl -i -p $1 -fn 'Cantarell 15' -nb '#44475a' -sb '#bd93f9' -h 30
+        # dont know how to determine current monitor in hikari
+        dmenu-wl -i -p $1 -fn 'Iosevka Term 15' -nb '#44475a' -sb '#bd93f9' -h 30 -b
         ;;
     *)
         ${DMENU_DEFAULTS:='-fn sans:fontformat=truetype:pixelsize=20 -nb #44475a -sb #bd93f9'}
