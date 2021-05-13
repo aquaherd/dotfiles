@@ -1,7 +1,7 @@
 #/bin/sh
+. ~/.local/lib/dmenu-lib.sh
 
 prompt="logout reboot poweroff lock sleep single dual boot reload"
-dmenu="dmenu -i -p sys $DMENU_DEFAULTS"
 
 die ()
 {
@@ -58,7 +58,7 @@ closeall_i3()
 closeall_sway()
 {
     # Kindly close all regular windows
-    swaymsg '[class=.*] kill'
+    swaymsg '[app_id=.*] kill'
     # wait until closed
     while [ $(swaymsg -t get_tree|grep -ce 'type.*con') -gt 0 ];
     do
@@ -95,7 +95,7 @@ randr()
 # requires an efi where each kernel is booted directly
 ask_boot()
 {
-    efibootmgr | grep Boot0 | cut -d' ' -f2- | dmenu -i -p 'boot:' $DMENU_DEFAULTS || die $*
+    efibootmgr | grep Boot0 | cut -d' ' -f2- | ask 'boot:' || die $*
 }
 
 boot()
@@ -121,7 +121,7 @@ reload_bspwm()
 
 ask_sys()
 {
-    echo $prompt|tr " " "\n"|dmenu -i -p 'sys:' $DMENU_DEFAULTS || true
+    echo $prompt|tr " " "\n"|ask "sys:"|| true
 }
 
 # determine init system
@@ -143,5 +143,3 @@ case $res in
     reload)             reload_${DESKTOP_SESSION};;
     boot)               boot && $ctl reboot;;
 esac
-
-
