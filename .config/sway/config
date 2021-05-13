@@ -127,7 +127,7 @@ bindsym $mod+Shift+q kill
 
 # start your launcher
 bindsym $mod+Shift+d exec $menu
-bindsym $mod+d exec j4-dmenu-desktop --wrapper='swaymsg exec ' --dmenu="dmenu-wl -i -fn 'Cantarell 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m 1" 
+bindsym $mod+d exec ~/.local/bin/dmenu-run.sh
 
 # Drag floating windows by holding down $mod and left mouse button.
 # Resize them with right mouse button + $mod.
@@ -155,7 +155,7 @@ bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 # poor mans alt+tab
-bindsym $mod+Tab ~/.config/sway/alttab.sh
+bindsym $mod+Tab exec ~/.config/sway/alttab.sh
 
 # _move_ the focused window with the same, but add Shift
 bindsym $mod+Shift+$left move left
