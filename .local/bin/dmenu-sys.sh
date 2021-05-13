@@ -83,6 +83,13 @@ closeall_xfce()
     esac
 }
 
+closeall_gnome()
+{
+    case $1 in
+    quit) gnome-session-quit --logout;;
+    esac
+}
+
 closeall()
 {
 	fix_desktop
