@@ -16,7 +16,6 @@ fix_desktop() # in case you start without display manager
 ask() # bifurcate to dmenu or dmenu-wl
 {
 	fix_desktop
-    
     case $DESKTOP_SESSION in
     sway)
         m=0
@@ -27,14 +26,14 @@ ask() # bifurcate to dmenu or dmenu-wl
             fi
             m=$((1+m))
         done
-        dmenu-wl -i -p $1 -fn 'Iosevka 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m $m -b
+        dmenu-wl -i -p $1 -fn 'Iosevka Term 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m $m -b
         ;;
     hikari)
         # dont know how to determine current monitor in hikari
-        dmenu-wl -i -p $1 -fn 'Iosevka 15' -nb '#44475a' -sb '#bd93f9' -h 30 -b
+        dmenu-wl -i -p $1 -fn 'Iosevka Term 15' -nb '#44475a' -sb '#bd93f9' -h 30 -b
         ;;
     *)
-        ${DMENU_DEFAULTS:='-fn sans:fontformat=truetype:pixelsize=20 -nb #44475a -sb #bd93f9'}
+        : ${DMENU_DEFAULTS:='-fn sans:fontformat=truetype:pixelsize=20 -nb #44475a -sb #bd93f9'}
         dmenu -i -p $1 $DMENU_DEFAULTS
         ;;
     esac
