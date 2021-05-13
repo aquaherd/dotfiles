@@ -70,6 +70,12 @@ closeall_sway()
     esac
 }
 
+closeall_hikari()
+{
+    # dont know yet
+    pkill hikari
+}
+
 closeall_xfce()
 {
     case $1 in
