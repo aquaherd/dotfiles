@@ -12,6 +12,9 @@ ask()
         done
         dmenu-wl -i -p $1 -fn 'Cantarell 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m $m
         ;;
+    hikari)
+        dmenu-wl -i -p $1 -fn 'Cantarell 15' -nb '#44475a' -sb '#bd93f9' -h 30
+        ;;
     *)
         ${DMENU_DEFAULTS:='-fn sans:fontformat=truetype:pixelsize=20 -nb #44475a -sb #bd93f9'}
         dmenu -i -p $1 $DMENU_DEFAULTS
