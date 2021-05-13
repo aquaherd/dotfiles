@@ -1,4 +1,6 @@
 #/bin/sh
+. ~/.local/lib/dmenu-lib.sh
+
 verbatim='stop|overview|preferences|add|about'
 
 die()
@@ -8,12 +10,12 @@ die()
 
 hamster_ask()
 {
-    echo "start|$verbatim"|tr "|" "\n"|dmenu -p 'hamster:' -i $DMENU_DEFAULTS || die
+    echo "start|$verbatim"|tr "|" "\n"|ask 'hamster:' || die
 } 
 
 hamster_start()
 {
-    hamster activities|dmenu -p 'start:'  -i $DMENU_DEFAULTS || die
+    hamster activities|ask 'start:' || die
 }
 
 hamster_makeitso()

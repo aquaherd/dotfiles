@@ -1,10 +1,11 @@
 #!/bin/bash
+. ~/.local/lib/dmenu-lib.sh
 
 all_name='[ALL]'
 mode=Library
 
 d_artist() {
-    mpc list artist | sort -f | dmenu -i -p Artist $DMENU_DEFAULTS
+    mpc list artist | sort -f | ask 'Artist:'
 }
 
 d_album() {
@@ -16,7 +17,7 @@ d_album() {
         {
             printf '%s\n' "$all_name"
             printf '%s\n' "${albums[@]}" | sort -f
-        } | dmenu -i -p Album $DMENU_DEFAULTS
+        } | ask 'Album:'
     else
         # We only have one album, so just use that.
         printf '%s\n' "${albums[0]}"
@@ -37,7 +38,7 @@ d_playlist() {
     num_extras=$(mpc playlist -f "$extra_format" | sort | uniq | wc -l)
     (( num_extras == 1 )) || format+=" $extra_format"
 
-    track=$(mpc playlist -f "$format" | dmenu -i -p Playlist $DMENU_DEFAULTS)
+    track=$(mpc playlist -f "$format" | ask 'Playlist:' $DMENU_DEFAULTS)
     printf '%s' "${track%% *}"
 }
 
@@ -54,7 +55,7 @@ for arg do
         -p) mode=Playlist ;;
 		-s) mode=Song ;;
 		-a) 
-			MODE=$(echo -e "Library\nSong\nPlaylist" | dmenu -i -p mpd $DMENU_DEFAULTS)
+			MODE=$(echo -e "Library\nSong\nPlaylist" | ask 'mpd:' $DMENU_DEFAULTS)
 			mode=$MODE ;;
     esac
 

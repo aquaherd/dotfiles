@@ -44,7 +44,8 @@ set {
 
     #web browser
     #$browser env MOZ_ENABLE_WAYLAND= firefox --new-window
-    $browser /home/herd/.local/bin/qutebrowser
+    #$browser qutebrowser
+    $browser firefox-wayland
     #MOZ_ENABLE_WAYLAND=1 firefox --new-window
 
     # application launchers
@@ -291,7 +292,7 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-bindsym $mod+Escape exec dmenu-sys.sh
+bindsym $mod+Escape exec ~/.local/bin/dmenu-sys.sh
 
 #
 # Status Bar:
