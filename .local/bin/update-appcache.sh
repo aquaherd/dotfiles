@@ -5,6 +5,15 @@ usr=/usr/share/applications
 loc=~/.local/share/applications
 self=~/.config/bspwm/update-appcache.sh
 cache=~/.cache/bspwm/applications
+case $SHELL in
+*/bash)
+    echo "Urgh. Some total madman defaults to bash as script shell"
+    tabarg='-ne'
+    ;;
+*)
+    tabarg='-e'
+    ;;
+esac
 
 if [ $# -eq 0 ];then
     if [ $cache -nt $usr -a $cache -nt $loc ]; then
@@ -22,7 +31,7 @@ else
     fi
     name=$(grep ^Name= "$f" | head -n1 | cut -b6-)
     if [ -n "$name" ]; then
-        echo -n "${name}\t${f}\t" >> ${cache}.new
+        echo $tabarg "${name}\t${f}\t" >> ${cache}.new
         grep ^Exec= "$f" | head -n1 | cut -b6- >> $cache.new || echo broken: $name: $f
         echo add: $name $f
     fi
