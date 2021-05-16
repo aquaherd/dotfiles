@@ -1,0 +1,12 @@
+#!/bin/sh
+if [ $# -ne 1 ]; then
+    echo "Usage: startw WAYLAND_SESSION"
+    for s in $(cat /usr/share/wayland-sessions/*|grep ^Exec|cut -d'=' -f2); do
+        echo "- $s"
+    done
+    exit 1
+fi
+export XDG_RUNTIME_DIR=/run/user/$UID
+sudo mkdir -p $XDG_RUNTIME_DIR
+sudo chown $USER:$USER $XDG_RUNTIME_DIR
+exec $1
