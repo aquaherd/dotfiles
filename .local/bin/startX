@@ -1,0 +1,25 @@
+#!/bin/sh
+if [ $# -ne 1 ]; then
+    echo "Usage: startX XORG_SESSION"
+    for s in $(cat /usr/share/xsessions/*|grep ^Exec|cut -d'=' -f2); do
+        echo "- $s"
+    done
+    exit 1
+fi
+
+tty=$(tty)
+
+case $tty in
+/dev/tty?)
+    idx=$(echo $tty | cut -d'y' -f2)
+    ;;
+*)  echo "Start this from a console only"
+    exit 1
+    ;;
+esac
+
+
+Xorg :$idx vt0$idx -keeptty &
+export DISPLAY=:$idx
+$1
+kill %1
