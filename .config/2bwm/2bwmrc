@@ -20,4 +20,4 @@ stalonetray&
 urxvtd&
 
 echo "idle"
-exec xterm -e tail -f $LOG
+exec xterm -title xconsole -e tail -f $LOG

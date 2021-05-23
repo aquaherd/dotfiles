@@ -40,6 +40,15 @@ closeall_bspwm()
     esac
 }
 
+closeall_2bwm()
+{
+    # do some wmctrl -l, wmctrl -c, then:
+
+    case $1 in
+    quit) pkill xconsole
+    esac
+}
+
 closeall_i3()
 {
     # Kindly close all regular windows
