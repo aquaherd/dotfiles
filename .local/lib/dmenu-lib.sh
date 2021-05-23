@@ -11,6 +11,19 @@ fix_desktop() # in case you start without display manager
 		    export DESKTOP_SESSION=$(wmname)
 		fi
 	fi
+
+	if [ -z "$WAYLAND_DISPLAY" ]; then
+	    #x11
+	    if [ -z "$PRIMARY" ]; then
+	        if [ $(xrdb -q|wc -l) -eq 0 ]; then
+	            xrdb -merge
+	        fi
+
+	        export PRIMARY=$(xrdb -q | grep Xdisplay.primary | cut -f2)
+	        export SECONDARY=$(xrdb -q | grep Xdisplay.secondary | cut -f2)
+	    fi
+    fi
+
 }
 
 ask() # bifurcate to dmenu or dmenu-wl
@@ -28,7 +41,7 @@ ask() # bifurcate to dmenu or dmenu-wl
         done
         dmenu-wl -i -p $1 -fn 'Iosevka Term 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m $m -b
         ;;
-    hikari)
+    hikari|wayfire)
         # dont know how to determine current monitor in hikari
         dmenu-wl -i -p $1 -fn 'Iosevka Term 15' -nb '#44475a' -sb '#bd93f9' -h 30 -b
         ;;

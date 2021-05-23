@@ -19,6 +19,7 @@ case $tty in
     ;;
 esac
 
+export DESKTOP_SESSION=$1
 if [ $1 = "default" ]; then
     startx
 else
