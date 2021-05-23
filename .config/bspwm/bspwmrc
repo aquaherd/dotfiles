@@ -1,9 +1,8 @@
 #! /bin/sh
 
 # redirect output of this script and all others to file
-test -d ~/.cache/bspwm || mkdir -p ~/.cache/bspwm
-test -f ~/.cache/bspwm/bspwm.log && mv ~/.cache/bspwm/bspwm.log ~/.cache/bspwm/bspwm.log.0
-exec > ~/.cache/bspwm/bspwm.log
+LOG=~/.cache/bspwm.log
+exec > $LOG
 exec 2>&1
 
 log()
@@ -75,10 +74,10 @@ bspc rule -a "Microsoft Teams - Preview" border=off
 bspc rule -a "Xfce4-panel" state=floating
 
 # backdrop
-~/.config/bspwm/renitrogen.sh &
+renitrogen.sh &
 
 # closure in dmenu-sys.sh
-launch xsettingsd -c ~/.config/bspwm/xsettings.conf
+launch xsettingsd -c ~/.config/xsettings.conf
 launch compton
 launch dunst
 launch /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
@@ -88,12 +87,12 @@ autostart
 test -f /var/run/lightdm.pid && launch light-locker
 launch sxhkd -c ~/.config/bspwm/sxhkd.conf
 xsetroot -cursor_name left_ptr
-urxvt -name bspwm-log -title Log -e /usr/bin/tail -f ~/.cache/bspwm/bspwm.log -n 1000 &
-~/.config/bspwm/update-appcache.sh &
+urxvt -name bspwm-log -title Log -e /usr/bin/tail -f $LOG -n 1000 &
+update-appcache.sh &
 log "+++ Startup complete +++"
 
 # await all processes
 wait
 
 log "--- Session Ends ---"
-
+savelog -c 7 $LOG

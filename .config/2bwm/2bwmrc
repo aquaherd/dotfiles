@@ -1,0 +1,23 @@
+#!/bin/sh
+CONF=~/.config/2bwm
+LOG=~/.cache/2bwm.log
+savelog -c 7 $LOG || true
+touch $LOG
+exec 1>$LOG
+exec 2>&1
+
+echo "liftoff"
+xrdb -merge .Xresources
+2bwm&
+
+echo "autostart"
+xsettingsd -c ~/.config/xsettings.conf&
+update-appcache.sh&
+xsetroot -cursor_name left_ptr
+dunst&
+renitrogen.sh&
+stalonetray&
+urxvtd&
+
+echo "idle"
+exec xterm -e tail -f $LOG
