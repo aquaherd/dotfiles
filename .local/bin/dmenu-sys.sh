@@ -118,7 +118,7 @@ randr()
 # requires an efi where each kernel is booted directly
 ask_boot()
 {
-    efibootmgr | grep Boot0 | cut -d' ' -f2- | ask 'boot:' || die ask_boot
+    sudo efibootmgr | grep Boot0 | cut -d' ' -f2- | ask 'boot:' || die ask_boot
 }
 
 boot()

@@ -14,7 +14,7 @@ case $tty in
 /dev/tty?)
     idx=$(echo $tty | cut -d'y' -f2)
     ;;
-*)  echo "Start this from a virtual console only"
+*)  echo "$tty: Start this from a virtual console only"
     exit 1
     ;;
 esac
