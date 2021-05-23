@@ -1,0 +1,38 @@
+diff --git a/config.h b/config.h
+index 0985d2e..33ef09f 100644
+--- a/config.h
++++ b/config.h
+@@ -40,7 +40,9 @@ static const uint8_t borders[] = {3,5,5,4};
+ #define LOOK_INTO "WM_NAME"
+ static const char *ignore_names[] = {"bar", "xclock"};
+ ///--Menus and Programs---///
+-static const char *menucmd[]   = { "", NULL };
++static const char *menucmd[]   = {"dmenu-run.sh", NULL};
++static const char *termcmd[]   = {"urxvtc", NULL};
++static const char *syscmd[]   = {"dmenu-sys.sh", NULL};
+ ///--Custom foo---///
+ static void halfandcentered(const Arg *arg)
+ {
+@@ -55,8 +57,8 @@ static void halfandcentered(const Arg *arg)
+  * The strings "Sloppy" and "Click" will be passed as the last argument
+  * If NULL this is ignored
+  */
+-static const char *sloppy_switch_cmd[] = {};
+-//static const char *sloppy_switch_cmd[] = { "notify-send", "toggle sloppy", NULL };
++//static const char *sloppy_switch_cmd[] = {};
++static const char *sloppy_switch_cmd[] = { "notify-send", "toggle sloppy", NULL };
+ static void toggle_sloppy(const Arg *arg)
+ {
+ 	is_sloppy = !is_sloppy;
+@@ -193,7 +195,10 @@ static key keys[] = {
+     {  MOD |SHIFT,        XK_Right,      cursor_move,       {.i=TWOBWM_CURSOR_RIGHT}},
+     {  MOD |SHIFT,        XK_Left,       cursor_move,       {.i=TWOBWM_CURSOR_LEFT}},
+     // Start programs
+-    {  MOD ,              XK_w,          start,             {.com = menucmd}},
++    {  MOD ,              XK_d,          start,             {.com = menucmd}}, // dmenu-run
++    {  MOD ,              XK_Return,     start,             {.com = termcmd}}, // terminal
++    {  MOD ,              XK_Escape,     start,             {.com = syscmd}}, // dmenu-sys
++    
+     // Exit or restart 2bwm
+     {  MOD |CONTROL,      XK_q,          twobwm_exit,       {.i=0}},
+     {  MOD |CONTROL,      XK_r,          twobwm_restart,    {.i=0}},

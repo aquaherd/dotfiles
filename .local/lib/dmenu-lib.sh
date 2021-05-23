@@ -7,6 +7,8 @@ fix_desktop() # in case you start without display manager
 			export DESKTOP_SESSION=sway
 		elif [ -n "$I3SOCK" ]; then
 			export DESKTOP_SESSION=i3
+		else
+		    export DESKTOP_SESSION=$(wmname)
 		fi
 	fi
 }
