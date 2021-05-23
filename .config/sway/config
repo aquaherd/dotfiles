@@ -59,10 +59,10 @@ set {
 }
 ### Output configuration
 #
-output $primary pos 0 0
-output $secondary pos 2560 0
-output DP-2 disable
-output DP-3 disable
+#output $primary pos 0 0
+#output $secondary pos 2560 0
+#output DP-2 disable
+#output DP-3 disable
 
 
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)

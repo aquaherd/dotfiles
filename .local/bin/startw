@@ -6,7 +6,8 @@ if [ $# -ne 1 ]; then
     done
     exit 1
 fi
-export XDG_RUNTIME_DIR=/run/user/$UID
+export XDG_RUNTIME_DIR=/run/user/$(id -u)
+export DESKTOP_SESSION=$1
 sudo mkdir -p $XDG_RUNTIME_DIR
 sudo chown $USER:$USER $XDG_RUNTIME_DIR
 exec $1
