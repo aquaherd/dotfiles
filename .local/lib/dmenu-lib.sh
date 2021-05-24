@@ -16,7 +16,7 @@ fix_desktop() # in case you start without display manager
 	    #x11
 	    if [ -z "$PRIMARY" ]; then
 	        if [ $(xrdb -q|wc -l) -eq 0 ]; then
-	            xrdb -merge
+	            xrdb -merge ~/.Xresources
 	        fi
 
 	        export PRIMARY=$(xrdb -q | grep Xdisplay.primary | cut -f2)
