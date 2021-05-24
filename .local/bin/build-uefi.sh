@@ -6,7 +6,7 @@ OS_RELEASE=$MTP/etc/os-release
 echo "Building image for $PRETTY_NAME"
 
 # Create file for kernel command line, provide at least the root parameter
-echo "root=LABEL=$ID rw quiet splash rootfstype=ext4" > /tmp/kernel-command-line.txt
+echo "root=LABEL=$ID rw rootfstype=ext4" > /tmp/kernel-command-line.txt
 
 # Set the splash image, /sys/firmware/acpi/bgrt/image is the vendor logo taken from ACPI in BMP image format
 SPLASH="/sys/firmware/acpi/bgrt/image"
