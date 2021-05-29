@@ -9,15 +9,10 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
-#setxkbmap "us(altgr-intl)"
-#exec --no-startup-id xmodmap ~/.Xmodmap
 
 set $mod Mod4
-exec xrdb -merge ~/.Xresources
-set_from_resource $primary Xdisplay.primary
-set_from_resource $secondary Xdisplay.secondary
-exec --no-startup-id xrandr --output $primary --primary --output $secondary --right-of $primary
-
+set_from_resource $primary Xdisplay.primary DisplayPort-0
+set_from_resource $secondary Xdisplay.secondary HDMI-A-0
 set $filemgr thunar
 
 #autostart
@@ -97,9 +92,6 @@ bindsym $mod+a focus parent
 
 # focus the child container
 bindsym $mod+c focus child
-
-#    bspc monitor $PRIMARY -d wrk web com rem
-#    bspc monitor $SECONDARY -d aud vid sys log
 
 set $ws1 "1: wrk"
 set $ws2 "2: web"

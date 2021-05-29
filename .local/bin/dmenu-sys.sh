@@ -110,9 +110,27 @@ randr_bspwm()
     .config/bspwm/xrandr.sh $res
 }
 
+randr_default()
+{
+    case $1 in
+    single)
+        xrandr \
+            --output $PRIMARY --primary --auto \
+            --output $SECONDARY --off
+        ;;
+    dual)
+        xrandr \
+            --output $PRIMARY --primary --auto \
+            --output $SECONDARY --auto --left-of $PRIMARY
+        ;;
+    esac
+}
+
 randr()
 {
-    randr_${DESKTOP_SESSION} $* || die randr
+    fix_desktop
+    echo "randr: $PRIMARY $SECONDARY randr_${DESKTOP_SESSION}  $*"
+    randr_${DESKTOP_SESSION} $* || randr_default $*
 }
 
 # requires an efi where each kernel is booted directly
