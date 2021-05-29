@@ -181,7 +181,11 @@ res=$(ask_sys)
 read r < /proc/1/comm
 case $r in
 systemd)    ctl=systemctl;; # insane
-*)          ctl=loginctl;;  # sane
+*)          if type loginctl>/dev/null 2>&1; then
+                ctl=loginctl  # sane
+            else
+                ctl=sudo      # seatd
+            fi;;
 esac
 
 echo "dmenu-sys.sh: ${res}@${ctl}"
