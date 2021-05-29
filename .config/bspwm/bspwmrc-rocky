@@ -1,6 +1,6 @@
 # this is a shell fragment specific for host rocky
-export PRIMARY=HDMI-A-0
-export SECONDARY=DisplayPort-0
+export SECONDARY=HDMI-A-0
+export PRIMARY=DisplayPort-0
 
 autostart()
 {
