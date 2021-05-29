@@ -2,8 +2,9 @@
 if [ $# -ne 1 ]; then
     echo "Usage: startX XORG_SESSION"
     echo "       where XORG_SESSION is one of:"
-    for s in $(cat /usr/share/xsessions/*|grep ^Exec|cut -d'=' -f2); do
-        echo "- $s"
+    echo "- default"
+    for s in $(cat /usr/share/xsessions/*|grep ^Exec|cut -d'=' -f2|sort -u); do
+        echo "- $(basename $s)"
     done
     exit 1
 fi
@@ -23,5 +24,5 @@ export DESKTOP_SESSION=$1
 if [ $1 = "default" ]; then
     startx
 else
-    DISPLAY=:$idx xinit $(which $1) -- :$idx vt0$idx
+    DISPLAY=:$idx xinit ~/.local/lib/xlaunch.sh $1 -- :$idx vt0$idx
 fi
