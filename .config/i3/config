@@ -13,10 +13,11 @@
 #exec --no-startup-id xmodmap ~/.Xmodmap
 
 set $mod Mod4
+exec xrdb -merge ~/.Xresources
 set_from_resource $primary Xdisplay.primary
 set_from_resource $secondary Xdisplay.secondary
-#set $primary DisplayPort-0
-#set $secondary HDMI-A-0
+exec --no-startup-id xrandr --output $primary --primary --output $secondary --right-of $primary
+
 set $filemgr thunar
 
 #autostart
@@ -26,7 +27,6 @@ exec --no-startup-id redshift-gtk
 exec --no-startup-id udiskie -s -A -f ranger
 exec --no-startup-id compton
 exec --no-startup-id xsettingsd -c ~/.config/i3/xsettings.conf
-# exec --no-startup-id xrandr --output $primary --primary --output $secondary --left-of $primary
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 font pango:Cantarell Regular 11
