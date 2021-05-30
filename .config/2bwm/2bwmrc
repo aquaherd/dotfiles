@@ -21,4 +21,4 @@ stalonetray&
 urxvtd&
 
 echo "idle"
-exec xterm -title xconsole -e tail -f $LOG
+exec xterm -geometry 200x10+0-0 -title xconsole -e tail -f $LOG
