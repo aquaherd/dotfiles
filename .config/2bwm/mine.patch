@@ -1,8 +1,22 @@
 diff --git a/config.h b/config.h
-index 0985d2e..33ef09f 100644
+index 0985d2e..d17046b 100644
 --- a/config.h
 +++ b/config.h
-@@ -40,7 +40,9 @@ static const uint8_t borders[] = {3,5,5,4};
+@@ -19,7 +19,12 @@ static const uint8_t offsets[] = {0,0,0,0};
+  *2)fixedcol         3)unkilcol
+  *4)fixedunkilcol    5)outerbordercol
+  *6)emptycol         */
+-static const char *colors[] = {"#35586c","#333333","#7a8c5c","#ff6666","#cc9933","#0d131a","#000000"};
++static const char *colors[] = {
++    "#bd93f9","#333333",
++    "#7a8c5c","#ff6666",
++    "#cc9933","#0d131a",
++    "#000000"
++};
+ /* if this is set to true the inner border and outer borders colors will be swapped */
+ static const bool inverted_colors = true;
+ ///---Cursor---///
+@@ -40,7 +45,9 @@ static const uint8_t borders[] = {3,5,5,4};
  #define LOOK_INTO "WM_NAME"
  static const char *ignore_names[] = {"bar", "xclock"};
  ///--Menus and Programs---///
@@ -13,7 +27,7 @@ index 0985d2e..33ef09f 100644
  ///--Custom foo---///
  static void halfandcentered(const Arg *arg)
  {
-@@ -55,8 +57,8 @@ static void halfandcentered(const Arg *arg)
+@@ -55,8 +62,8 @@ static void halfandcentered(const Arg *arg)
   * The strings "Sloppy" and "Click" will be passed as the last argument
   * If NULL this is ignored
   */
@@ -24,7 +38,7 @@ index 0985d2e..33ef09f 100644
  static void toggle_sloppy(const Arg *arg)
  {
  	is_sloppy = !is_sloppy;
-@@ -193,7 +195,10 @@ static key keys[] = {
+@@ -193,7 +200,10 @@ static key keys[] = {
      {  MOD |SHIFT,        XK_Right,      cursor_move,       {.i=TWOBWM_CURSOR_RIGHT}},
      {  MOD |SHIFT,        XK_Left,       cursor_move,       {.i=TWOBWM_CURSOR_LEFT}},
      // Start programs
