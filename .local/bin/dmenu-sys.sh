@@ -45,7 +45,7 @@ closeall_2bwm()
     # do some wmctrl -l, wmctrl -c, then:
 
     case $1 in
-    quit) pkill xconsole
+    quit) pkill -f xconsole
     esac
 }
 
