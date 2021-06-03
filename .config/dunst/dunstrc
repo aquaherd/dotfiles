@@ -165,7 +165,7 @@
     max_icon_size = 72
 
     # Paths to default icons.
-    icon_path = /usr/share/icons/Adwaita/64x64/status/:/usr/share/icons/Adwaita/64x64/devices/
+    icon_path = /usr/share/icons/Faba/48x48/status:/usr/share/icons/Faba/48x48/devices
 
     ### History ###
 
