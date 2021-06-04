@@ -1,5 +1,5 @@
 #!/bin/sh
-if [ $# -ne 1 ]; then
+if [ $# -lt 1 ]; then
     echo "Usage: startX XORG_SESSION"
     echo "       where XORG_SESSION is one of:"
     echo "- default"
@@ -22,7 +22,7 @@ esac
 
 export DESKTOP_SESSION=$1
 if [ $1 = "default" ]; then
-    startx
+    startx $*
 else
-    DISPLAY=:$idx xinit ~/.local/lib/xlaunch.sh $1 -- :$idx vt0$idx
+    DISPLAY=:$idx xinit ~/.local/lib/xlaunch.sh $* -- :$idx vt0$idx
 fi

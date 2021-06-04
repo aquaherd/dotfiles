@@ -14,8 +14,7 @@ Xcursor.theme: "DMZ-Black"
 ! --------------------------------------------------
 URxvt.iso14755: false
 URxvt.iso14755_52: false
-URxvt.font: xft:Fira Code Retina:size=13
-URXVT.font: xft:Fira Code Retina:bold:size=13
+URxvt.font: xft:Iosevka Term:size=13
 URxvt.letterSpace:0 
 URxvt.lineSpace: 0
 URxvt.internalBorder: 20
@@ -23,8 +22,8 @@ URxvt.cursorColor: #f8f8f2
 URxvt.cursorBlink: false
 URxvt.scrollBar: false
 URxvt.depth: 32
-URxvt.background: [90]#282a36
-URxvt.mouseWheelScrollPage: true
+URxvt.background: #282a36
+URxvt.mouseWheelScrollPage: false
 ! --------------------------------------------------
 ! Rofi
 ! --------------------------------------------------
@@ -94,3 +93,16 @@ Xdsiplay.serverhost: SERVERHOST
 Xdsiplay.clienthost: CLIENTHOST
 Xdisplay.layout: LAYOUT
 hwmon.temperature: TEMP
+
+XEyes*foreground: black
+
+XClock*hourColor: white
+XClock*minuteColor: white
+XClock*secondColor: white
+XClock*majorColor: #bd93f9
+XClock*minorColor: #bd93f9
+XCLock*render: false
+
+XLoad*foreground: #bd93f9
+XLoad*Label*Justify: center
+*internalBorderWidth: 8
