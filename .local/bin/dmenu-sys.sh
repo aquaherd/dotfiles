@@ -42,10 +42,16 @@ closeall_bspwm()
 
 closeall_2bwm()
 {
-    # do some wmctrl -l, wmctrl -c, then:
+    for w in $(lsw|cut -d' ' -f1); do
+        xdo kill $w
+    done
+
+    while [ $(lsw|wc -l) -gt 0 ]; do
+        sleep 1
+    done 
 
     case $1 in
-    quit) pkill -f xconsole
+    quit) pkill 2bwm
     esac
 }
 

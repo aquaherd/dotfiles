@@ -2,12 +2,23 @@
 if [ $# -ne 1 ]; then
     echo "Usage: startw WAYLAND_SESSION"
     for s in $(cat /usr/share/wayland-sessions/*|grep ^Exec|cut -d'=' -f2); do
-        echo "- $s"
+        echo "- $(basename $s)"
     done
     exit 1
 fi
 export XDG_RUNTIME_DIR=/run/user/$(id -u)
+export MOZ_ENABLE_WAYLAND=1
+export MOZ_DISABLE_RDD_SANDBOX=1
+export MOZ_WEBRENDER=1
+export MOZ_DBUS_REMOTE=1
+export QT_QPA_PLATFORM=wayland-egl
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+export QT_AUTO_SCREEN_SCALE_FACTOR=1
+export XDG_SESSION_TYPE=wayland
+export XDG_SESSION_DESKTOP=$1
+export XDG_CURRENT_DESKTOP=$1
+#export LIBSEAT_BACKEND=logind
 export DESKTOP_SESSION=$1
 sudo mkdir -p $XDG_RUNTIME_DIR
 sudo chown $USER:$USER $XDG_RUNTIME_DIR
-exec $1
+exec dbus-run-session $1
