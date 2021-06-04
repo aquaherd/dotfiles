@@ -20,7 +20,7 @@ launch()
 
 autostart()
 {
-    #launch mpDris2 
+    #launch mpDris2
     #launch blueman-applet
     #launch unclutter -not "$PRIMARY $SECONDARY" -reset -keystroke -idle 15
     launch redshift-gtk
@@ -77,10 +77,10 @@ bspc rule -a "Xfce4-panel" state=floating
 renitrogen.sh &
 
 # closure in dmenu-sys.sh
-launch xsettingsd -c ~/.config/xsettings.conf
-launch compton
+launch xsettingsd
+#launch compton
 launch dunst
-launch /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
+launch urxvtd
 
 autostart
 

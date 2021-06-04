@@ -3,8 +3,7 @@
 
 usr=/usr/share/applications
 loc=~/.local/share/applications
-self=~/.config/bspwm/update-appcache.sh
-cache=~/.cache/bspwm/applications
+cache=~/.cache/applications.txt
 
 if [ $# -eq 0 ];then
     if [ $cache -nt $usr -a $cache -nt $loc ]; then
