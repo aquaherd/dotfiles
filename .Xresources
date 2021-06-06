@@ -106,3 +106,5 @@ XCLock*render: false
 XLoad*foreground: #bd93f9
 XLoad*Label*Justify: center
 *internalBorderWidth: 8
+
+st.font: Iosevka Term:pixelsize=18

@@ -7,7 +7,10 @@ fix_desktop() # in case you start without display manager
 			export DESKTOP_SESSION=sway
 		elif [ -n "$I3SOCK" ]; then
 			export DESKTOP_SESSION=i3
-		else
+		elif [ -z "$DISPLAY"  ]; then
+            export DESKTOP_SESSION=none
+            return
+        else
 		    export DESKTOP_SESSION=$(wmname)
 		fi
 	fi
@@ -51,6 +54,9 @@ ask() # bifurcate to dmenu or dmenu-wl
         else
             dmenu -i -p $1
         fi
+        ;;
+    none)
+        fzf
         ;;
     *)
         : ${DMENU_DEFAULTS:='-fn sans:fontformat=truetype:pixelsize=20 -nb #44475a -sb #bd93f9'}
