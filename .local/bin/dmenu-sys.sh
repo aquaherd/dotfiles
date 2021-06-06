@@ -108,7 +108,7 @@ closeall_gnome()
 closeall()
 {
 	fix_desktop
-    closeall_${DESKTOP_SESSION} $* || die closeall_${DESKTOP_SESSION} $* 
+    closeall_${DESKTOP_SESSION} $* || true
 }
 
 randr_bspwm()
