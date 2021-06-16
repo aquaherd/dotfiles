@@ -11,7 +11,7 @@ action_get()
     apt) 			echo 'apt-get update && apt-get dist-upgrade -y && apt-get autoremove --purge -y && apt-get autoclean' ;;
     dnf) 			echo 'dnf upgrade && dnf autoremove' ;;
     kiss) 			echo 'KISS_PROMPT=0 kiss u && KISS_PROMPT=0 kiss u' ;;
-    pacman) 		echo 'pacman -Syu' ;;
+    pacman) 		echo 'pacman -Syu --noconfirm && pacman -Sc --noconfirm' ;;
     swupd) 			echo 'swupd update' ;;
     xbps-install) 	echo 'xbps-install -Syu' ;;
     yum) 			echo "yum upgrade" ;;

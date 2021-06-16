@@ -9,10 +9,9 @@ exec 2>&1
 
 echo "liftoff"
 xrdb -merge .Xresources
-2bwm&
 
 echo "autostart"
-xsettingsd -c ~/.config/xsettings.conf&
+xsettingsd&
 update-appcache.sh&
 xsetroot -cursor_name left_ptr
 dunst&

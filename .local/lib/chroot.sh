@@ -13,5 +13,5 @@ chroot_mount() {
 chroot_umount() {
 	echo "chroot_umount $1 from $2"
     sudo fstrim -v /run/mount/$2
-    sudo umount --recursive /run/mount/$2 && sudo rmdir /run/mount/$2
+    sudo umount --recursive --lazy /run/mount/$2 && sudo rmdir /run/mount/$2
 }
