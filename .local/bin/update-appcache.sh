@@ -21,7 +21,7 @@ else
     fi
     name=$(grep ^Name= "$f" | head -n1 | cut -b6-)
     if [ -n "$name" ]; then
-        echo "${name}\t${f}" >> ${cache}.new
+        echo -e "${name}\t${f}" >> ${cache}.new
         echo add: $name $f
     fi
 fi
