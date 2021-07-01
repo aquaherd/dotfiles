@@ -28,12 +28,12 @@ settings:
         pw: spawn -m -u qute-bitwarden -w
   colors.webpage.preferred_color_scheme:
     global: dark
-  content.notifications:
+  content.notifications.enabled:
     https://outlook.office.com: true
     https://teams.microsoft.com: true
     https://www.reddit.com: true
   content.proxy:
-    global: system
+    global: http://md2eyg3c.fritz.box:8888
   fonts.default_family:
     global: Iosevka Term
   fonts.default_size:
