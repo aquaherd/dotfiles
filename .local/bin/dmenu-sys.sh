@@ -98,6 +98,11 @@ closeall_xfce()
     esac
 }
 
+closeall_startxfce4()
+{
+    closeall_xfce $*
+}
+
 closeall_gnome()
 {
     case $1 in
