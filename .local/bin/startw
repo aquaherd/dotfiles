@@ -19,6 +19,7 @@ export XDG_SESSION_DESKTOP=$1
 export XDG_CURRENT_DESKTOP=$1
 #export LIBSEAT_BACKEND=logind
 export DESKTOP_SESSION=$1
+export HOSTNAME=$(hostname)
 sudo mkdir -p $XDG_RUNTIME_DIR
 sudo chown $USER:$USER $XDG_RUNTIME_DIR
 exec dbus-run-session $1
