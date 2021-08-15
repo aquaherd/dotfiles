@@ -55,6 +55,18 @@ set {
 }
 ### Output configuration
 # is in $HOSTNAME.conf
+#!/bin/sh PC specific config for sway
+
+set {
+    $primary DP-1
+    $secondary HDMI-A-1
+}
+
+output $primary pos 0 0
+output $secondary pos 2560 0
+output DP-2 disable
+output DP-3 disable
+
 include ~/.config/$HOSTNAME.conf
 
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
