@@ -14,7 +14,7 @@ set $mod Mod4
 set_from_resource $primary Xdisplay.primary DisplayPort-0
 set_from_resource $secondary Xdisplay.secondary HDMI-A-0
 set $filemgr thunar
-set $term urxvtc
+set $term urxvtcd
 set $browser firefox
 
 #autostart
@@ -24,7 +24,7 @@ exec --no-startup-id redshift-gtk
 exec --no-startup-id udiskie -s -A -f ranger
 exec --no-startup-id compton
 exec --no-startup-id xsettingsd -c ~/.config/i3/xsettings.conf
-exec --no-statrup-id urxvtd -f
+exec --no-startup-id dunst
 exec --no-startup-id xsetroot -cursor_name left_ptr
 
 # Font for window titles. Will also be used by the bar unless a different font

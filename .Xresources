@@ -22,7 +22,7 @@ URxvt.cursorColor: #f8f8f2
 URxvt.cursorBlink: false
 URxvt.scrollBar: false
 URxvt.depth: 32
-URxvt.background: #282a36
+URxvt.background: [95]#282a36
 URxvt.mouseWheelScrollPage: false
 ! --------------------------------------------------
 ! Rofi
