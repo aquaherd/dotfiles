@@ -16,17 +16,29 @@ enter()
 	fi
 	local n=$(basename $1)
 	local d=$(readlink -f $1)
-	
+
 	chroot_mount $d $n
-	
+
 	for s in $shells; do
 		if [ -f /run/mount/$n/$s ]; then
 			sudo chroot /run/mount/$n $s -l
 			break
 		fi
 	done
-	
+
 	chroot_umount $d $n
+}
+
+list()
+{
+    for f in /dev/disk/by-label/*; do
+        local n=$(basename $f)
+
+        case $n in
+        backup|data|EF00|leswap|store) continue;;
+        *) echo $n
+        esac
+    done
 }
 
 case $1 in
