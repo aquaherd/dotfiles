@@ -8,7 +8,7 @@ exec 1>$LOG
 exec 2>&1
 
 echo "liftoff"
-xrdb -merge .Xresources
+xrdb -merge ~/.Xresources
 
 echo "autostart"
 xsettingsd&
@@ -18,6 +18,7 @@ dunst&
 renitrogen.sh&
 stalonetray&
 urxvtd&
+urxvtc&
 
 echo "idle"
 exec xterm -geometry 200x10+0-0 -title xconsole -e tail -f $LOG
