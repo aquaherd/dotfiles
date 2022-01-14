@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Xfce Session with i3
+Comment=improved dynamic tiling window manager
+Exec=i3xfce
+TryExec=i3xfce
+Type=Application
+DesktopNames=XFCE
+Keywords=tiling;wm;windowmanager;window;manager;

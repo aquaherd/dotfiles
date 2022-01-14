@@ -70,6 +70,12 @@ closeall_i3()
     esac
 }
 
+closeall_i3xfce()
+{
+    closeall_i3 $1
+    closeall_xfce $1
+}
+
 closeall_sway()
 {
     # Kindly close all regular windows
