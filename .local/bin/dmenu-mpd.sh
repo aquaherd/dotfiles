@@ -5,7 +5,7 @@ all_name='[ALL]'
 mode=Library
 
 d_artist() {
-    mpc list artist | sort -f | ask 'Artist:'
+    mpc list artist | sort -f | ask 'Artist:' $DMENU_DEFAULTS
 }
 
 d_album() {
@@ -17,7 +17,7 @@ d_album() {
         {
             printf '%s\n' "$all_name"
             printf '%s\n' "${albums[@]}" | sort -f
-        } | ask 'Album:'
+        } | ask 'Album:' $DMENU_DEFAULTS
     else
         # We only have one album, so just use that.
         printf '%s\n' "${albums[0]}"
@@ -25,21 +25,11 @@ d_album() {
 }
 
 d_song() {
-	mpc list title | sort -f | dmenu -i -p Song $DMENU_DEFAULTS 
+	mpc list title | sort -f |  ask 'Song:' $DMENU_DEFAULTS 
 }
 
 d_playlist() {
-    local format="%position% %title%"
-    local extra_format="(%artist% - %album%)"
-    local track
-    local num_extras
-
-    # If all tracks are from the same artist and album, no need to display that
-    num_extras=$(mpc playlist -f "$extra_format" | sort | uniq | wc -l)
-    (( num_extras == 1 )) || format+=" $extra_format"
-
-    track=$(mpc playlist -f "$format" | ask 'Playlist:' $DMENU_DEFAULTS)
-    printf '%s' "${track%% *}"
+	mpc lsplaylists | ask 'Playlist:' $DMENU_DEFAULTS
 }
 
 i=2
@@ -51,10 +41,10 @@ for arg do
     fi
 
     case "$arg" in
-        -l) mode=Library ;;
-        -p) mode=Playlist ;;
-		-s) mode=Song ;;
-		-a) 
+	-l) mode=Library ;;
+	-p) mode=Playlist ;;
+	-s) mode=Song ;;
+	-a) 
 			MODE=$(echo -e "Library\nSong\nPlaylist" | ask 'mpd:' $DMENU_DEFAULTS)
 			mode=$MODE ;;
     esac
@@ -80,7 +70,8 @@ case "$mode" in
         mpc play >/dev/null
     ;;
 	Playlist)
-        mpc play "$(d_playlist)" >/dev/null
+	mpc clear
+        mpc load "$(d_playlist)" > /dev/null && mpc play >/dev/null
     ;;
 	Song)
 		mpc clear
