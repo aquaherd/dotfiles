@@ -13,7 +13,7 @@ action_get()
     kiss) 			echo 'KISS_PROMPT=0 kiss u && KISS_PROMPT=0 kiss u' ;;
     pacman) 		echo 'pacman -Syu --noconfirm && pacman -Sc --noconfirm' ;;
     swupd) 			echo 'swupd update' ;;
-    xbps-install) 	echo 'xbps-install -Syu' ;;
+    xbps-install) 	echo 'xbps-install -Syu && xbps-remove -oy' ;;
     yum) 			echo "yum upgrade" ;;
     *) 				return 1 ;;
     esac
