@@ -28,7 +28,7 @@ vim.cmd [[
   exe "hi StatusInactive guibg=background guifg=".g:terminal_color_8 
   exe "hi StatusNormal guifg=background guibg=".g:terminal_color_2
   exe "hi StatusReplace guifg=background guibg=".g:terminal_color_1
-  exe "hi StatusInsert guifg=background guibg=".g:terminal_color_2
+  exe "hi StatusInsert guifg=background guibg=".g:terminal_color_1
   exe "hi StatusCommand guifg=background guibg=".g:terminal_color_3
   exe "hi StatusVisual guifg=background guibg=".g:terminal_color_4
   exe "hi StatusTerminal guifg=background guibg=".g:terminal_color_5
