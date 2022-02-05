@@ -20,8 +20,8 @@ local uwu = base16.theme_from_array {
   "5b98a9"; "7ab3c3"; "e74c4c"; "e74c4c"; 
 }
 
--- base16(base16.themes["classic-dark"], true) -- to use default base16-themes
-base16(uwu, true)
+base16(base16.themes["dracula"], true) -- to use default base16-themes
+-- base16(uwu, true)
 
 -- higlights
 vim.cmd [[

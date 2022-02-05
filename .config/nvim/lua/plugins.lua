@@ -10,7 +10,9 @@ return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
   use 'norcalli/nvim-base16.lua'
   use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } }
-  use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' } } -- Just something one might use
+  if ( vim.version().major > 0 or vim.version().minor  >= 6 ) then
+    use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' } } -- Just something one might use
+  end
   use 'lukas-reineke/indent-blankline.nvim'
   use 'numToStr/Comment.nvim' 
  
