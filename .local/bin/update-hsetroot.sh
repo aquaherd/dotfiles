@@ -9,4 +9,4 @@ while [ "$CUR" = "$SET" ]; do
 done
 
 ln -svf "$SET" "$DST"
-hsetroot -root -cover $DST || hsetroot -cover $DST 
+hsetroot -root -cover $DST > /dev/null 2>&1 || hsetroot -cover $DST > /dev/null 2>&1

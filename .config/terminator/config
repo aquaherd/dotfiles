@@ -7,6 +7,7 @@
   enabled_plugins = CustomCommandsMenu, TerminalShot, Logger, ActivityWatch, SSHMenu
   always_split_with_profile = True
 [keybindings]
+  rotate_cw = <Primary><Alt>r
 [profiles]
   [[default]]
     icon_bell = False

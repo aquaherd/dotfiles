@@ -18,7 +18,7 @@ set $term urxvt
 set $browser firefox
 
 #autostart
-exec --no-startup-id nitrogen --restore
+exec --no-startup-id update-hsetroot.sh 
 exec --no-startup-id redshift-gtk
 #exec --no-startup-id pasystray
 exec --no-startup-id udiskie -s -A -f ranger
@@ -252,7 +252,7 @@ bar {
 bindsym $mod+d exec --no-startup-id i3-dmenu-desktop --entry-type=name --dmenu="dmenu -p run: -i -sb $active -fn Cantarell:bold:pixelsize=20"
 bindsym $mod+Shift+n exec $filemgr
 bindsym $mod+i bar mode toggle
-bindsym $mod+Shift+v exec --no-startup-id nitrogen --random --set-zoom-fill
+bindsym $mod+Shift+v exec --no-startup-id update-hsetroot.sh 
 bindsym $mod+Return exec $term
 bindsym $mod+Shift+Return exec $browser
 bindsym $mod+Shift+d exec --no-startup-id rofi -sort -sidebar-mode -modi "drun#window#run#ssh#Workspaces:i3_switch_workspaces.sh" -show drun

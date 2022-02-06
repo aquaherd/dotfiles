@@ -15,10 +15,9 @@ xsettingsd&
 update-appcache.sh&
 xsetroot -cursor_name left_ptr
 dunst&
-renitrogen.sh&
+update-hsetroot.sh&
 stalonetray&
-urxvtd&
-urxvtc&
+sxhkd -c ~/.config/2bwm/sxhd.conf
 
 echo "idle"
 exec xterm -geometry 200x10+0-0 -title xconsole -e tail -f $LOG

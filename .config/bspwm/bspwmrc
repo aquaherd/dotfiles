@@ -74,20 +74,19 @@ bspc rule -a "Microsoft Teams - Preview" border=off
 bspc rule -a "Xfce4-panel" state=floating
 
 # backdrop
-renitrogen.sh &
+update-hsetroot.sh &
 
 # closure in dmenu-sys.sh
 launch xsettingsd
 #launch compton
 launch dunst
-launch urxvtd
 
 autostart
 
 test -f /var/run/lightdm.pid && launch light-locker
 launch sxhkd -c ~/.config/bspwm/sxhkd.conf
 xsetroot -cursor_name left_ptr
-urxvt -name bspwm-log -title Log -e /usr/bin/tail -f $LOG -n 1000 &
+:q
 update-appcache.sh &
 log "+++ Startup complete +++"
 

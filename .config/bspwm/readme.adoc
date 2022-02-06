@@ -2,7 +2,7 @@
 * xrandr command
 * kill and restart bar
 * add desktops and/or rename
-* nitrogen --restore
+* update-hsetroot.sh 
 * OK, see xrandr.sh
 
 # lemonbar

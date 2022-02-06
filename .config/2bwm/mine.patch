@@ -22,7 +22,7 @@ index 0985d2e..d17046b 100644
  ///--Menus and Programs---///
 -static const char *menucmd[]   = { "", NULL };
 +static const char *menucmd[]   = {"dmenu-run.sh", NULL};
-+static const char *termcmd[]   = {"urxvtc", NULL};
++static const char *termcmd[]   = {"x-terminal-emulator", NULL};
 +static const char *syscmd[]   = {"dmenu-sys.sh", NULL};
  ///--Custom foo---///
  static void halfandcentered(const Arg *arg)
