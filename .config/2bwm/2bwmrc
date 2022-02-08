@@ -17,7 +17,8 @@ xsetroot -cursor_name left_ptr
 dunst&
 update-hsetroot.sh&
 stalonetray&
-sxhkd -c ~/.config/2bwm/sxhd.conf
+sxhkd -c ~/.config/2bwm/sxhkd.conf &
+st&
 
 echo "idle"
 exec xterm -geometry 200x10+0-0 -title xconsole -e tail -f $LOG

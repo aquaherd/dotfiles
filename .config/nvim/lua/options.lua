@@ -33,6 +33,7 @@ opt.splitbelow = true
 opt.splitright = true
 opt.hidden = true
 opt.fillchars.vert = "│"
+opt.cursorline = true
 
 -- text formatting
 opt.expandtab = true

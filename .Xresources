@@ -107,4 +107,8 @@ XLoad*foreground: #bd93f9
 XLoad*Label*Justify: center
 *internalBorderWidth: 8
 
-st.font: Iosevka Term:pixelsize=18
+!suckless
+st.font: Iosevka Term:pixelsize=17
+st.alpha: 1.00
+st.borderpx: 16
+
