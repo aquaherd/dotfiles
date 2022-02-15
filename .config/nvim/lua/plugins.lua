@@ -30,6 +30,9 @@ return require('packer').startup(function()
   -- lsp
   use 'neovim/nvim-lspconfig'
   use 'williamboman/nvim-lsp-installer'
+  
+  use 'tpope/vim-fugitive'
+  use 'mboughaba/i3config.vim'
 
   -- status
   use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true }}
