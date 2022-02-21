@@ -27,6 +27,7 @@ opt.number = true
 opt.numberwidth = 1
 opt.relativenumber = true
 opt.signcolumn = "yes"
+opt.wildmode = 'longest:full'
 
 -- window, buffer, tabs
 opt.splitbelow = true

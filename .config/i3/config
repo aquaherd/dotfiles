@@ -50,10 +50,10 @@ floating_modifier $mod
 bindsym $mod+Shift+q kill
 
 # change focus
-bindsym $mod+j focus left
+bindsym $mod+h focus left
 bindsym $mod+k focus down
-bindsym $mod+l focus up
-bindsym $mod+semicolon focus right
+bindsym $mod+j focus up
+bindsym $mod+l focus right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
@@ -62,10 +62,10 @@ bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 # move focused window
-bindsym $mod+Shift+j move left
+bindsym $mod+Shift+h move left
 bindsym $mod+Shift+k move down
-bindsym $mod+Shift+l move up
-bindsym $mod+Shift+semicolon move right
+bindsym $mod+Shift+j move up
+bindsym $mod+Shift+l move right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Shift+Left move left
@@ -74,10 +74,10 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
-bindsym $mod+h split h
+bindsym $mod+Ctrl+h split h
 
 # split in vertical orientation
-bindsym $mod+v split v
+bindsym $mod+Ctrl+v split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
@@ -158,10 +158,10 @@ mode "resize" {
         # Pressing right will grow the window’s width.
         # Pressing up will shrink the window’s height.
         # Pressing down will grow the window’s height.
-        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym h resize shrink width 10 px or 10 ppt
         bindsym k resize grow height 10 px or 10 ppt
-        bindsym l resize shrink height 10 px or 10 ppt
-        bindsym odiaeresis resize grow width 10 px or 10 ppt
+        bindsym j resize shrink height 10 px or 10 ppt
+        bindsym l resize grow width 10 px or 10 ppt
 
         # same bindings, but for the arrow keys
         bindsym Left resize shrink width 10 px or 10 ppt
@@ -175,15 +175,7 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-bindsym $mod+m mode "$mode_mpd"
-
-bindsym $mod+Escape exec ~/.local/bin/dmenu-sys.sh
-#DMENU_DEFAULT="-sb $active -fn Cantarell:bold:pixelsize=20" dmenu-sys.sh
-
-
-
 # Bling
-
 default_border pixel 14
 
 # Set colors from Xresources
@@ -247,10 +239,13 @@ bar {
 }
 
 # Launchers TODO: move to sxhkd
+bindsym $mod+Escape exec ~/.local/bin/dmenu-sys.sh
 bindsym $mod+d exec --no-startup-id ~/.local/bin/dmenu-run.sh
 bindsym $mod+Shift+n exec $filemgr
 bindsym $mod+i bar mode toggle
 bindsym $mod+Shift+v exec --no-startup-id ~/.local/bin/update-hsetroot.sh 
+bindsym $mod+Shift+t exec --no-startup-id ~/.local/bin/dmenu-hamster.sh ask
+bindsym $mod+Shift+m exec --no-startup-id ~/.local/bin/dmenu-mpd.sh -a
 bindsym $mod+Return exec $term
 bindsym $mod+Shift+Return exec $browser
 bindsym $mod+Shift+d exec --no-startup-id rofi -sort -sidebar-mode -modi "drun#window#run#ssh#Workspaces:i3_switch_workspaces.sh" -show drun
