@@ -30,6 +30,7 @@ return require('packer').startup(function()
   -- lsp
   use 'neovim/nvim-lspconfig'
   use 'williamboman/nvim-lsp-installer'
+  use 'nvim-treesitter/nvim-treesitter'
   
   use 'tpope/vim-fugitive'
   use 'mboughaba/i3config.vim'

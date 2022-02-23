@@ -55,4 +55,6 @@ vim.cmd [[
   hi DiffChange guibg=background                                             
   hi DiffDelete guibg=background                                                                
   hi DiffText guibg=background
+
+  hi Normal guibg=none
 ]]

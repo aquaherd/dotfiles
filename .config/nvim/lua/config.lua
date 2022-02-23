@@ -61,3 +61,24 @@ if present then
   vim.g.nvim_tree_indent_markers = 1
 end
 
+-- lualine
+local present, lualine = pcall(require, "lualine")
+if present then
+  lualine.setup {
+    options = {
+      component_separators = '|',
+      section_separators = '',
+      theme = 'dracula',
+    }
+  }
+end
+
+-- which-key 
+local present, whichkey = pcall(require, "which-key")
+if present then
+  whichkey.setup {
+  }
+end
+
+-- treesitter
+

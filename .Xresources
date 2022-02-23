@@ -109,6 +109,6 @@ XLoad*Label*Justify: center
 
 !suckless
 st.font: Iosevka Term:pixelsize=17
-st.alpha: 1.00
+st.alpha: 0.95
 st.borderpx: 16
 

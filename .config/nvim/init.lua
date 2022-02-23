@@ -1,7 +1,6 @@
 local modules = {
 	'options',
 	'plugins',
-	'status',
 	'config',
   'colors',
 	'mappings',
@@ -24,4 +23,4 @@ vim.cmd [[
   augroup end
   au TermOpen term://* setlocal nonumber norelativenumber signcolumn=no | setfiletype terminal
   au BufEnter,BufWinEnter,WinEnter,CmdwinEnter * if bufname('%') == "NvimTree" | set laststatus=0 | else | set laststatus=2 | endif
-]]
+  ]]
