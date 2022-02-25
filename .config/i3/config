@@ -27,6 +27,7 @@ exec --no-startup-id compton
 exec --no-startup-id xsettingsd -c ~/.config/i3/xsettings.conf
 exec --no-startup-id dunst
 exec --no-startup-id xsetroot -cursor_name left_ptr
+exec --no-startup-id ~/.local/bin/i3-autotiling
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -92,6 +93,10 @@ bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
+
+# minimize / restore floating
+bindsym $mod+Ctrl+space move to scratchpad
+bindsym $mod+Mod1+space scratchpad show
 
 # focus the parent container
 bindsym $mod+a focus parent
