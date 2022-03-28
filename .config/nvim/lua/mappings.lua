@@ -35,6 +35,10 @@ nmap("<leader>t", ":tabnew")
 nmap("<leader>x", ":q")
 nmap("<C-S>", ":w")
 
+nmap("<C-N>", ":cnext")
+nmap("<C-P>", ":cprev")
+
+
 -- Minimal toggle
 nmap("<leader>m", ":lua minimal()")
 
@@ -43,9 +47,10 @@ nmap("<leader>/", ":lua require('Comment.api').toggle_current_linewise()")
 nmap("<leader><space>", ":Telescope")
 nmap("ff", ":Telescope find_files")
 nmap("fb", ":Telescope buffers")
+nmap("fo", ":Telescope oldfiles")
 
 -- NvimTree
-nmap("<C-N>", ":NvimTreeToggle")
+nmap("<C-T>", ":NvimTreeToggle")
 nmap("<C-E>", ":NvimTreeFocus")
 
 -- Visual Map

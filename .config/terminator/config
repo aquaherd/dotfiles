@@ -8,18 +8,22 @@
   always_split_with_profile = True
 [keybindings]
   rotate_cw = <Primary><Alt>r
+  new_terminator = <Alt>Return
 [profiles]
   [[default]]
     icon_bell = False
     background_color = "#282a36"
-    background_darkness = 0.9
+    background_darkness = 0.95
     background_type = transparent
     cursor_color = "#aaaaaa"
+    font = Iosevka 13
     foreground_color = "#f8f8f2"
     show_titlebar = False
     scrollbar_position = hidden
     scrollback_infinite = True
-    palette = "#262626:#e356a7:#42e66c:#e4f34a:#9b6bdf:#e64747:#75d7ec:#efa554:#7a7a7a:#ff79c6:#50fa7b:#f1fa8c:#bd93f9:#ff5555:#8be9fd:#ffb86c"
+    palette = "#262626:#e356a7:#42e66c:#e4f34a:#9b6bdf:#e64747:#75d7ec:#f6f5f4:#7a7a7a:#ff79c6:#50fa7b:#f1fa8c:#bd93f9:#ff5555:#8be9fd:#deddda"
+    use_system_font = False
+    use_theme_colors = True
   [[pi]]
     icon_bell = False
     background_darkness = 0.93
