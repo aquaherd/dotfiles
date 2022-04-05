@@ -81,4 +81,14 @@ if present then
 end
 
 -- treesitter
+-- ????
+-- neogen 
+local present, neogen = pcall(require, "neogen")
+if present then
+  neogen.setup {
+    snippet_engine = 'luasnip'
+  }
+end
+
+
 

@@ -19,15 +19,15 @@ set $term terminator
 set $browser firefox
 
 #autostart
-exec --no-startup-id ~/.local/bin/update-hsetroot.sh 
+exec_always --no-startup-id ~/.local/bin/update-hsetroot.sh 
 exec --no-startup-id redshift-gtk
 #exec --no-startup-id pasystray
 exec --no-startup-id udiskie -s -A -f ranger
-exec --no-startup-id compton
+exec_always --no-startup-id picom
 exec --no-startup-id xsettingsd -c ~/.config/i3/xsettings.conf
 exec --no-startup-id dunst
 exec --no-startup-id xsetroot -cursor_name left_ptr
-exec --no-startup-id ~/.local/bin/i3-autotiling
+exec_always --no-startup-id ~/.local/bin/i3-autotiling
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -206,7 +206,7 @@ bar {
     font pango:Iosevka Term 13
     tray_output primary
     mode hide
-    modifier $mod
+    modifier none
     colors {
       background $background
       statusline $foreground
@@ -228,7 +228,7 @@ bar {
 	font pango:Iosevka Term 13
 	tray_output none
     mode hide
-    modifier $mod
+    modifier none
     position bottom
     colors {
       background $background
@@ -253,7 +253,7 @@ bindsym $mod+Shift+t exec --no-startup-id ~/.local/bin/dmenu-hamster.sh ask
 bindsym $mod+Shift+m exec --no-startup-id ~/.local/bin/dmenu-mpd.sh -a
 bindsym $mod+Return exec $term
 bindsym $mod+Shift+Return exec $browser
-bindsym $mod+Shift+d exec --no-startup-id rofi -sort -sidebar-mode -modi "drun#window#run#ssh#Workspaces:i3_switch_workspaces.sh" -show drun
+bindsym $mod+Shift+d exec --no-startup-id rofi -sort -sidebar-mode -modi "drun#window#run#ssh#Workspaces:~/.local/bin/i3_switch_workspaces.sh" -show drun
 bindsym Mod1+Tab exec --no-startup-id rofi -show window
 
 # Cause Settings app to float above tiled windows

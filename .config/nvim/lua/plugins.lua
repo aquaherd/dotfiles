@@ -37,6 +37,9 @@ return require('packer').startup(function()
 
   -- status
   use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true }}
+  
+  -- misc
   use  'folke/which-key.nvim'
+  use { 'danymat/neogen', requires = { 'nvim-treesitter/nvim-treesitter' }, tag = '*' }
 end)
 

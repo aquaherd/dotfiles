@@ -53,5 +53,8 @@ nmap("fo", ":Telescope oldfiles")
 nmap("<C-T>", ":NvimTreeToggle")
 nmap("<C-E>", ":NvimTreeFocus")
 
+-- Neogen
+nmap("<leader>rd", ":lua require('neogen').generate()")
+
 -- Visual Map
 vmap("<leader>/", ":lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())")

@@ -35,6 +35,7 @@ opt.splitright = true
 opt.hidden = true
 opt.fillchars.vert = "│"
 opt.cursorline = true
+opt.scrolloff = 8
 
 -- text formatting
 opt.expandtab = true
