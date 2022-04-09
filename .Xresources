@@ -7,7 +7,7 @@
 
 ! -- cursor --
 Xcursor.size: 24
-Xcursor.theme: "DMZ-Black"
+Xcursor.theme: "Adwaita"
 
 ! --------------------------------------------------
 ! URxvt
@@ -108,7 +108,7 @@ XLoad*Label*Justify: center
 *internalBorderWidth: 8
 
 !suckless
-st.font: Iosevka Term:pixelsize=17
+st.font: Iosevka:pixelsize=17
 st.alpha: 0.95
 st.borderpx: 16
 

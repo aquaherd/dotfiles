@@ -1,10 +1,14 @@
-active = false
-function nmap(keys, command)
+local active = false
+local function nmap(keys, command)
   vim.api.nvim_set_keymap("n", keys, command .. " <CR>", { noremap = true, silent = true })
 end
 
-function vmap(keys, command)
+local function vmap(keys, command)
   vim.api.nvim_set_keymap("v", keys, command .. " <CR>", { noremap = true, silent = true })
+end
+
+local function tmap(keys, command)
+  vim.api.nvim_set_keymap("t", keys, command .. " <CR>", { noremap = true, silent = true })
 end
 
 function minimal()
@@ -14,7 +18,7 @@ function minimal()
       au WinEnter,BufEnter, * set number relativenumber 
     ]]
     active = false
-  else 
+  else
     vim.cmd [[
       set nonumber norelativenumber showmode showtabline=0 laststatus=0 signcolumn=no foldcolumn=1
       au WinEnter,BufEnter, * set nonumber norelativenumber 
@@ -26,18 +30,14 @@ end
 -- Normal Map
 nmap("<TAB>", ":tabnext")
 nmap("<S-TAB>", ":tabprev")
-nmap("hs", ":split")
-nmap("vs", ":vs")
-nmap("<leader>v", ":vs +terminal | startinsert")
-nmap("<leader>h", ":split +terminal | startinsert")
-nmap("<leader>t", ":tabnew")
+nmap("<leader>t", ":ToggleTerm")
 
 nmap("<leader>x", ":q")
 nmap("<C-S>", ":w")
 
 nmap("<C-N>", ":cnext")
 nmap("<C-P>", ":cprev")
-
+-- nmap("<A-O>", ":colder")
 
 -- Minimal toggle
 nmap("<leader>m", ":lua minimal()")
@@ -45,16 +45,25 @@ nmap("<leader>m", ":lua minimal()")
 -- Telescope
 nmap("<leader>/", ":lua require('Comment.api').toggle_current_linewise()")
 nmap("<leader><space>", ":Telescope")
-nmap("ff", ":Telescope find_files")
-nmap("fb", ":Telescope buffers")
-nmap("fo", ":Telescope oldfiles")
+nmap("<leader>F", ":Telescope find_files")
+nmap("<leader>b", ":Telescope buffers")
+nmap("<leader>o", ":Telescope oldfiles")
+nmap("<leader>s", ":Telescope lsp_document_symbols")
+nmap("<leader>W", ":Telescope lsp_workspace_symbols")
+
 
 -- NvimTree
-nmap("<C-T>", ":NvimTreeToggle")
-nmap("<C-E>", ":NvimTreeFocus")
+nmap("<leader>e", ":NvimTreeToggle")
 
 -- Neogen
 nmap("<leader>rd", ":lua require('neogen').generate()")
 
 -- Visual Map
 vmap("<leader>/", ":lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())")
+
+-- Terminal map
+tmap("<esc>", [[<C-\><C-n>]])
+tmap('<C-h>', [[<C-\><C-n><C-W>h]])
+tmap('<C-j>', [[<C-\><C-n><C-W>j]])
+tmap('<C-k>', [[<C-\><C-n><C-W>k]])
+tmap('<C-l>', [[<C-\><C-n><C-W>l]])

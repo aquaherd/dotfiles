@@ -69,11 +69,17 @@ if present then
       component_separators = '|',
       section_separators = '',
       theme = 'dracula',
-    }
+    },
+      extensions = {
+        'aerial',
+        'nvim-tree',
+        -- 'symbols-outline',
+        'fugitive'
+      },
   }
 end
 
--- which-key 
+-- which-key
 local present, whichkey = pcall(require, "which-key")
 if present then
   whichkey.setup {
@@ -82,7 +88,7 @@ end
 
 -- treesitter
 -- ????
--- neogen 
+-- neogen
 local present, neogen = pcall(require, "neogen")
 if present then
   neogen.setup {
@@ -90,5 +96,27 @@ if present then
   }
 end
 
+-- aerial
+local present, aerial = pcall(require, "aerial")
+if present then
+  aerial.setup {
+    backends = { "treesitter" },
+    on_attach = function(bufnr)
+      -- Toggle the aerial window with <leader>a
+      vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>a', '<cmd>AerialToggle!<CR>', {})
+      -- Jump forwards/backwards with '{' and '}'
+      vim.api.nvim_buf_set_keymap(bufnr, 'n', '{', '<cmd>AerialPrev<CR>', {})
+      vim.api.nvim_buf_set_keymap(bufnr, 'n', '}', '<cmd>AerialNext<CR>', {})
+      -- Jump up the tree with '[[' or ']]'
+      vim.api.nvim_buf_set_keymap(bufnr, 'n', '[[', '<cmd>AerialPrevUp<CR>', {})
+      vim.api.nvim_buf_set_keymap(bufnr, 'n', ']]', '<cmd>AerialNextUp<CR>', {})
+    end
+  }
+end
 
-
+-- toggleterm
+local present, toggleterm = pcall(require, "toggleterm")
+if present then
+  toggleterm.setup {
+  }
+end

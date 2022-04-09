@@ -6,7 +6,7 @@ end
 
 vim.cmd [[ packadd packer.nvim ]]
 
-return require('packer').startup(function()
+return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
   use 'norcalli/nvim-base16.lua'
   use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } }
@@ -14,8 +14,8 @@ return require('packer').startup(function()
     use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' } } -- Just something one might use
   end
   use 'lukas-reineke/indent-blankline.nvim'
-  use 'numToStr/Comment.nvim' 
- 
+  use 'numToStr/Comment.nvim'
+
   -- Completion
   use 'hrsh7th/nvim-cmp'
   use 'hrsh7th/cmp-nvim-lsp'
@@ -27,19 +27,25 @@ return require('packer').startup(function()
   use 'kyazdani42/nvim-web-devicons' -- for file icons
   use 'kyazdani42/nvim-tree.lua'
 
+  -- treesitter
+  use 'nvim-treesitter/nvim-treesitter'
+  use { 'danymat/neogen', requires = { 'nvim-treesitter/nvim-treesitter' }, tag = '*' }
+  use 'stevearc/aerial.nvim'
+
   -- lsp
   use 'neovim/nvim-lspconfig'
   use 'williamboman/nvim-lsp-installer'
-  use 'nvim-treesitter/nvim-treesitter'
-  
+  -- use 'simrat39/symbols-outline.nvim'
+
+  -- non-lua
   use 'tpope/vim-fugitive'
   use 'mboughaba/i3config.vim'
 
   -- status
   use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true }}
-  
+
   -- misc
-  use  'folke/which-key.nvim'
-  use { 'danymat/neogen', requires = { 'nvim-treesitter/nvim-treesitter' }, tag = '*' }
+  use 'folke/which-key.nvim'
+  use 'akinsho/toggleterm.nvim'
 end)
 
