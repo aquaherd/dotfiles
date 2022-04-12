@@ -261,9 +261,8 @@ bindsym $mod+Shift+p exec --no-startup-id killall -SIGUSR1 picom
 floating_maximum_size -1 x -1
 for_window [class="Gnome-control-center"] floating enable
 for_window [class="Gnome-tweaks"] floating enable
-for_window [class="Nitrogen"] floating enable
 for_window [class="Hamster"] floating enable
-for_window [class="pavu.*"] floating enable
+for_window [class="Pavu.*"] floating enable
 
 ### i3-gaps stuff ###
 

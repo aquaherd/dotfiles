@@ -2,15 +2,14 @@ local modules = {
 	'options',
 	'plugins',
 	'config',
-  'colors',
 	'mappings',
   'lsp'
 }
 
 for i, a in ipairs(modules) do
 	local ok, err = pcall(require, a)
-	if not ok then 
-		error("Error calling " .. a .. err)
+	if not ok then
+		error("Error calling " .. a .. err .. i)
 	end
 end
 

@@ -8,7 +8,7 @@ vim.cmd [[ packadd packer.nvim ]]
 
 return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
-  use 'norcalli/nvim-base16.lua'
+  -- use 'norcalli/nvim-base16.lua'
   use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } }
   if ( vim.version().major > 0 or vim.version().minor  >= 6 ) then
     use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' } } -- Just something one might use
@@ -30,6 +30,7 @@ return require('packer').startup(function(use)
   -- treesitter
   use 'nvim-treesitter/nvim-treesitter'
   use { 'danymat/neogen', requires = { 'nvim-treesitter/nvim-treesitter' }, tag = '*' }
+  use 'nvim-treesitter/nvim-treesitter-textobjects'
   use 'stevearc/aerial.nvim'
 
   -- lsp
@@ -47,5 +48,6 @@ return require('packer').startup(function(use)
   -- misc
   use 'folke/which-key.nvim'
   use 'akinsho/toggleterm.nvim'
+  use 'Mofiqul/dracula.nvim'
 end)
 

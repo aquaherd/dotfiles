@@ -1,17 +1,26 @@
 local active = false
+
+local function map (mode, keys, command)
+  vim.api.nvim_set_keymap(mode, keys, command, { noremap = true, silent = true })
+end
+
 local function nmap(keys, command)
-  vim.api.nvim_set_keymap("n", keys, command .. " <CR>", { noremap = true, silent = true })
+  map("n", keys, command .. " <CR>")
 end
 
 local function vmap(keys, command)
-  vim.api.nvim_set_keymap("v", keys, command .. " <CR>", { noremap = true, silent = true })
+  map("v", keys, command .. " <CR>")
+end
+
+local function imap(keys, command)
+  map("i", keys, command)
 end
 
 local function tmap(keys, command)
-  vim.api.nvim_set_keymap("t", keys, command .. " <CR>", { noremap = true, silent = true })
+  map("t", keys, command)
 end
 
-function minimal()
+function Minimal()
   if active then
     vim.cmd [[
       set number relativenumber noshowmode showtabline=1 laststatus=2 signcolumn=yes foldcolumn=0 
@@ -40,7 +49,7 @@ nmap("<C-P>", ":cprev")
 -- nmap("<A-O>", ":colder")
 
 -- Minimal toggle
-nmap("<leader>m", ":lua minimal()")
+nmap("<leader>m", ":lua Minimal()")
 
 -- Telescope
 nmap("<leader>/", ":lua require('Comment.api').toggle_current_linewise()")
@@ -62,8 +71,14 @@ nmap("<leader>rd", ":lua require('neogen').generate()")
 vmap("<leader>/", ":lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())")
 
 -- Terminal map
-tmap("<esc>", [[<C-\><C-n>]])
+-- tmap("<esc>", [[<C-\><C-n>]])
 tmap('<C-h>', [[<C-\><C-n><C-W>h]])
 tmap('<C-j>', [[<C-\><C-n><C-W>j]])
 tmap('<C-k>', [[<C-\><C-n><C-W>k]])
 tmap('<C-l>', [[<C-\><C-n><C-W>l]])
+
+-- insert mode
+imap ('<C-a>', [[<Home>]])
+imap ('<C-e>', [[<End>]])
+imap ('<C-b>', [[<left>]])
+imap ('<C-f>', [[<right>]])
