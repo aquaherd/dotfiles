@@ -256,7 +256,7 @@ bindsym $mod+Return exec $term
 bindsym $mod+Shift+Return exec $browser
 bindsym $mod+Shift+d exec --no-startup-id rofi -sort -sidebar-mode -modi "drun#window#run#ssh#Workspaces:~/.local/bin/i3_switch_workspaces.sh" -show drun
 bindsym Mod1+Tab exec --no-startup-id rofi -show window
-bindsym $mod+Shift+p exec --no-startup-id killall -SIGUSR1 picom
+bindsym $mod+Shift+p exec --no-startup-id pkill -SIGUSR1 picom
 
 # Cause Settings app to float above tiled windows
 floating_maximum_size -1 x -1
