@@ -1,0 +1,31 @@
+#!/bin/sh
+
+sudo umount /usr/local/share/ftproot/Firmware || echo 'srv was not mounted'
+sudo umount /usr/local/share/ftproot/Logfiles || echo 'srv was not mounted'
+sudo umount ~/Firmware || echo "user was not mounted"
+sudo umount ~/Logfiles || echo "user was not mounted"
+
+attach_tty()
+{
+  sudo usbip detach -p 0 || echo "ttyUSB0 was not detached"
+  sudo usbip detach -p 1 || echo "ttyUSB1 was not detached"
+}
+case $1 in
+  "") 
+    echo "use local"
+    sudo mount ~/Firmware 
+    sudo mount ~/Logfiles
+    sudo mount -o bind /mnt/data/hakan/Firmware /usr/local/share/ftproot/Firmware
+    sudo mount -o bind /mnt/data/hakan/Logfiles /usr/local/share/ftproot/Logfiles
+    sudo ip addr add 192.168.184.1/25 dev enp3s0
+    ;;
+  'win???') 
+    echo "use remote"
+    sshfs "$1":Firmware ~/Firmware
+    sshfs "$1":Logfiles ~/Logfiles
+    ssh -O forward $1 '2323 192.168.184.40:2323'
+    ssh -O forward $1 '32400 127.0.0.1:3240'
+    sudo mount -o bind ~/Firmware /usr/local/share/ftproot/Firmware
+    sudo mount -o bind ~/Logfiles /usr/local/share/ftproot/Logfiles
+    ;;
+esac
