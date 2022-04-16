@@ -33,7 +33,7 @@ settings:
     https://teams.microsoft.com: true
     https://www.reddit.com: true
   content.proxy:
-    global: http://localhost:8086/
+    global: system
   fonts.default_family:
     global: Iosevka Term
   fonts.default_size:

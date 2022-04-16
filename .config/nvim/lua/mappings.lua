@@ -69,7 +69,7 @@ nmap("<leader>rd", ":lua require('neogen').generate()")
 
 -- Visual Map
 vmap("<leader>/", ":lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())")
-
+vmap("<leader>f", ":lua vim.lsp.buf.range_formatting()")
 -- Terminal map
 -- tmap("<esc>", [[<C-\><C-n>]])
 tmap('<C-h>', [[<C-\><C-n><C-W>h]])
