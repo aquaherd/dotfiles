@@ -3,7 +3,6 @@ local opt = vim.opt
 
 g.mapleader = ' '
 g.dracula_italic_comment = true
-vim.cmd[[colorscheme dracula]]
 -- basic
 opt.mouse = 'a'
 opt.title = true
