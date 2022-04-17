@@ -34,8 +34,10 @@ settings:
     https://www.reddit.com: true
   content.proxy:
     global: system
+  content.register_protocol_handler:
+    https://outlook.office.com?mailtouri=%25s: false
   fonts.default_family:
-    global: Iosevka Term
+    global: Iosevka
   fonts.default_size:
     global: 12pt
   fonts.web.family.fixed:
