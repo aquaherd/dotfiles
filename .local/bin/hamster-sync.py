@@ -1,17 +1,17 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import sqlite3 as lite
 import sys
 
-print sys.argv[1:]
+print (sys.argv[1:])
 
 n=0
 
-def cb():
+def cb(): 
     global n
     n+=72
-    return 0
+    return None
 
 src = lite.connect(sys.argv[1])
 
@@ -32,20 +32,20 @@ col_names = [cn[0] for cn in cur.description]
 
 rows = cur.fetchall()
 
-print col_names
+print (col_names)
 
-print len(rows)
+print (len(rows))
 for row in rows:    
-    print row[2], row[3], row[4], row[5], 
+    print (row[2], row[3], row[4], row[5], )
     cur.execute("insert into dst.facts values (null, ?, ?, ?, ?)", (row[2], row[3], row[4], row[5]))
     last = cur.lastrowid
-    print "=", last, 
+    print ("=", last, )
     if row[7] is None:
-        print "no tag"
+        print ("no tag")
     else:
         cur.execute("insert into dst.fact_tags values(?, ?)", (last, row[7]))
-        print "tagged", row[6]
-print cur.lastrowid, len(rows), n
+        print ("tagged", row[6])
+print (cur.lastrowid, len(rows), n)
 src.commit()
 cur.close()
 
