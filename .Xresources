@@ -112,3 +112,15 @@ st.font: Iosevka:pixelsize=17:style=Medium
 st.alpha: 0.95
 st.borderpx: 16
 
+dmenu.font: Iosevka:pixelsize=20:style=Medium
+dmenu.alpha: 0.99
+dmenu.background: #44475a
+dmenu.selbackground: #bd93f9
+
+dwm.normbgcolor: #44475a
+dwm.normfgcolor: #bd93f9
+dwm.selbordercolor: #bd93f9
+dwm.selbgcolor: #bd93f9
+dwm.tagsselbgcolor: #bd93f9
+dwm.titlenormbgcolor: #bd93f9
+

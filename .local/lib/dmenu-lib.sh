@@ -42,11 +42,11 @@ ask() # bifurcate to dmenu or dmenu-wl
             fi
             m=$((1+m))
         done
-        dmenu-wl -i -p $1 -fn 'Iosevka Term 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m $m -b
+        dmenu-wl -i -p $1 -fn 'Iosevka 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m $m -b
         ;;
     hikari|wayfire)
         # dont know how to determine current monitor in hikari
-        dmenu-wl -i -p $1 -fn 'Iosevka Term 15' -nb '#44475a' -sb '#bd93f9' -h 30 -b
+        dmenu-wl -i -p $1 -fn 'Iosevka 15' -nb '#44475a' -sb '#bd93f9' -h 30 -b
         ;;
     gnome)
         if [ -n "$WAYLAND_DISPLAY" ]; then
@@ -59,8 +59,7 @@ ask() # bifurcate to dmenu or dmenu-wl
         fzf
         ;;
     *)
-        : ${DMENU_DEFAULTS:='-fn Iosevka:fontformat=truetype:pixelsize=20 -nb #44475a -sb #bd93f9'}
-        dmenu -i -p $1 $DMENU_DEFAULTS
+        dmenu -b -i -p $1
         ;;
     esac
 }
