@@ -147,3 +147,11 @@ if present7 then
   toggleterm.setup {
   }
 end
+
+-- surround
+local haveSurround, surround = pcall(require, "surround")
+if haveSurround then
+  surround.setup {
+    mappings_style = "sandwich" 
+  }
+end

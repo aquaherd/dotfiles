@@ -33,7 +33,7 @@ settings:
     https://teams.microsoft.com: true
     https://www.reddit.com: true
   content.proxy:
-    global: system
+    global: http://localhost:8086
   content.register_protocol_handler:
     https://outlook.office.com?mailtouri=%25s: false
   fonts.default_family:

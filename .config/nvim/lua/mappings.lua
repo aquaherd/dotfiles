@@ -55,11 +55,11 @@ nmap("<leader>m", ":lua Minimal()")
 nmap("<leader>/", ":lua require('Comment.api').toggle_current_linewise()")
 nmap("<leader><space>", ":Telescope")
 nmap("<leader>F", ":Telescope find_files")
+nmap("<leader>W", ":Telescope lsp_workspace_symbols")
 nmap("<leader>b", ":Telescope buffers")
+nmap("<leader>g", ":Telescope live_grep")
 nmap("<leader>o", ":Telescope oldfiles")
 nmap("<leader>s", ":Telescope lsp_document_symbols")
-nmap("<leader>W", ":Telescope lsp_workspace_symbols")
-
 
 -- NvimTree
 nmap("<leader>e", ":NvimTreeToggle")

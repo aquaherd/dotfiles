@@ -49,5 +49,6 @@ return require('packer').startup(function(use)
   use 'folke/which-key.nvim'
   use 'akinsho/toggleterm.nvim'
   use 'Mofiqul/dracula.nvim'
+  use 'ur4ltz/surround.nvim'
 end)
 
