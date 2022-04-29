@@ -94,14 +94,15 @@ Xdsiplay.clienthost: CLIENTHOST
 Xdisplay.layout: LAYOUT
 hwmon.temperature: TEMP
 
-XEyes*foreground: black
+XEyes*foreground: #282a36
+XEyes*background: #44475a
 
-XClock*hourColor: white
-XClock*minuteColor: white
-XClock*secondColor: white
+XClock*hourColor: #f8f8f2
+XClock*minuteColor: #f1fa8c
+XClock*secondColor: #caa9fa
 XClock*majorColor: #bd93f9
 XClock*minorColor: #bd93f9
-XCLock*render: false
+XCLock*render: true
 
 XLoad*foreground: #bd93f9
 XLoad*Label*Justify: center

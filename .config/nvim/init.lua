@@ -25,4 +25,5 @@ vim.cmd [[
   au TermOpen term://* setlocal nonumber norelativenumber signcolumn=no | setfiletype terminal
   au BufEnter,BufWinEnter,WinEnter,CmdwinEnter * if bufname('%') == "NvimTree" | set laststatus=0 | else | set laststatus=2 | endif
   colorscheme dracula
+  set guifont=Iosevka:h12
   ]]

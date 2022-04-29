@@ -28,6 +28,8 @@ settings:
         pw: spawn -m -u qute-bitwarden -w
   colors.webpage.preferred_color_scheme:
     global: dark
+  content.desktop_capture:
+    https://teams.microsoft.com: true
   content.notifications.enabled:
     https://outlook.office.com: true
     https://teams.microsoft.com: true

@@ -39,6 +39,8 @@ if present1 then
       borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
     },
   }
+  telescope.load_extension "zoxide"
+  telescope.load_extension "repo"
 end
 
 -- Nvim tree
@@ -53,29 +55,11 @@ if present2 then
     disable_netrw = true,
     hijack_cursor = true,
     update_cwd = true,
-    update_to_buf_dir = {
-      auto_open = false,
-    },
+    update_focused_file = {
+      enable = true
+    }
   }
   vim.g.nvim_tree_indent_markers = 1
-end
-
--- lualine
-local present3, lualine = pcall(require, "lualine")
-if present3 then
-  lualine.setup {
-    options = {
-      component_separators = '|',
-      section_separators = '',
-      theme = 'dracula-nvim',
-    },
-      extensions = {
-        'aerial',
-        'nvim-tree',
-        -- 'symbols-outline',
-        'fugitive'
-      },
-  }
 end
 
 -- which-key
@@ -90,10 +74,10 @@ local presentTT, treesitter = pcall(require, "nvim-treesitter.configs")
 if presentTT then
   treesitter.setup {
     -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-    ensure_installed = {"bash", "c", "python", "cpp", "lua", "toml", "cmake"},
+    ensure_installed = { "bash", "c", "python", "cpp", "lua", "toml", "cmake" },
     --ignore_install = { "javascript" }, -- List of parsers to ignore installing
     highlight = {
-      enable = true,              -- false will disable the whole extension
+      enable = true, -- false will disable the whole extension
       --disable = { "c", "rust" },  -- list of language that will be disabled
     },
     textobjects = {
@@ -115,17 +99,9 @@ if presentTT then
   }
 end
 
--- neogen
-local present5, neogen = pcall(require, "neogen")
-if present5 then
-  neogen.setup {
-    snippet_engine = 'luasnip'
-  }
-end
-
 -- aerial
-local present6, aerial = pcall(require, "aerial")
-if present6 then
+local haveAerial, aerial = pcall(require, "aerial")
+if haveAerial then
   aerial.setup {
     backends = { "treesitter" },
     on_attach = function(bufnr)
@@ -141,6 +117,38 @@ if present6 then
   }
 end
 
+-- lualine
+local present3, lualine = pcall(require, "lualine")
+if present3 then
+  lualine.setup {
+    options = {
+      component_separators = '',
+      section_separators = '',
+      theme = 'dracula-nvim',
+      disabled_filetypes = { 'packer' }
+    },
+    extensions = {
+      'aerial',
+      'nvim-tree',
+      -- 'symbols-outline',
+      'fugitive',
+      'toggleterm',
+      'quickfix'
+    },
+    sections = {
+      lualine_c = { 'filename', 'aerial' },
+    }
+  }
+end
+
+-- neogen
+local present5, neogen = pcall(require, "neogen")
+if present5 then
+  neogen.setup {
+    snippet_engine = 'luasnip'
+  }
+end
+
 -- toggleterm
 local present7, toggleterm = pcall(require, "toggleterm")
 if present7 then
@@ -152,6 +160,6 @@ end
 local haveSurround, surround = pcall(require, "surround")
 if haveSurround then
   surround.setup {
-    mappings_style = "sandwich" 
+    mappings_style = "sandwich"
   }
 end

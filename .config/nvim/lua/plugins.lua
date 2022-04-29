@@ -12,6 +12,8 @@ return require('packer').startup(function(use)
   use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } }
   if ( vim.version().major > 0 or vim.version().minor  >= 6 ) then
     use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' } } -- Just something one might use
+    use 'jvgrootveld/telescope-zoxide'
+    use 'cljoly/telescope-repo.nvim'
   end
   use 'lukas-reineke/indent-blankline.nvim'
   use 'numToStr/Comment.nvim'
@@ -35,8 +37,7 @@ return require('packer').startup(function(use)
 
   -- lsp
   use 'neovim/nvim-lspconfig'
-  use 'williamboman/nvim-lsp-installer'
-  -- use 'simrat39/symbols-outline.nvim'
+  use { 'williamboman/nvim-lsp-installer', requires = 'neovim/nvim-lspconfig' }
 
   -- non-lua
   use 'tpope/vim-fugitive'
@@ -46,9 +47,10 @@ return require('packer').startup(function(use)
   use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true }}
 
   -- misc
-  use 'folke/which-key.nvim'
   use 'akinsho/toggleterm.nvim'
   use 'Mofiqul/dracula.nvim'
   use 'ur4ltz/surround.nvim'
+  use 'norcalli/nvim-colorizer.lua'
+  use 'folke/which-key.nvim'
 end)
 
