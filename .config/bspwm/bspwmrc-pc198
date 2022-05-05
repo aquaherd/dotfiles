@@ -6,7 +6,6 @@ autostart()
 {
     launch mpDris2 
     #launch blueman-applet
-    #launch unclutter -not "$PRIMARY $SECONDARY" -reset -keystroke -idle 15
     launch redshift-gtk
 }
 

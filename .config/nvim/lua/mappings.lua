@@ -1,11 +1,15 @@
 local active = false
+local hwk, wk = pcall("require", "which-key")
 
-local function map (mode, keys, command)
-  vim.api.nvim_set_keymap(mode, keys, command, { noremap = true, silent = true })
+local function map (mode, keys, command, desc)
+  vim.api.nvim_set_keymap(mode, keys, command, { noremap = true, silent = true, desc = desc })
+  if hwk and not desc == nil then
+    wk.register({keys = { desc }}, { mode = mode})
+  end
 end
 
-local function nmap(keys, command)
-  map("n", keys, command .. " <CR>")
+local function nmap(keys, command, desc)
+  map("n", keys, command .. " <CR>", desc)
 end
 
 local function vmap(keys, command)
@@ -49,10 +53,10 @@ nmap("<C-P>", ":cprev")
 -- nmap("<A-O>", ":colder")
 
 -- Minimal toggle
-nmap("<leader>m", ":lua Minimal()")
+nmap("<leader>m", ":lua Minimal()", "Minimal mode")
 
 -- Telescope
-nmap("<leader>/", ":lua require('Comment.api').toggle_current_linewise()")
+nmap("<leader>/", ":lua require('Comment.api').toggle_current_linewise()", "Toggle comment")
 nmap("<leader><space>", ":Telescope")
 nmap("<leader>F", ":Telescope find_files")
 nmap("<leader>W", ":Telescope lsp_dynamic_workspace_symbols")
