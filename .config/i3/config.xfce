@@ -22,6 +22,8 @@ set $browser firefox
 exec --no-startup-id ~/.local/bin/update-hsetroot.sh
 exec --no-startup-id xsetroot -cursor_name left_ptr
 exec_always --no-startup-id ~/.local/bin/i3-autotiling
+exec --no-startup-id picom
+exec --no-startup-id mpDris2
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
