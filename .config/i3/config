@@ -143,6 +143,7 @@ set_from_resource $active color4
 set_from_resource $background background
 set_from_resource $foreground foreground
 set_from_resource $urgent color1
+set_from_resource $status color3
 
 client.focused          $active $active $background $active $active
 client.focused_inactive $background $background $foreground $background $background
@@ -164,7 +165,7 @@ bar {
     modifier none
     colors {
       background $background
-      statusline $foreground
+      statusline $status
       separator  $active
 
       focused_workspace  $active $active $foreground
@@ -211,6 +212,13 @@ bindsym $mod+Shift+Return exec $browser
 bindsym $mod+Shift+d exec --no-startup-id rofi -sort -sidebar-mode -modi "drun#window#run#ssh#Workspaces:~/.local/bin/i3_switch_workspaces.sh" -show drun
 bindsym Mod1+Tab exec --no-startup-id rofi -show window
 bindsym $mod+Shift+p exec --no-startup-id pkill -SIGUSR1 picom
+# media keys
+bindsym XF86AudioPlay exec --no-startup-id mpc toggle
+bindsym XF86AudioNext exec --no-startup-id mpc next
+bindsym XF86AudioPrev exec --no-startup-id mpc prev
+bindsym XF86AudioRaiseVolume exec --no-startup-id amixer set Master 5%+
+bindsym XF86AudioLowerVolume exec --no-startup-id amixer set Master 5%-
+bindsym XF86AudioMute exec --no-startup-id amixer set Master toggle
 
 # Cause Settings app to float above tiled windows
 floating_maximum_size -1 x -1
@@ -218,6 +226,7 @@ for_window [class="Gnome-control-center"] floating enable
 for_window [class="Gnome-tweaks"] floating enable
 for_window [class="Hamster"] floating enable
 for_window [class="Pavu.*"] floating enable
+for_window [title="Sign in to security device"] floating enable
 
 ### i3-gaps stuff ###
 
