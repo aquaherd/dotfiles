@@ -24,7 +24,9 @@ case $1 in
     sshfs "$1":Firmware ~/Firmware
     sshfs "$1":Logfiles ~/Logfiles
     ssh -O forward $1 '2323 192.168.184.40:2323'
-    ssh -O forward $1 '32400 127.0.0.1:3240'
+    if [ "$1" != "win106" ]; then
+      ssh -O forward zsc "3240 $1:3240"
+    fi
     sudo mount -o bind ~/Firmware /usr/local/share/ftproot/Firmware
     sudo mount -o bind ~/Logfiles /usr/local/share/ftproot/Logfiles
     ;;
