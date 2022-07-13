@@ -33,12 +33,20 @@ floating_modifier $mod
 bindsym $mod+Shift+q kill
 
 # change focus
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
 bindsym $mod+h focus left
 bindsym $mod+k focus down
 bindsym $mod+j focus up
 bindsym $mod+l focus right
 
 # move focused window
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
 bindsym $mod+Shift+h move left
 bindsym $mod+Shift+k move down
 bindsym $mod+Shift+j move up
@@ -213,9 +221,9 @@ bindsym $mod+Shift+d exec --no-startup-id rofi -sort -sidebar-mode -modi "drun#w
 bindsym Mod1+Tab exec --no-startup-id rofi -show window
 bindsym $mod+Shift+p exec --no-startup-id pkill -SIGUSR1 picom
 # media keys
-bindsym XF86AudioPlay exec --no-startup-id mpc toggle
-bindsym XF86AudioNext exec --no-startup-id mpc next
-bindsym XF86AudioPrev exec --no-startup-id mpc prev
+bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
+bindsym XF86AudioNext exec --no-startup-id playerctl next
+bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 bindsym XF86AudioRaiseVolume exec --no-startup-id amixer set Master 5%+
 bindsym XF86AudioLowerVolume exec --no-startup-id amixer set Master 5%-
 bindsym XF86AudioMute exec --no-startup-id amixer set Master toggle
