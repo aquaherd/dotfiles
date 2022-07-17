@@ -7,7 +7,7 @@ managers="apk apt dnf kiss pacman swupd xbps-install yum"
 action_get() 
 {
     case $1 in
-    apk)			echo 'apk upgrade' ;;
+    apk)			echo 'apk upgrade -a' ;;
     apt) 			echo 'apt-get update && apt-get dist-upgrade -y && apt-get autoremove --purge -y && apt-get autoclean' ;;
     dnf) 			echo 'dnf upgrade && dnf autoremove' ;;
     kiss) 			echo 'KISS_PROMPT=0 kiss u && KISS_PROMPT=0 kiss u' ;;
