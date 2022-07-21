@@ -49,6 +49,9 @@ opt.whichwrap:append "<>[]hl"
 -- remove intro
 opt.shortmess:append "sI"
 
+-- neovide
+g.neovide_transparency = 0.8
+g.neovide_cursor_animation_length=0.01
 -- disable inbuilt vim plugins
 local built_ins = {
   "2html_plugin",
