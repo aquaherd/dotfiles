@@ -20,7 +20,7 @@ vim.cmd [[
   augroup open-tabs
     au!
     au VimEnter * ++nested if !&diff | tab all | tabfirst | endif
-    au ColorScheme * highlight Normal ctermbg=NONE 
+    au ColorScheme * highlight Normal ctermbg=NONE
   augroup end
   au TermOpen term://* setlocal nonumber norelativenumber signcolumn=no | setfiletype terminal
   au BufEnter,BufWinEnter,WinEnter,CmdwinEnter * if bufname('%') == "NvimTree" | set laststatus=0 | else | set laststatus=2 | endif
