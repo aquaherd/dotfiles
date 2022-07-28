@@ -1,11 +1,9 @@
 #!/bin/sh
 hostpath="$XDG_RUNTIME_DIR/host"
 host=win106
-usbf=$host
 
 if [ $# -eq 1 ]; then
     host=$1
-    usbf=zsc
 fi
 
 for d in Firmware Logfiles; do
@@ -17,8 +15,6 @@ for d in Firmware Logfiles; do
         sshfs ${host}:$d ~/$d
 done
 echo $host > "$hostpath"
-ssh -O forward $host '2323 192.168.194.40:23'
-ssh -O forward $usbf "3240 $host:3240"
 for b in $(sudo usbip list -r localhost 2> /dev/null |grep UART|cut -d':' -f1); do
   case $b in
     *-*)
