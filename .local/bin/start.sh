@@ -5,7 +5,7 @@ host=win106
 if [ $# -eq 1 ]; then
     host=$1
 fi
-
+ssh $host echo OK
 for d in Firmware Logfiles; do
         if mountpoint -q ~/$d; then
                 echo unmounting \~/$d ...
