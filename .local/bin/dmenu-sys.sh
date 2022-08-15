@@ -159,8 +159,8 @@ ask_boot()
 boot()
 {
     res=$(ask_boot)
-    next=$(efibootmgr|grep $res|cut -c5-8)
-    sudo efibootmgr -n $next
+    next=$(efibootmgr|grep "$res"|cut -c5-8)
+    sudo efibootmgr -n "$next" || die boot "$next"
     closeall $ctl reboot
 }
 
