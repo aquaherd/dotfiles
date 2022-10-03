@@ -122,6 +122,7 @@ local present3, lualine = pcall(require, "lualine")
 if present3 then
   lualine.setup {
     options = {
+      globalstatus = true,
       component_separators = '',
       section_separators = '',
       theme = 'dracula-nvim',

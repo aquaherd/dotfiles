@@ -27,7 +27,7 @@ end
 function Minimal()
   if active then
     vim.cmd [[
-      set number relativenumber noshowmode showtabline=1 laststatus=2 signcolumn=yes foldcolumn=0 
+      set number relativenumber noshowmode showtabline=1 laststatus=3 signcolumn=yes foldcolumn=0 
       au WinEnter,BufEnter, * set number relativenumber 
     ]]
     active = false
