@@ -15,7 +15,7 @@ return require('packer').startup(function(use)
     use 'jvgrootveld/telescope-zoxide'
     use 'cljoly/telescope-repo.nvim'
   end
-  use 'lukas-reineke/indent-blankline.nvim'
+  --  use 'lukas-reineke/indent-blankline.nvim'
   use 'numToStr/Comment.nvim'
 
   -- Completion
