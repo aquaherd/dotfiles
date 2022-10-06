@@ -1,5 +1,5 @@
 local active = false
-local hwk, wk = pcall("require", "which-key")
+local hwk, wk = pcall(require, "which-key")
 
 local function map (mode, keys, command, desc)
   vim.api.nvim_set_keymap(mode, keys, command, { noremap = true, silent = true, desc = desc })
@@ -56,7 +56,6 @@ nmap("<C-P>", ":cprev")
 nmap("<leader>m", ":lua Minimal()", "Minimal mode")
 
 -- Telescope
-nmap("<leader>/", ":lua require('Comment.api').toggle_current_linewise()", "Toggle comment")
 nmap("<leader><space>", ":Telescope")
 nmap("<leader>F", ":Telescope find_files")
 nmap("<leader>W", ":Telescope lsp_dynamic_workspace_symbols")
@@ -75,7 +74,6 @@ nmap("<leader>e", ":NvimTreeToggle")
 nmap("<leader>rd", ":lua require('neogen').generate()")
 
 -- Visual Map
-vmap("<leader>/", ":lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())")
 vmap("<leader>f", ":lua vim.lsp.buf.range_formatting()")
 -- Terminal map
 -- tmap("<esc>", [[<C-\><C-n>]])

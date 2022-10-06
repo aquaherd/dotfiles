@@ -2,7 +2,6 @@ local g = vim.g
 local opt = vim.opt
 
 g.mapleader = ' '
-g.dracula_italic_comment = true
 -- basic
 opt.mouse = 'a'
 opt.title = true
@@ -10,7 +9,7 @@ opt.clipboard = 'unnamedplus'
 opt.swapfile = false
 opt.undofile = true
 opt.cmdheight = 1
-opt.termguicolors = true
+-- opt.termguicolors = true
 opt.showmode = false
 
 -- timeout stuff
@@ -51,8 +50,11 @@ opt.whichwrap:append "<>[]hl"
 opt.shortmess:append "sI"
 
 -- neovide
-g.neovide_transparency = 0.95
-g.neovide_cursor_animation_length=0.01
+opt.guifont = { 'Iosevka',':h12' }
+if g.neovide then
+    g.neovide_transparency = 0.85
+    g.neovide_cursor_animation_length=0.01
+end
 -- disable inbuilt vim plugins
 local built_ins = {
   "2html_plugin",
