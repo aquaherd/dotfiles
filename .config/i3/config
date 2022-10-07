@@ -55,6 +55,10 @@ bindsym $mod+Shift+j move up
 bindsym $mod+Shift+l move right
 
 # resize focused window
+bindsym $mod+Ctrl+Left resize shrink width 10 px
+bindsym $mod+Ctrl+Up resize grow height 10 px
+bindsym $mod+Ctrl+Down resize shrink height 10 px
+bindsym $mod+Ctrl+Right resize grow width 10 px
 bindsym $mod+Ctrl+h resize shrink width 10 px
 bindsym $mod+Ctrl+k resize grow height 10 px
 bindsym $mod+Ctrl+j resize shrink height 10 px
