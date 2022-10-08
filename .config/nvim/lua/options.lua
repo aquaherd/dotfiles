@@ -80,3 +80,13 @@ local built_ins = {
 for _, plugin in pairs(built_ins) do
    g["loaded_" .. plugin] = 1
 end
+
+-- custom filetypes
+vim.filetype.add({
+    extension = {
+        mke = "make",
+    },
+    pattern = {
+        [".clang.*"] = "yaml",
+    },
+})
