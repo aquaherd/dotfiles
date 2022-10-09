@@ -148,6 +148,7 @@ randr()
     fix_desktop
     echo "randr: $PRIMARY $SECONDARY randr_${DESKTOP_SESSION}  $*"
     randr_${DESKTOP_SESSION} $* || randr_default $*
+    echo $* > /var/run/user/$(id -u)/dmenu-mode
 }
 
 # requires an efi where each kernel is booted directly

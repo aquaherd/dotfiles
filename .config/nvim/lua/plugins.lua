@@ -1,56 +1,155 @@
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
 
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-  vim.fn.execute('!git clone https://github.com/wbthomason/packer.nvim ' .. install_path)
+    vim.fn.execute('!git clone https://github.com/wbthomason/packer.nvim ' .. install_path)
 end
 
 vim.cmd [[ packadd packer.nvim ]]
 
 return require('packer').startup(function(use)
-  use 'wbthomason/packer.nvim'
-  -- use 'norcalli/nvim-base16.lua'
-  use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } }
-  if ( vim.version().major > 0 or vim.version().minor  >= 6 ) then
-    use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' } } -- Just something one might use
+
+    -- Coding
+    use 'wbthomason/packer.nvim'
+    use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' },
+        config = function()
+            require('gitsigns').setup {
+                signs = {
+                    add = { hl = "DiffAdd", text = "│", numhl = "GitSignsAddNr" },
+                    change = { hl = "DiffChange", text = "│", numhl = "GitSignsChangeNr" },
+                    delete = { hl = "DiffDelete", text = "│", numhl = "GitSignsDeleteNr" },
+                    topdelete = { hl = "DiffDelete", text = "│", numhl = "GitSignsDeleteNr" },
+                    changedelete = { hl = "DiffChangeDelete", text = "│", numhl = "GitSignsChangeNr" },
+                }
+            }
+        end
+    }
+    use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' },
+        config = function()
+            local t = require('telescope')
+            t.setup {
+                defaults = {
+                    file_ignore_patterns = {
+                        "%.jpg",
+                        "%.jpeg",
+                        "%.png",
+                        "%.otf",
+                        "%.ttf",
+                        ".git",
+                    },
+                    prompt_prefix = "   ",
+                    selection_caret = "  ",
+                    entry_prefix = "  ",
+                    layout_strategy = "flex",
+                    layout_config = {
+                        horizontal = {
+                            preview_width = 0.6,
+                        },
+                    },
+                    border = {},
+                    -- borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+                    borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+                },
+                extensions = {
+                    zoxide = {},
+                    repo = {},
+                },
+            }
+            t.load_extension("zoxide")
+            t.load_extension("repo")
+        end
+    }
     use 'jvgrootveld/telescope-zoxide'
     use 'cljoly/telescope-repo.nvim'
-  end
-  --  use 'lukas-reineke/indent-blankline.nvim'
-  use 'numToStr/Comment.nvim'
+    --  use 'lukas-reineke/indent-blankline.nvim'
+    use { 'numToStr/Comment.nvim',
+        config = function()
+            require('Comment').setup {}
+        end
+    }
 
-  -- Completion
-  use 'hrsh7th/nvim-cmp'
-  use 'hrsh7th/cmp-nvim-lsp'
-  use 'saadparwaiz1/cmp_luasnip'
-  use 'rafamadriz/friendly-snippets'
-  use 'L3MON4D3/LuaSnip'
+    -- Completion
+    use 'hrsh7th/nvim-cmp'
+    use 'hrsh7th/cmp-nvim-lsp'
+    use 'saadparwaiz1/cmp_luasnip'
+    use 'rafamadriz/friendly-snippets'
+    use 'L3MON4D3/LuaSnip'
 
-  -- Tree
-  use 'kyazdani42/nvim-web-devicons' -- for file icons
-  use 'kyazdani42/nvim-tree.lua'
+    -- treesitter
+    use { 'nvim-treesitter/nvim-treesitter' } -- move?
+    use 'nvim-treesitter/nvim-treesitter-textobjects'
+    use { 'danymat/neogen', requires = { 'nvim-treesitter/nvim-treesitter' }, tag = '*',
+        config = function()
+            require('neogen').setup { snippet_engine = 'luasnip' }
+        end
+    }
 
-  -- treesitter
-  use 'nvim-treesitter/nvim-treesitter'
-  use { 'danymat/neogen', requires = { 'nvim-treesitter/nvim-treesitter' }, tag = '*' }
-  use 'nvim-treesitter/nvim-treesitter-textobjects'
-  use 'stevearc/aerial.nvim'
+    -- Side panes
+    use 'kyazdani42/nvim-web-devicons' -- for file icons
+    use { 'kyazdani42/nvim-tree.lua' }
+    use { 'akinsho/toggleterm.nvim',
+        config = function()
+            require('toggleterm').setup {}
+        end
+    }
+    use { 'stevearc/aerial.nvim',
+        config = function()
+            require('aerial').setup {
+                backends = { "treesitter" },
+                on_attach = function(bufnr)
+                    -- Toggle the aerial window with <leader>a
+                    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>a', '<cmd>AerialToggle!<CR>', {})
+                    -- Jump forwards/backwards with '{' and '}'
+                    vim.api.nvim_buf_set_keymap(bufnr, 'n', '{', '<cmd>AerialPrev<CR>', {})
+                    vim.api.nvim_buf_set_keymap(bufnr, 'n', '}', '<cmd>AerialNext<CR>', {})
+                    -- Jump up the tree with '[[' or ']]'
+                    vim.api.nvim_buf_set_keymap(bufnr, 'n', '[[', '<cmd>AerialPrevUp<CR>', {})
+                    vim.api.nvim_buf_set_keymap(bufnr, 'n', ']]', '<cmd>AerialNextUp<CR>', {})
+                end
+            }
+        end
+    }
 
-  -- lsp
-  use 'neovim/nvim-lspconfig'
-  use { 'williamboman/nvim-lsp-installer', requires = 'neovim/nvim-lspconfig' }
+    -- lsp
+    use 'neovim/nvim-lspconfig'
+    use { 'williamboman/nvim-lsp-installer', requires = 'neovim/nvim-lspconfig' }
 
-  -- non-lua
-  use 'tpope/vim-fugitive'
-  use 'mboughaba/i3config.vim'
+    -- non-lua
+    use { 'tpope/vim-fugitive', cmd = { "Git" } }
+    use { 'mboughaba/i3config.vim', ft = { 'i3config' } }
 
-  -- status
-  use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true }}
+    -- status
+    use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true },
+        config = function()
+            require('lualine').setup {
+                options = {
+                    globalstatus = true,
+                    component_separators = '',
+                    section_separators = '',
+                    theme = 'dracula-nvim',
+                    disabled_filetypes = { 'packer' },
+                },
+                extensions = {
+                    'aerial',
+                    'nvim-tree',
+                    -- 'symbols-outline',
+                    'fugitive',
+                    'toggleterm',
+                    'quickfix',
+                },
+                sections = {
+                    lualine_c = { 'filename', 'aerial' },
+                }
+            }
+        end
+    }
 
-  -- misc
-  use 'akinsho/toggleterm.nvim'
-  use 'Mofiqul/dracula.nvim'
-  use 'ur4ltz/surround.nvim'
-  use 'norcalli/nvim-colorizer.lua'
-  use 'folke/which-key.nvim'
+    -- misc
+    use 'Mofiqul/dracula.nvim'
+    use { "ur4ltz/surround.nvim",
+        config = function()
+            require('surround').setup { mappings_style = "sandwich" }
+        end
+    }
+    use 'norcalli/nvim-colorizer.lua'
+    use 'folke/which-key.nvim'
 end)
-
