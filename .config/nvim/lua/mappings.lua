@@ -84,7 +84,7 @@ nmap("<leader>e", ":NvimTreeToggle")
 nmap("<leader>rd", ":lua require('neogen').generate()", "generate doxygen")
 
 -- Visual Map
-vmap("<leader>f", ":lua vim.lsp.buf.range_formatting()", "lsp: format selection")
+vmap("<leader>f", ":lua vim.lsp.buf.range_format()", "lsp: format selection")
 
 -- Terminal map
 -- tmap("<esc>", [[<C-\><C-n>]])
