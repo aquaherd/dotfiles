@@ -14,9 +14,10 @@ local function bmap(bufnr, mode, keys, command, desc)
     vim.api.nvim_buf_set_keymap(bufnr, mode, keys, command, {noremap = true, silent=true,desc=desc})
 end
 
-gmap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', "lsp: go to previous diagnostic")
-gmap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', "lsp: go to next diagnostic")
+gmap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev({wrap=false,})<CR>', "lsp: go to previous diagnostic")
+gmap('n', ']d', '<cmd>lua vim.diagnostic.goto_next({wrap=false,})<CR>', "lsp: go to next diagnostic")
 gmap('n', '<leader>q', '<cmd>lua vim.diagnostic.setqflist()<CR>', "lsp: show diagnostics in qflist")
+gmap('n', '<leader>Q', '<cmd>lua vim.diagnostic.setqflist({severity=vim.diagnostic.severity.ERROR})<CR>', "lsp: show error diagnostics in qflist")
 gmap('n', '<leader>h', '<cmd>lua vim.diagnostic.open_float()<CR>', "lsp: show diagnostic in float")
 
 -- Use an on_attach function to only map the following keys
@@ -56,7 +57,6 @@ require("nvim-lsp-installer").setup {
   ensure_installed = servers
 }
 for _, lsp in pairs(servers) do
-
   local settings = {}
   if lsp == 'sumneko_lua' then
     settings = {
