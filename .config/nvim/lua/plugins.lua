@@ -48,12 +48,14 @@ require('packer').startup(function(use)
                         },
                     },
                     border = {},
-                    -- borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
-                    borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+                    borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+                    -- borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
                 },
                 extensions = {
                     zoxide = {},
-                    repo = {},
+                    repo = {
+                        search_dirs = '~/Projects',
+                    },
                 },
             }
             t.load_extension("zoxide")
