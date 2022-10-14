@@ -1,6 +1,6 @@
 #!/bin/sh
 m=dual
-if test -f [ /var/run/user/$(id -u)/dmenu-mode ]; then
+if test -f /var/run/user/$(id -u)/dmenu-mode; then
     read m < /var/run/user/$(id -u)/dmenu-mode
 fi
 DIR=~/Pictures/Backdrops/${m}
