@@ -9,7 +9,7 @@ end
 
 -- plugins
 require('packer').startup(function(use)
-
+    local theme = 'tokyonight' -- 'dracula'
     -- Self
     use 'wbthomason/packer.nvim'
 
@@ -107,10 +107,8 @@ require('packer').startup(function(use)
     }
 
     -- Side panes
-    use 'kyazdani42/nvim-web-devicons' -- for file icons
     use { 'kyazdani42/nvim-tree.lua',
         requires = { 'kyazdani42/nvim-web-devicons' },
-        after = { 'dracula.nvim' },
         config = function()
             require('nvim-tree').setup {
                 view = {
@@ -136,6 +134,7 @@ require('packer').startup(function(use)
         end
     }
     use { 'stevearc/aerial.nvim',
+        requires = { 'kyazdani42/nvim-web-devicons' },
         config = function()
             require('aerial').setup {
                 backends = { "treesitter" },
@@ -155,7 +154,6 @@ require('packer').startup(function(use)
 
     -- lsp
     use { 'VonHeikemen/lsp-zero.nvim',
-        after = { 'dracula.nvim' },
         config = function()
             local lsp = require('lsp-zero')
             lsp.preset('recommended')
@@ -207,14 +205,13 @@ require('packer').startup(function(use)
     -- status
     use { 'nvim-lualine/lualine.nvim',
         requires = { 'kyazdani42/nvim-web-devicons' },
-        after = { 'dracula.nvim' },
         config = function()
             require('lualine').setup {
                 options = {
                     globalstatus = true,
                     component_separators = '',
                     section_separators = '',
-                    theme = 'dracula-nvim',
+                    theme = theme,
                     disabled_filetypes = { 'packer' },
                 },
                 extensions = {
@@ -233,16 +230,29 @@ require('packer').startup(function(use)
     }
 
     -- misc
-    use { 'Mofiqul/dracula.nvim',
-        config = function()
-            require('dracula').setup {
-                italic_comment = true,
-                transparent_bg = true,
-                lualine_bg_color = "#282a36",
-            }
-            vim.api.nvim_command "colorscheme dracula"
-        end
-    }
+    if theme == 'dracula' then
+        use { 'Mofiqul/dracula.nvim',
+            config = function()
+                require('dracula').setup {
+                    italic_comment = true,
+                    transparent_bg = true,
+                    lualine_bg_color = "#282a36",
+                }
+                vim.api.nvim_command "colorscheme dracula"
+            end
+        }
+    end
+    if theme == 'tokyonight' then
+        use { 'folke/tokyonight.nvim',
+            config = function()
+                require('tokyonight').setup
+                {
+                    transparent = true
+                }
+                vim.api.nvim_command "colorscheme tokyonight"
+            end
+        }
+    end
     use { "ur4ltz/surround.nvim",
         config = function()
             require('surround').setup { mappings_style = "sandwich" }
@@ -251,7 +261,6 @@ require('packer').startup(function(use)
     use { 'norcalli/nvim-colorizer.lua' }
     use { 'folke/which-key.nvim',
         requires = { 'kyazdani42/nvim-web-devicons' },
-        after = { 'dracula.nvim' },
         config = function()
             require("which-key").setup {}
         end
@@ -473,9 +482,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = {'help', 'man'},
-  group = user_group,
-  command = 'nnoremap <buffer> q <cmd>quit<cr>'
+    pattern = { 'help', 'man' },
+    group = user_group,
+    command = 'nnoremap <buffer> q <cmd>quit<cr>'
 })
 
 -- custom filetypes
@@ -487,4 +496,3 @@ vim.filetype.add({
         [".clang.*"] = "yaml"
     }
 })
-
