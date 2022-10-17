@@ -169,10 +169,10 @@ require('packer').startup(function(use)
                 bind(bufnr, 'n', '<leader>h', '<cmd>lua vim.diagnostic.open_float()<cr>',
                     { desc = 'lsp: show diagnostic on hover' })
                 bind(bufnr, 'n', '<leader>R', '<cmd>lua vim.lsp.buf.rename()<cr>', { desc = 'lsp: rename' })
-                bind(bufnr, 'n', '<leader>q', '<cmd>lua vim.buf.diagnostics.setqflist()<cr>',
+                bind(bufnr, 'n', '<leader>q', '<cmd>lua vim.diagnostic.setqflist()<cr>',
                     { desc = 'lsp: set diagnostics to qflist' })
                 bind(bufnr, 'n', '<leader>Q',
-                    '<cmd>lua vim.buf.diagnostics.setqflist({severity=vim.diagnostic.severity.ERROR})<cr>',
+                    '<cmd>lua vim..diagnostic.setqflist({severity=vim.diagnostic.severity.ERROR})<cr>',
                     { desc = 'lsp: set error diagnostics to qflist' })
             end)
             lsp.setup()
