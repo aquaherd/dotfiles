@@ -247,7 +247,11 @@ require('packer').startup(function(use)
             config = function()
                 require('tokyonight').setup
                 {
-                    transparent = true
+                    style = 'night',
+                    transparent = true,
+                    on_colors = function(colors)
+                        colors.border = colors.blue0
+                    end
                 }
                 vim.api.nvim_command "colorscheme tokyonight"
             end
@@ -282,6 +286,7 @@ local g = vim.g
 local opt = vim.opt
 local o = vim.o
 g.mapleader = ' '
+g.maplocalleader = ' '
 -- basic
 o.mouse = 'a'
 o.title = true
@@ -465,11 +470,11 @@ imap('<C-f>', [[<right>]])
 -- Auto commands
 local user_group = vim.api.nvim_create_augroup('UserCommands', { clear = true })
 
-vim.api.nvim_create_user_command(
-    'ReloadConfig',
-    'source $MYVIMRC | PackerCompile', {
+vim.api.nvim_create_autocmd('BufWritePost', {
+    command = 'source $MYVIMRC | PackerCompile',
     desc = 'reload config on save',
-    -- group = user_group
+    group = user_group,
+    pattern = vim.fn.expand('$MYVIMRC')
 })
 
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -482,7 +487,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 vim.api.nvim_create_autocmd('FileType', {
-    pattern = { 'help', 'man' },
+    pattern = { 'help', 'man', 'qflist' },
     group = user_group,
     command = 'nnoremap <buffer> q <cmd>quit<cr>'
 })
