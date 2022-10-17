@@ -1,13 +1,13 @@
 -- install packer
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
-local is_bootstrap = false
+local first_run = false
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-    is_bootstrap = true
+    first_run = true
     vim.fn.execute('!git clone https://github.com/wbthomason/packer.nvim ' .. install_path)
     vim.cmd [[ packadd packer.nvim ]]
 end
 
-
+-- plugins
 require('packer').startup(function(use)
 
     -- Self
@@ -257,12 +257,12 @@ require('packer').startup(function(use)
         end
     }
 
-    if is_bootstrap then
+    if first_run then
         require('packer').sync();
     end
 end)
 
-if is_bootstrap then
+if first_run then
     print 'hit enter, let packer sync go and restart nvim'
     return
 end
@@ -352,24 +352,11 @@ for _, plugin in pairs(built_ins) do
     g["loaded_" .. plugin] = 1
 end
 
--- custom filetypes
-vim.filetype.add({
-    extension = {
-        mke = "make",
-    },
-    pattern = {
-        [".clang.*"] = "yaml",
-    },
-})
-
+-- mappings
 local active = false
-local hwk, wk = pcall(require, "which-key")
 
 local function map(mode, keys, command, desc)
     vim.api.nvim_set_keymap(mode, keys, command, { noremap = true, silent = true, desc = desc })
-    if hwk and not desc == nil then
-        wk.register({ keys = { desc } }, { mode = mode })
-    end
 end
 
 local function nmap(keys, command, desc)
@@ -460,7 +447,6 @@ tmap('<A-up>', [[<C-\><C-n><C-W>k]])
 tmap('<C-l>', [[<C-\><C-n><C-W>l]])
 tmap('<A-t>', [[<C-\><C-n><Cmd>ToggleTerm<CR>]])
 
-
 -- insert mode
 imap('<C-a>', [[<Home>]])
 imap('<C-e>', [[<End>]])
@@ -468,11 +454,37 @@ imap('<C-b>', [[<left>]])
 imap('<C-f>', [[<right>]])
 
 -- Auto commands
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
+local user_group = vim.api.nvim_create_augroup('UserCommands', { clear = true })
+
+vim.api.nvim_create_user_command(
+    'ReloadConfig',
+    'source $MYVIMRC | PackerCompile', {
+    desc = 'reload config on save',
+    -- group = user_group
+})
+
 vim.api.nvim_create_autocmd('TextYankPost', {
+    desc = 'Highlight on yank',
     callback = function()
-        vim.highlight.on_yank()
+        vim.highlight.on_yank({ higroup = 'Visual', timeout = 300 })
     end,
-    group = highlight_group,
+    group = user_group,
     pattern = '*',
 })
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = {'help', 'man'},
+  group = user_group,
+  command = 'nnoremap <buffer> q <cmd>quit<cr>'
+})
+
+-- custom filetypes
+vim.filetype.add({
+    extension = {
+        mke = "make",
+    },
+    pattern = {
+        [".clang.*"] = "yaml"
+    }
+})
+
