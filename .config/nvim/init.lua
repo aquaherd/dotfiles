@@ -14,20 +14,6 @@ require('packer').startup(function(use)
 
     -- Theme
     local theme = 'dracula' -- 'tokyonight'
-    -- local function useTheme(gitname, name, blob)
-    --     use { gitname,
-    --         cond = theme == name,
-    --         config = function()
-    --             require(name).setup(blob)
-    --             vim.api.nvim_command("colorscheme " .. name)
-    --         end
-    --     }
-    -- end
-    -- useTheme('Mofiqul/dracula.nvim', 'dracula', {
-    --     italic_comment = true,
-    --     transparent_bg = true,
-    --     lualine_bg_color = "#282a36",
-    -- })
     use { 'Mofiqul/dracula.nvim',
         cond = theme == 'dracula',
         config = function()
