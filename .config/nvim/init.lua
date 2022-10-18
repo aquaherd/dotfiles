@@ -9,9 +9,49 @@ end
 
 -- plugins
 require('packer').startup(function(use)
-    local theme = 'tokyonight' -- 'dracula'
     -- Self
     use 'wbthomason/packer.nvim'
+
+    -- Theme
+    local theme = 'dracula' -- 'tokyonight'
+    -- local function useTheme(gitname, name, blob)
+    --     use { gitname,
+    --         cond = theme == name,
+    --         config = function()
+    --             require(name).setup(blob)
+    --             vim.api.nvim_command("colorscheme " .. name)
+    --         end
+    --     }
+    -- end
+    -- useTheme('Mofiqul/dracula.nvim', 'dracula', {
+    --     italic_comment = true,
+    --     transparent_bg = true,
+    --     lualine_bg_color = "#282a36",
+    -- })
+    use { 'Mofiqul/dracula.nvim',
+        cond = theme == 'dracula',
+        config = function()
+            require('dracula').setup {
+                italic_comment = true,
+                transparent_bg = true,
+                lualine_bg_color = "#282a36",
+            }
+            vim.api.nvim_command "colorscheme dracula"
+        end
+    }
+    use { 'folke/tokyonight.nvim',
+        cond = (theme == 'tokyonight'),
+        config = function()
+            require('tokyonight').setup {
+                style = 'night',
+                transparent = true,
+                on_colors = function(colors)
+                    colors.border = colors.blue0
+                end
+            }
+            vim.api.nvim_command "colorscheme tokyonight"
+        end
+    }
 
     -- Coding
     use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' },
@@ -72,9 +112,7 @@ require('packer').startup(function(use)
     use { 'nvim-treesitter/nvim-treesitter',
         config = function()
             require('nvim-treesitter.configs').setup {
-                -- one of "all", "maintained" (parsers with maintainers), or a list of languages
                 ensure_installed = { "bash", "c", "python", "cpp", "lua", "toml", "cmake" },
-                --ignore_install = { "javascript" }, -- List of parsers to ignore installing
                 highlight = {
                     enable = true, -- false will disable the whole extension
                     --disable = { "c", "rust" },  -- list of language that will be disabled
@@ -103,7 +141,8 @@ require('packer').startup(function(use)
     use { 'danymat/neogen', requires = { 'nvim-treesitter/nvim-treesitter' }, tag = '*',
         config = function()
             require('neogen').setup { snippet_engine = 'luasnip' }
-        end
+        end,
+        ft = 'c'
     }
 
     -- Side panes
@@ -155,11 +194,9 @@ require('packer').startup(function(use)
     -- lsp
     use { 'VonHeikemen/lsp-zero.nvim',
         config = function()
+            require('neodev').setup({})
             local lsp = require('lsp-zero')
             lsp.preset('recommended')
-
-            local luadev = require('neodev').setup({})
-            lsp.configure('sumneko_lua', luadev)
             lsp.on_attach(function(_, bufnr)
                 local bind = vim.api.nvim_buf_set_keymap
 
@@ -180,7 +217,6 @@ require('packer').startup(function(use)
             { 'neovim/nvim-lspconfig' },
             { 'williamboman/mason.nvim' },
             { 'williamboman/mason-lspconfig.nvim' },
-
             -- Autocompletion
             { 'hrsh7th/nvim-cmp' },
             { 'hrsh7th/cmp-buffer' },
@@ -188,11 +224,9 @@ require('packer').startup(function(use)
             { 'saadparwaiz1/cmp_luasnip' },
             { 'hrsh7th/cmp-nvim-lsp' },
             { 'hrsh7th/cmp-nvim-lua' },
-
             -- Snippets
             { 'L3MON4D3/LuaSnip' },
             { 'rafamadriz/friendly-snippets' },
-
             -- lua development
             { 'folke/neodev.nvim' }
         }
@@ -217,7 +251,6 @@ require('packer').startup(function(use)
                 extensions = {
                     'aerial',
                     'nvim-tree',
-                    -- 'symbols-outline',
                     'fugitive',
                     'toggleterm',
                     'quickfix',
@@ -230,39 +263,12 @@ require('packer').startup(function(use)
     }
 
     -- misc
-    if theme == 'dracula' then
-        use { 'Mofiqul/dracula.nvim',
-            config = function()
-                require('dracula').setup {
-                    italic_comment = true,
-                    transparent_bg = true,
-                    lualine_bg_color = "#282a36",
-                }
-                vim.api.nvim_command "colorscheme dracula"
-            end
-        }
-    end
-    if theme == 'tokyonight' then
-        use { 'folke/tokyonight.nvim',
-            config = function()
-                require('tokyonight').setup
-                {
-                    style = 'night',
-                    transparent = true,
-                    on_colors = function(colors)
-                        colors.border = colors.blue0
-                    end
-                }
-                vim.api.nvim_command "colorscheme tokyonight"
-            end
-        }
-    end
     use { "ur4ltz/surround.nvim",
         config = function()
             require('surround').setup { mappings_style = "sandwich" }
         end
     }
-    use { 'norcalli/nvim-colorizer.lua' }
+    use { 'norcalli/nvim-colorizer.lua', cmd = 'ColorizerToggle' }
     use { 'folke/which-key.nvim',
         requires = { 'kyazdani42/nvim-web-devicons' },
         config = function()
