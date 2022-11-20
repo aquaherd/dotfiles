@@ -3,15 +3,16 @@
 
 usr=/usr/share/applications
 loc=~/.local/share/applications
+fpk=~/.local/share/flatpak/exports/share/applications
 cache=~/.cache/applications.txt
 
 if [ $# -eq 0 ];then
-    if [ $cache -nt $usr -a $cache -nt $loc ]; then
+    if [ $cache -nt $usr -a $cache -nt $loc -a $cache -tn $fpk ]; then
         echo app cache is up to date.
         exit 0
     fi
     rm -rf ${cache}.new # just in case
-    find $usr $loc -type f -name '*.desktop' -exec $0 {} \; # call self with arg
+    find $usr $loc $fpk -name '*.desktop' -exec $0 {} \; # call self with arg
     mv -vf ${cache}.new ${cache} # atomic
 else
     f=$*
