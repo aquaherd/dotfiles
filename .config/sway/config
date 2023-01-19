@@ -18,6 +18,7 @@ exec_always {
     xrdb .Xresources
     # gtk2
     xsettingsd -c ~/.config/bspwm/xsettings.conf
+    ~/.local/bin/i3-autotiling
 }
 
 # autostart

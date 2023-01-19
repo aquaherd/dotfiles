@@ -1,7 +1,9 @@
 #!/bin/sh
 m=dual
-if test -f /var/run/user/$(id -u)/dmenu-mode; then
-    read m < /var/run/user/$(id -u)/dmenu-mode
+if [ 1 -eq "$(xrandr --listactivemonitors | grep Monitors | cut -d' ' -f2)" ]; then
+    m=single
+else
+    m=dual
 fi
 DIR=~/Pictures/Backdrops/${m}
 DST=~/.cache/i3.current.backdrop
@@ -10,6 +12,6 @@ SET="$CUR"
 while [ "$CUR" = "$SET" ]; do
     SET=$(shuf -n1 -e "$DIR"/*)
 done
-echo $CUR $SET $DST
+echo "$CUR $SET $DST"
 ln -svf "$SET" "$DST"
 hsetroot -root -cover $DST > /dev/null 2>&1 || hsetroot -cover $DST > /dev/null 2>&1

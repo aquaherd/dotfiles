@@ -55,9 +55,18 @@ require('packer').startup(function(use)
     }
     use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' },
         config = function()
+            local l = require("telescope.actions.layout")
             local t = require('telescope')
             t.setup {
                 defaults = {
+                    mappings = {
+                        n = {
+                            ["<M-p>"] = l.toggle_preview
+                        },
+                        i = {
+                            ["<M-p>"] = l.toggle_preview
+                        },
+                    },
                     file_ignore_patterns = {
                         "%.jpg",
                         "%.jpeg",
@@ -75,9 +84,6 @@ require('packer').startup(function(use)
                             preview_width = 0.6,
                         },
                     },
-                    border = {},
-                    borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
-                    -- borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
                 },
                 extensions = {
                     zoxide = {}

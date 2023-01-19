@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 . ~/.local/lib/dmenu-lib.sh
 
 prompt="logout reboot poweroff lock sleep single dual boot reload"
@@ -16,18 +16,18 @@ closeall_bspwm()
 
     # graceful kill
     for d in $(bspc query -N);do 
-        bspc node $d -c
+        bspc node "$d" -c
     done
-    while [ $(bspc query -N|wc -l) -gt 0 ]; do
+    while [ "$(bspc query -N|wc -l)" -gt 0 ]; do
         sleep 1
     done
 
     # from bspwmrc
     for f in ~/.cache/bspwm/*.pid; do
-        local cmd=$(basename -s .pid $f)
-        read pid < $f
-        kill $pid || pkill $cmd || pkill $cmd -9 || true
-        rm $f
+        cmd=$(basename -s .pid "$f")
+        read -r pid < "$f"
+        kill "$pid" || pkill "$cmd" || pkill "$cmd" -9 || true
+        rm "$f"
         echo "*** $pid:$cmd Ended ***"
     done
 
@@ -43,10 +43,10 @@ closeall_bspwm()
 closeall_2bwm()
 {
     for w in $(lsw|cut -d' ' -f1); do
-        xdo kill $w
+        xdo kill "$w"
     done
 
-    while [ $(lsw|wc -l) -gt 0 ]; do
+    while [ "$(lsw|wc -l)" -gt 0 ]; do
         sleep 1
     done 
 
@@ -60,7 +60,7 @@ closeall_i3()
     # Kindly close all regular windows
     i3-msg '[class=.*] kill'
     # wait until closed
-    while [ $(i3-msg -t get_tree|jq 'recurse(.nodes[]) | select(.window_type=="normal").window'|wc -l) -gt 0 ];
+    while [ "$(i3-msg -t get_tree|jq 'recurse(.nodes[]) | select(.window_type=="normal").window'|wc -l)" -gt 0 ];
     do
         sleep 1
     done
@@ -72,8 +72,8 @@ closeall_i3()
 
 closeall_i3xfce()
 {
-    closeall_i3 $1
-    closeall_xfce $1
+    closeall_i3 "$1"
+    closeall_xfce "$1"
 }
 
 closeall_sway()
@@ -81,7 +81,7 @@ closeall_sway()
     # Kindly close all regular windows
     swaymsg '[app_id=.*] kill'
     # wait until closed
-    while [ $(swaymsg -t get_tree|grep -ce 'type.*con') -gt 0 ];
+    while [ "$(swaymsg -t get_tree|grep -ce 'type.*con')" -gt 0 ];
     do
         sleep 1
     done
@@ -106,7 +106,7 @@ closeall_xfce()
 
 closeall_startxfce4()
 {
-    closeall_xfce $*
+    closeall_xfce "$*"
 }
 
 closeall_gnome()
@@ -119,12 +119,12 @@ closeall_gnome()
 closeall()
 {
 	fix_desktop
-    closeall_${DESKTOP_SESSION} $* || true
+    "closeall_${DESKTOP_SESSION}" "$*" || true
 }
 
 randr_bspwm()
 {
-    .config/bspwm/xrandr.sh $res
+    .config/bspwm/xrandr.sh "$res"
 }
 
 randr_default()
@@ -132,13 +132,13 @@ randr_default()
     case $1 in
     single)
         xrandr \
-            --output $PRIMARY --primary --auto \
-            --output $SECONDARY --off
+            --output "$PRIMARY" --primary --auto \
+            --output "$SECONDARY" --off
         ;;
     dual)
         xrandr \
-            --output $PRIMARY --primary --auto \
-            --output $SECONDARY --auto --left-of $PRIMARY
+            --output "$PRIMARY" --primary --auto \
+            --output "$SECONDARY" --auto --left-of "$PRIMARY"
         ;;
     esac
 }
@@ -147,8 +147,7 @@ randr()
 {
     fix_desktop
     echo "randr: $PRIMARY $SECONDARY randr_${DESKTOP_SESSION}  $*"
-    randr_${DESKTOP_SESSION} $* || randr_default $*
-    echo $* > /var/run/user/$(id -u)/dmenu-mode
+    "randr_${DESKTOP_SESSION}" "$*" || randr_default "$*"
 }
 
 # requires an efi where each kernel is booted directly
@@ -162,7 +161,7 @@ boot()
     res=$(ask_boot)
     next=$(efibootmgr|grep "$res"|cut -c5-8)
     sudo efibootmgr -n "$next" || die boot "$next"
-    closeall $ctl reboot
+    closeall "$ctl" reboot
 }
 
 reload_bspwm()
@@ -186,17 +185,17 @@ reload_sway()
 reload()
 {
 	fix_desktop
-	reload_${DESKTOP_SESSION} $* || die reload $*
+	"reload_${DESKTOP_SESSION}" || die reload
 }
 
 ask_sys()
 {
-    echo $prompt|tr " " "\n"|ask "sys:"|| true
+    echo "$prompt"|tr " " "\n"|ask "sys:"|| true
 }
 
 # determine init system
 res=$(ask_sys)
-read r < /proc/1/comm
+read -r r < /proc/1/comm
 case $r in
 systemd)    ctl=systemctl;; # insane
 *)          if type loginctl>/dev/null 2>&1; then
@@ -210,8 +209,8 @@ echo "dmenu-sys.sh: ${res}@${ctl}"
 
 case $res in
     logout)             closeall quit;;
-    reboot|poweroff)    closeall && $ctl $res;;
-    single|dual)        randr $res;;
+    reboot|poweroff)    closeall && $ctl "$res";;
+    single|dual)        randr "$res";;
     lock)               dm-tool lock;;
     sleep)              $ctl suspend;;
     reload)             reload;;

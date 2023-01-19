@@ -7,6 +7,6 @@ echo "dmenu-run.sh: $res -> $desktop"
 gtk-launch "$desktop"
 fail=$?
 if [ $fail -ne 0 ]; then
-    zenity --error --text "error $fail: $err"
+    zenity --error --text "error $fail: $desktop"
 fi
 
