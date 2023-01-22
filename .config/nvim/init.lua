@@ -368,103 +368,56 @@ for _, plugin in pairs(built_ins) do
 end
 
 -- mappings
-local active = false
-
-local function map(mode, keys, command, desc)
-    vim.api.nvim_set_keymap(mode, keys, command, { noremap = true, silent = true, desc = desc })
-end
-
-local function nmap(keys, command, desc)
-    map("n", keys, command .. " <CR>", desc)
-end
-
-local function vmap(keys, command, desc)
-    map("v", keys, command .. " <CR>", desc)
-end
-
-local function tmap(keys, command)
-    map("t", keys, command)
-end
-
-function Minimal()
-    if active then
-        vim.cmd [[
-      set number relativenumber noshowmode showtabline=1 laststatus=3 signcolumn=yes foldcolumn=0 
-      au WinEnter,BufEnter, * set number relativenumber 
-    ]]
-        active = false
-    else
-        vim.cmd [[
-      set nonumber norelativenumber showmode showtabline=0 laststatus=0 signcolumn=no foldcolumn=1
-      au WinEnter,BufEnter, * set nonumber norelativenumber 
-    ]]
-        active = true
-    end
-end
-
--- Normal Map
-nmap("<TAB>", ":tabnext")
-nmap("<S-TAB>", ":tabprev")
-nmap("<leader>t", ":ToggleTerm")
-nmap("<A-t>", ":ToggleTerm")
-
-nmap("<leader>x", ":q")
-nmap("<C-S>", ":w")
-
-nmap("<C-N>", ":cnext")
-nmap("<C-P>", ":cprev")
--- nmap("<A-O>", ":colder")
-
-nmap('<A-down>', ":wincmd j")
-nmap('<A-left>', ":wincmd h")
-nmap('<A-right>', ":wincmd l")
-nmap('<A-up>', ":wincmd k")
-nmap('<AS-down>', ":wincmd -")
-nmap('<AS-left>', ":wincmd <")
-nmap('<AS-right>', ":wincmd >")
-nmap('<AS-up>', ":wincmd +")
-
--- Minimal toggle
-nmap("<leader>m", ":lua Minimal()", "Minimal mode")
-
--- Telescope
-nmap("<leader><space>", ":Telescope")
-nmap("<leader>F", ":Telescope find_files", "ts: Find files")
-nmap("<leader>W", ":Telescope lsp_dynamic_workspace_symbols", "lsp: Workspace symbols")
-nmap("<leader>b", ":Telescope buffers", "ts: buffers")
-nmap("<leader>cc", ":ColorizerToggle")
-nmap("<leader>g", ":Telescope live_grep", "ts: Live grep")
-nmap("<leader>l", ":Telescope repo list", "ts: Repository list")
-nmap("<leader>o", ":Telescope oldfiles", "ts: oldfiles")
-nmap("<leader>s", ":Telescope lsp_document_symbols", "lsp: Document Symbols")
-nmap("<leader>z", ":Telescope zoxide list", "ts: zoxide list")
-
--- NvimTree
-nmap("<leader>e", ":NvimTreeToggle")
-
--- Neogen
-nmap("<leader>D", ":lua require('neogen').generate()", "generate doxygen")
-
--- Visual Map
-vmap("<leader>f", ":lua vim.lsp.buf.format()", "lsp: format selection") -- this always formats entire buffer.
-
--- Terminal map
--- tmap("<esc>", [[<C-\><C-n>]])
-tmap('<C-h>', [[<C-\><C-n><C-W>h]])
-tmap('<C-j>', [[<C-\><C-n><C-W>j]])
-tmap('<A-down>', [[<C-\><C-n><C-W>j]])
-tmap('<C-k>', [[<C-\><C-n><C-W>k]])
-tmap('<A-up>', [[<C-\><C-n><C-W>k]])
-tmap('<C-l>', [[<C-\><C-n><C-W>l]])
-tmap('<A-t>', [[<C-\><C-n><Cmd>ToggleTerm<CR>]])
-
 local wk = require("which-key")
+wk.register({
+    ['<A-t>'] = { ":ToggleTerm<cr>", "" },
+    ['<C-n>'] = { ":cnext<cr>", "" },
+    ['<C-p>'] = { ":cprev<cr>", "" },
+    ['<C-s>'] = { ":w<cr>", "" },
+    ['<S-TAB>'] = { ":tabprev<cr>", "" },
+    ['<TAB>'] = { ":tabnext<cr>", "" },
+    ['<leader><space>'] = { ":Telescope<cr>", "" },
+    ['<leader>D'] = { ":lua require('neogen').generate()", "generate doxygen" },
+    ['<leader>F'] = { ":Telescope find_files<cr>", "ts: Find files" },
+    ['<leader>W'] = { ":Telescope lsp_dynamic_workspace_symbols<cr>", "lsp: Workspace symbols" },
+    ['<leader>b'] = { ":Telescope buffers<cr>", "ts: buffers" },
+    ['<leader>cc'] = { ":ColorizerToggle<cr>", "" },
+    ['<leader>e'] = { ":NvimTreeToggle<cr>", "" },
+    ['<leader>g'] = { ":Telescope live_grep<cr>", "ts: Live grep" },
+    ['<leader>l'] = { ":Telescope repo list<cr>", "ts: Repository list" },
+    ['<leader>o'] = { ":Telescope oldfiles<cr>", "ts: oldfiles" },
+    ['<leader>s'] = { ":Telescope lsp_document_symbols<cr>", "lsp: Document Symbols" },
+    ['<leader>t'] = { ":ToggleTerm<cr>", "" },
+    ['<leader>z'] = { ":Telescope zoxide list<cr>", "ts: zoxide list" },
+    ['<A-down>'] = { ":wincmd j<cr>", "" },
+    ['<A-left>'] = { ":wincmd h<cr>", "" },
+    ['<A-right>'] = { ":wincmd l<cr>", "" },
+    ['<A-up>'] = { ":wincmd k<cr>", "" },
+    ['<AS-down>'] = { ":wincmd -<cr>", "" },
+    ['<AS-left>'] = { ":wincmd <<cr>", "" },
+    ['<AS-right>'] = { ":wincmd ><cr>", "" },
+    ['<AS-up>'] = { ":wincmd +<cr>", "" },
+})
 wk.register({
     ['<C-a>'] = { [[<Home>]], "go home" },
     ['<C-e>'] = { [[<End>]], "go end" },
     ['<C-b>'] = { [[<left>]], "left" },
     ['<C-f>'] = { [[<right>]], "right" },
-}, { mode = "i" })
+}, { mode = "i" }) -- insert mode
+wk.register({
+    ['<C-h>'] = { [[<C-\><C-n><C-W>h]], "" },
+    ['<C-j>'] = { [[<C-\><C-n><C-W>j]], "" },
+    ['<A-down>'] = { [[<C-\><C-n><C-W>j]], "" },
+    ['<C-k>'] = { [[<C-\><C-n><C-W>k]], "" },
+    ['<A-up>'] = { [[<C-\><C-n><C-W>k]], "" },
+    ['<C-l>'] = { [[<C-\><C-n><C-W>l]], "" },
+    -- Normal Map
+    ['<A-t>'] = { [[<C-\><C-n><Cmd>ToggleTerm<CR>]], "" },
+}, { mode = "t" }) -- terminal mode
+wk.register({
+    ['<leader>f'] = { ":lua vim.lsp.buf.format()", "lsp: format selection" },
+}, { mode = "v" }) -- visual mode
+
 -- Auto commands
 local user_group = vim.api.nvim_create_augroup('UserCommands', { clear = true })
 
