@@ -15,3 +15,4 @@ done
 echo "$CUR $SET $DST"
 ln -svf "$SET" "$DST"
 hsetroot -root -cover $DST > /dev/null 2>&1 || hsetroot -cover $DST > /dev/null 2>&1
+cp -v "$SET" "/usr/local/share/backgrounds/$(id -un)" 

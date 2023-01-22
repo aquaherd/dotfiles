@@ -202,6 +202,9 @@ require('packer').startup(function(use)
                     '<cmd>lua vim..diagnostic.setqflist({severity=vim.diagnostic.severity.ERROR})<cr>',
                     { desc = 'lsp: set error diagnostics to qflist' })
             end)
+            local cmp_map = lsp.defaults.cmp_mappings()
+            cmp_map['<C-e>'] = nil
+            lsp.setup_nvim_cmp({ mapping = cmp_map })
             lsp.setup()
         end,
         requires = {
@@ -379,10 +382,6 @@ local function vmap(keys, command, desc)
     map("v", keys, command .. " <CR>", desc)
 end
 
-local function imap(keys, command)
-    map("i", keys, command)
-end
-
 local function tmap(keys, command)
     map("t", keys, command)
 end
@@ -459,12 +458,13 @@ tmap('<A-up>', [[<C-\><C-n><C-W>k]])
 tmap('<C-l>', [[<C-\><C-n><C-W>l]])
 tmap('<A-t>', [[<C-\><C-n><Cmd>ToggleTerm<CR>]])
 
--- insert mode
-imap('<C-a>', [[<Home>]])
-imap('<C-e>', [[<End>]])
-imap('<C-b>', [[<left>]])
-imap('<C-f>', [[<right>]])
-
+local wk = require("which-key")
+wk.register({
+    ['<C-a>'] = { [[<Home>]], "go home" },
+    ['<C-e>'] = { [[<End>]], "go end" },
+    ['<C-b>'] = { [[<left>]], "left" },
+    ['<C-f>'] = { [[<right>]], "right" },
+}, { mode = "i" })
 -- Auto commands
 local user_group = vim.api.nvim_create_augroup('UserCommands', { clear = true })
 
