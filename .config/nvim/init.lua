@@ -109,19 +109,27 @@ require('packer').startup(function(use)
                     enable = true, -- false will disable the whole extension
                     --disable = { "c", "rust" },  -- list of language that will be disabled
                 },
+                indent = { enable = false }, -- revisit later
                 textobjects = {
                     select = {
-                        enable = true,
-                        -- Automatically jump forward to textobj, similar to targets.vim
+                        enable = true, -- Automatically jump forward to textobj, similar to targets.vim
                         lookahead = true,
-                        keymaps = {
-                            -- You can use the capture groups defined in textobjects.scm
+                        keymaps = { -- You can use the capture groups defined in textobjects.scm
                             ["af"] = "@function.outer",
                             ["if"] = "@function.inner",
                             ["ac"] = "@comment.outer",
                             ["as"] = "@statement.outer",
-                            ["ii"] = "@conditional.inner",
                             ["ai"] = "@conditional.outer",
+                            ["ii"] = "@conditional.inner",
+                            ["al"] = "@loop.outer",
+                            ["il"] = "@loop.inner",
+                        },
+                    },
+                    lsp_interop = {
+                        enable = true,
+                        peek_definition_code = {
+                            ["<leader>df"] = "@function.outer",
+                            ["<leader>dF"] = "@class.outer",
                         },
                     },
                 },
@@ -134,7 +142,7 @@ require('packer').startup(function(use)
         config = function()
             require('neogen').setup { snippet_engine = 'luasnip' }
         end,
-        ft = 'c'
+        ft = 'c', cmd = { "Neogen" }
     }
 
     -- Side panes
@@ -370,14 +378,23 @@ end
 -- mappings
 local wk = require("which-key")
 wk.register({
+    ['<A-down>'] = { ":wincmd j<cr>", "window down" },
+    ['<A-left>'] = { ":wincmd h<cr>", "window left" },
+    ['<A-right>'] = { ":wincmd l<cr>", "window right" },
     ['<A-t>'] = { ":ToggleTerm<cr>", "toggle terminal" },
+    ['<A-up>'] = { ":wincmd k<cr>", "window up" },
+    ['<AS-down>'] = { ":wincmd -<cr>", "resize window down" },
+    ['<AS-left>'] = { ":wincmd <<cr>", "resize window left" },
+    ['<AS-right>'] = { ":wincmd ><cr>", "resize window right" },
+    ['<AS-up>'] = { ":wincmd +<cr>", "resize window up" },
     ['<C-n>'] = { ":cnext<cr>", "qflist next" },
     ['<C-p>'] = { ":cprev<cr>", "qflist prev" },
     ['<C-s>'] = { ":w<cr>", "save" },
     ['<S-TAB>'] = { ":tabprev<cr>", "previous tab" },
     ['<TAB>'] = { ":tabnext<cr>", "next tab" },
     ['<leader><space>'] = { ":Telescope<cr>", "telescope" },
-    ['<leader>D'] = { ":lua require('neogen').generate()", "generate doxygen" },
+    ['<leader>c'] = { ":Gitsigns setqflist<cr>", "git changes" },
+    ['<leader>D'] = { ":Neogen<cr>", "generate doxygen" },
     ['<leader>F'] = { ":Telescope find_files<cr>", "ts: Find files" },
     ['<leader>W'] = { ":Telescope lsp_dynamic_workspace_symbols<cr>", "lsp: Workspace symbols" },
     ['<leader>b'] = { ":Telescope buffers<cr>", "ts: buffers" },
@@ -389,14 +406,8 @@ wk.register({
     ['<leader>s'] = { ":Telescope lsp_document_symbols<cr>", "lsp: Document Symbols" },
     ['<leader>t'] = { ":ToggleTerm<cr>", "toggle terminal" },
     ['<leader>z'] = { ":Telescope zoxide list<cr>", "ts: zoxide list" },
-    ['<A-down>'] = { ":wincmd j<cr>", "window down" },
-    ['<A-left>'] = { ":wincmd h<cr>", "window left" },
-    ['<A-right>'] = { ":wincmd l<cr>", "window right" },
-    ['<A-up>'] = { ":wincmd k<cr>", "window up" },
-    ['<AS-down>'] = { ":wincmd -<cr>", "resize window down" },
-    ['<AS-left>'] = { ":wincmd <<cr>", "resize window left" },
-    ['<AS-right>'] = { ":wincmd ><cr>", "resize window right" },
-    ['<AS-up>'] = { ":wincmd +<cr>", "resize window up" },
+    ['[c'] = { ":Gitsigns prev_hunk<cr>", "prev hunk" },
+    [']c'] = { ":Gitsigns next_hunk<cr>", "next hunk" },
 })
 wk.register({
     ['<C-a>'] = { [[<Home>]], "go home" },
@@ -414,9 +425,6 @@ wk.register({
     -- Normal Map
     ['<A-t>'] = { [[<C-\><C-n><Cmd>ToggleTerm<CR>]], "toggle terminal" },
 }, { mode = "t" }) -- terminal mode
-wk.register({
-    ['<leader>f'] = { ":lua vim.lsp.buf.format()", "lsp: format selection" },
-}, { mode = "v" }) -- visual mode
 
 -- Auto commands
 local user_group = vim.api.nvim_create_augroup('UserCommands', { clear = true })
