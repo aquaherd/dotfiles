@@ -64,6 +64,12 @@ closeall_i3()
     do
         sleep 1
     done
+    for d in "$XDG_RUNTIME_DIR"/i3/*.pid; do
+        read -r pid < "$d"
+        kill "$pid"
+        rm "$pid"
+    done
+
     # let go of session
     case $1 in
     quit) i3-msg exit;;

@@ -7,23 +7,12 @@
 set $mod Mod4
 set_from_resource $primary Xdisplay.primary DisplayPort-0
 set_from_resource $secondary Xdisplay.secondary HDMI-A-0
-set_from_resource $temperature hwmon.temperature /sys/class/hwmon/hwmon0/temp1_input
 set $filemgr thunar
 set $term st
 set $browser x-www-browser
 
 #autostart
-exec --no-startup-id ln -sf $temperature ~/.cache/temp
-exec_always --no-startup-id ~/.local/bin/update-hsetroot.sh 
-exec --no-startup-id redshift-gtk
-#exec --no-startup-id pasystray
-exec --no-startup-id udiskie -s -A -f ranger
-exec_always --no-startup-id picom
-exec --no-startup-id xsettingsd -c ~/.config/i3/xsettings.conf
-exec --no-startup-id dunst
-exec_always --no-startup-id ~/.local/bin/i3-autotiling
-exec --no-startup-id xsetroot -cursor_name left_ptr
-
+exec_always --no-startup-id ~/.config/i3/autostart.sh
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 font pango:Iosevka 11
@@ -69,10 +58,10 @@ bindsym --whole-window --border $mod+shift+button4 resize shrink width 5 px
 bindsym --whole-window --border $mod+shift+button5 resize grow width 5 px
 
 # split in horizontal orientation
-bindsym $mod+. split h
+bindsym $mod+r split h
 
 # split in vertical orientation
-bindsym $mod+/ split v
+bindsym $mod+t split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
@@ -147,7 +136,7 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exit
 
 # Bling
 default_border pixel 14
@@ -165,67 +154,20 @@ client.unfocused        $background $background $foreground $background $backgro
 client.urgent           $urgent $urgent $background $urgent $urgent
 client.placeholder      $background $background $foreground $background $background
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-bar {
-    id primary
-    i3bar_command i3bar
-    status_command py3status -c ~/.config/i3/py3status.conf
-    position bottom
-    output $primary
-    font pango:Iosevka Term 13
-    tray_output primary
-    mode hide
-    modifier none
-    colors {
-      background $background
-      statusline $status
-      separator  $active
-
-      focused_workspace  $active $active $foreground
-      active_workspace   $backgroung $background $foreground
-      inactive_workspace $background $background $foreground
-      urgent_workspace   $urgent $urgent $foreground
-      binding_mode       $urgent $urgent $foreground
-   	}
-}
-
-bar {
-	id secondary
-	i3bar_command i3bar
-	status_command i3status -c ~/.config/i3/i3status.conf
-	output nonprimary
-	font pango:Iosevka Term 13
-	tray_output none
-    mode hide
-    modifier none
-    position bottom
-    colors {
-      background $background
-      statusline $foreground
-      separator  $active
-
-      focused_workspace  $active $active $foreground
-      active_workspace   $backgroung $background $foreground
-      inactive_workspace $background $background $foreground
-      urgent_workspace   $urgent $urgent $foreground
-      binding_mode       $urgent $urgent $foreground
-   	}
-}
-
 # Launchers TODO: move to sxhkd
 bindsym $mod+Escape exec ~/.local/bin/dmenu-sys.sh
 bindsym $mod+d exec --no-startup-id ~/.local/bin/dmenu-run.sh
 bindsym $mod+Shift+n exec $filemgr
-bindsym $mod+i bar mode toggle
 bindsym $mod+Shift+v exec --no-startup-id ~/.local/bin/update-hsetroot.sh 
 bindsym $mod+Shift+t exec --no-startup-id ~/.local/bin/dmenu-hamster.sh ask
 bindsym $mod+Shift+m exec --no-startup-id ~/.local/bin/dmenu-mpd.sh -a
 bindsym $mod+Return exec $term
 bindsym $mod+Shift+Return exec $browser
-bindsym $mod+Shift+d exec --no-startup-id rofi -sort -sidebar-mode -modi "drun#window#run#ssh#Workspaces:~/.local/bin/i3_switch_workspaces.sh" -show drun
-bindsym Mod1+Tab exec --no-startup-id rofi -show window
-bindsym $mod+Shift+p exec --no-startup-id pkill -SIGUSR1 picom
+set $rofi_modes "drun#window#run#ssh#Workspaces:~/.local/bin/i3_switch_workspaces.sh" 
+bindsym $mod+Shift+d exec --no-startup-id rofi -sort -sidebar-mode -modi $rofi_modes  -show drun
+bindsym Mod1+Tab exec --no-startup-id rofi -modi $rofi_modes -show window
+bindsym $mod+Shift+p exec --no-stairtup-id pkill -SIGUSR1 picom
+bindsym $mod+p exec scrot $HOME'/Pictures/Screenshots/%Y-%m-%d_%H%M%S-$wx$h_scrot.png' --exec 'pqiv $f'
 # media keys
 bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
 bindsym XF86AudioNext exec --no-startup-id playerctl next
@@ -247,51 +189,9 @@ for_window [title="Sign in to security device"] floating enable
 # Necessary for i3-gaps to work properly (pixel can be any value)
 for_window [class="^.*"] border pixel 3
 
-# Smart Gaps
 smart_gaps on
-# Smart Borders
 smart_borders on
-
-# Set inner/outer gaps
 gaps inner 16
 gaps outer 0
-
-# Gaps mode
-set $mode_gaps 'Gaps: (o) outer, (i) inner'
-set $mode_gaps_outer 'Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)'
-set $mode_gaps_inner 'Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)'
-bindsym $mod+Shift+g mode "$mode_gaps"
-
-mode "$mode_gaps" {
-        bindsym o      mode "$mode_gaps_outer"
-        bindsym i      mode "$mode_gaps_inner"
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-}
-
-mode "$mode_gaps_inner" {
-        bindsym plus  gaps inner current plus 5
-        bindsym minus gaps inner current minus 5
-        bindsym 0     gaps inner current set 0
-
-        bindsym Shift+plus  gaps inner all plus 5
-        bindsym Shift+minus gaps inner all minus 5
-        bindsym Shift+0     gaps inner all set 0
-
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-}
-
-mode "$mode_gaps_outer" {
-        bindsym plus  gaps outer current plus 5
-        bindsym minus gaps outer current minus 5
-        bindsym 0     gaps outer current set 0
-
-        bindsym Shift+plus  gaps outer all plus 5
-        bindsym Shift+minus gaps outer all minus 5
-        bindsym Shift+0     gaps outer all set 0
-
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-}
-
+bindsym $mod+g gaps inner all minus 8
+bindsym $mod+Shift+g gaps inner all plus 8
