@@ -1,5 +1,5 @@
 #!/bin/bash 
-PATH+=~/.local/bin
+PATH+=:~/.local/bin
 pids="$XDG_RUNTIME_DIR/i3"
 mkdir "$pids"
 start()

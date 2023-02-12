@@ -1,6 +1,6 @@
 #!/bin/sh
 hostpath="$XDG_RUNTIME_DIR/host"
-all='win105 win106 win107 win108 win126 win200 win246 win247 win248 win249'
+all='win105 win106 win107 win108 win109 win126 win200 win246 win247 win248 win249'
 if [ $# -eq 0 ]; then
     host=$(echo "$all" |tr " " "\n"| fzf) || exit 1
 else
