@@ -133,6 +133,14 @@ randr_bspwm()
     .config/bspwm/xrandr.sh "$res"
 }
 
+randr_sway()
+{
+    case $1 in 
+        single) swaymsg output \$secondary disable;;
+        dual) swaymsg output \$secondary enable;;
+    esac 
+}
+
 randr_default()
 {
     case $1 in

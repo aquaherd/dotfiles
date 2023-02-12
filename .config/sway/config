@@ -259,7 +259,8 @@ bindsym XF86AudioPlay exec mpc toggle
 bindsym Mod1+q exec mpc prev
 bindsym Mod1+w exec mpc toggle
 bindsym Mod1+e exec mpc next
-bindsym $mod+i bar mode toggle
+bindsym $mod+i exec killall -USR1 waybar
+#bindsym $mod+i bar mode toggle
 #bindsym XF86AudioRaiseVolume exec
 #XF86AudioLowerVolume
 #XF86AudioMute
