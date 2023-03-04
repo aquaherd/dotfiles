@@ -126,7 +126,6 @@ require("lazy").setup({
     { 'akinsho/toggleterm.nvim', opts = {}, },
     {
         'stevearc/aerial.nvim',
-        cmd = 'AerialToggle',
         dependencies = { 'kyazdani42/nvim-web-devicons' },
         opts = {
             backends = { "treesitter" },
@@ -165,7 +164,7 @@ require("lazy").setup({
                 disabled_filetypes = { 'packer' },
             },
             extensions = {
-                -- 'aerial',
+                'aerial',
                 -- 'nvim-tree',
                 'fugitive',
                 'toggleterm',
