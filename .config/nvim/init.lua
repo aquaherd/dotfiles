@@ -84,6 +84,13 @@ require("lazy").setup({
     },
     'jvgrootveld/telescope-zoxide',
     { 'numToStr/Comment.nvim',   opts = {}, },
+    {
+        'lukas-reineke/indent-blankline.nvim',
+        opts = {
+            char = '┊',
+            show_trailing_blankline_indent = false,
+        },
+    },
     -- treesitter
     {
         'nvim-treesitter/nvim-treesitter',
@@ -171,7 +178,7 @@ require("lazy").setup({
                 'quickfix',
             },
             sections = {
-                lualine_c = { 'filename'},
+                lualine_c = { { 'filename', path = 1 }, 'aerial' },
             }
         }
     },
