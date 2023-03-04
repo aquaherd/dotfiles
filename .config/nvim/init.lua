@@ -168,7 +168,6 @@ require("lazy").setup({
                 component_separators = '',
                 section_separators = '',
                 theme = 'dracula',
-                disabled_filetypes = { 'packer' },
             },
             extensions = {
                 'aerial',
@@ -326,9 +325,10 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.filetype.add({
     extension = {
         mke = "make",
+        json = "jsonc",
     },
     pattern = {
-            [".clang.*"] = "yaml"
+            [".clang.*"] = "yaml",
     }
 })
 -- lsp & cmp setup
