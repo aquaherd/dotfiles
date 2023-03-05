@@ -110,30 +110,16 @@ require("lazy").setup({
     },
     -- Side panes
     {
-        'kyazdani42/nvim-tree.lua',
-        cmd = 'NvimTreeToggle',
-        dependencies = { 'kyazdani42/nvim-web-devicons' },
-        opts = {
-            view = {
-                width = 30,
-                side = "left",
-                hide_root_folder = true,
-            },
-            disable_netrw = true,
-            hijack_cursor = true,
-            update_cwd = true,
-            update_focused_file = {
-                enable = true
-            },
-            diagnostics = {
-                enable = true,
-            }
-        }
+        'nvim-neo-tree/neo-tree.nvim',
+        dependencies = { 'nvim-lua/plenary.nvim', 'nvim-tree/nvim-web-devicons', 'MunifTanjim/nui.nvim',
+            'miversen33/netman.nvim' },
+        opts = { sources = { 'filesystem', 'buffers', 'git_status', 'netman.ui.neo-tree' } },
+        cmd = { 'Neotree' }
     },
     { 'akinsho/toggleterm.nvim', opts = {}, },
     {
         'stevearc/aerial.nvim',
-        dependencies = { 'kyazdani42/nvim-web-devicons' },
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
         opts = {
             backends = { "treesitter" },
             on_attach = function(bufnr)
@@ -161,7 +147,7 @@ require("lazy").setup({
     -- status
     {
         'nvim-lualine/lualine.nvim',
-        dependencies = { 'kyazdani42/nvim-web-devicons' },
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
         opts = {
             options = {
                 globalstatus = true,
@@ -183,7 +169,7 @@ require("lazy").setup({
     },
     -- misc
     { 'norcalli/nvim-colorizer.lua', cmd = 'ColorizerToggle' },
-    { 'folke/which-key.nvim',        dependencies = { 'kyazdani42/nvim-web-devicons' }, opts = {} },
+    { 'folke/which-key.nvim',        dependencies = { 'nvim-tree/nvim-web-devicons' }, opts = {} },
 })
 -- unfinished business
 -- basic
@@ -281,7 +267,7 @@ wk.register({
         ['<leader>W'] = { ":Telescope lsp_dynamic_workspace_symbols<cr>", "LSP: Workspace symbols" },
         ['<leader>b'] = { ":Telescope buffers<cr>", "ts: buffers" },
         ['<leader>cc'] = { ":ColorizerToggle<cr>", "colorizer" },
-        ['<leader>e'] = { ":NvimTreeToggle<cr>", "tree" },
+        ['<leader>e'] = { ":Neotree toggle<cr>", "tree" },
         ['<leader>g'] = { ":Telescope live_grep<cr>", "ts: Live grep" },
         ['<leader>o'] = { ":Telescope oldfiles<cr>", "ts: oldfiles" },
         ['<leader>s'] = { ":Telescope lsp_document_symbols<cr>", "LSP: Document Symbols" },
