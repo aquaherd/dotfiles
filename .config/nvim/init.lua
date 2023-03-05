@@ -476,3 +476,5 @@ require('nvim-treesitter.configs').setup {
         },
     },
 }
+-- dispatch left of the dial
+vim.api.nvim_set_hl(0, 'NeoTreeNormal', { bg='NONE'} )
