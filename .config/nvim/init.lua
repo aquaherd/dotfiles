@@ -129,8 +129,6 @@ require("lazy").setup({
                 vim.api.nvim_buf_set_keymap(bufnr, 'n', '{', '<cmd>AerialPrev<CR>', {})
                 vim.api.nvim_buf_set_keymap(bufnr, 'n', '}', '<cmd>AerialNext<CR>', {})
                 -- Jump up the tree with '[[' or ']]'
-                vim.api.nvim_buf_set_keymap(bufnr, 'n', '[[', '<cmd>AerialPrevUp<CR>', {})
-                vim.api.nvim_buf_set_keymap(bufnr, 'n', ']]', '<cmd>AerialNextUp<CR>', {})
             end
         }
     },
@@ -325,6 +323,9 @@ local on_attach = function(_, bufnr)
         end
         vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
+    nmap('<C-p>', vim.diagnostic.goto_prev, 'Prev diagnostic')
+    nmap('<C-n>', vim.diagnostic.goto_next, 'Next diagnostic')
+    nmap('<leader>q', vim.diagnostic.setqflist, 'diagnostic setqflist')
     nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
     nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
@@ -333,6 +334,7 @@ local on_attach = function(_, bufnr)
     nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
     nmap('<leader>f', vim.lsp.buf.format, '[F]ormat buffer')
     nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+    nmap('<leader>wd', require('telescope.builtin').diagnostics, '[W]orkspace [D]iagnostics')
     nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
     nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
     nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
