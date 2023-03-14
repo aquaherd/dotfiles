@@ -259,12 +259,12 @@ wk.register({
         ['<S-TAB>'] = { ":tabprev<cr>", "previous tab" },
         ['<TAB>'] = { ":tabnext<cr>", "next tab" },
         ['<leader><space>'] = { ":Telescope<cr>", "telescope" },
-        ['<leader>cg'] = { ":Gitsigns setqflist<cr>", "git changes" },
-        ['<leader>cd'] = { ":Neogen<cr>", "generate doxygen" },
         ['<leader>F'] = { ":Telescope find_files<cr>", "ts: Find files" },
         ['<leader>W'] = { ":Telescope lsp_dynamic_workspace_symbols<cr>", "LSP: Workspace symbols" },
         ['<leader>b'] = { ":Telescope buffers<cr>", "ts: buffers" },
         ['<leader>cc'] = { ":ColorizerToggle<cr>", "colorizer" },
+        ['<leader>cd'] = { ":Neogen<cr>", "generate doxygen" },
+        ['<leader>cg'] = { ":Gitsigns setqflist<cr>", "git changes" },
         ['<leader>e'] = { ":Neotree toggle<cr>", "tree" },
         ['<leader>g'] = { ":Telescope live_grep<cr>", "ts: Live grep" },
         ['<leader>o'] = { ":Telescope oldfiles<cr>", "ts: oldfiles" },
@@ -323,24 +323,24 @@ local on_attach = function(_, bufnr)
         end
         vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
-    nmap('<C-p>', vim.diagnostic.goto_prev, 'Prev diagnostic')
-    nmap('<C-n>', vim.diagnostic.goto_next, 'Next diagnostic')
+    nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+    nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
+    nmap('<leader>Q', '<cmd>vim.diagnostic.setqflist({severity=vim.diagnostic.severity.ERROR})<cr>', 'diagnostic setqflist errors')
+    nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+    nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+    nmap('<leader>f', vim.lsp.buf.format, '[F]ormat buffer')
+    nmap('<leader>h', vim.diagnostic.open_float, 'Show [h]int')
     nmap('<leader>q', vim.diagnostic.setqflist, 'diagnostic setqflist')
     nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-    nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-    nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-    nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-    nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-    nmap('<leader>f', vim.lsp.buf.format, '[F]ormat buffer')
-    nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+    nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
     nmap('<leader>wd', require('telescope.builtin').diagnostics, '[W]orkspace [D]iagnostics')
+    nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
     nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
     nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-    nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
     nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-    nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-    nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+    nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+    nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
     nmap('<leader>wl', function()
         print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, '[W]orkspace [L]ist Folders')
@@ -479,4 +479,4 @@ require('nvim-treesitter.configs').setup {
     },
 }
 -- dispatch left of the dial
-vim.api.nvim_set_hl(0, 'NeoTreeNormal', { bg='NONE'} )
+vim.api.nvim_set_hl(0, 'NeoTreeNormal', { bg = 'NONE' })
