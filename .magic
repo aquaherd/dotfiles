@@ -1,0 +1,4 @@
+0       string  MAKEDO\ HEADER  Downloadable Object container
+>0xf    string  >\0  %-16s
+>0x2d   string  >\0  %s
+!:mime application/x-do
