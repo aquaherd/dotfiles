@@ -22,4 +22,5 @@ export DESKTOP_SESSION=$1
 #export HOSTNAME=$(hostname)
 sudo mkdir -p $XDG_RUNTIME_DIR
 sudo chown $USER:$USER $XDG_RUNTIME_DIR
+chmod 0700 $XDG_RUNTIME_DIR
 exec dbus-run-session $1
