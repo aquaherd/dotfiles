@@ -12,7 +12,7 @@ exec_always {
 	# picked up by gtk3
     gsettings set $gnome-schema gtk-theme 'Dracula'
     gsettings set $gnome-schema icon-theme 'Faba'
-    gsettings set $gnome-schema font-name 'Cantarell 11'
+    gsettings set $gnome-schema font-name 'Liberation Sans Narow 13'
     gsettings set $gnome-schema cursor-theme 'Adwaita'
     # x11
     xrdb .Xresources
