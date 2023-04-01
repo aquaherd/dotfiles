@@ -80,6 +80,7 @@ closeall_i3xfce()
 {
     closeall_i3 "$1"
     closeall_xfce "$1"
+    xfconf-query -c xfce4-session -p /general/SessionName -s Default
 }
 
 closeall_sway()

@@ -19,6 +19,8 @@ set $term st
 set $browser firefox
 
 #autostart
+exec --no-startup-id xfconf-query -c xfce4-session -p /general/SessionName -s i3
+exec --no-startup-id xfce4-session
 exec --no-startup-id ~/.local/bin/update-hsetroot.sh
 exec --no-startup-id xsetroot -cursor_name left_ptr
 exec_always --no-startup-id ~/.local/bin/i3-autotiling
