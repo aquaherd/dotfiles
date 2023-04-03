@@ -118,6 +118,9 @@ bindsym {
 
 	# Take a Screenshot with the region select
 	$mod+Print exec grim -t jpeg -g "$(slurp)" ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).jpg
+
+    # Rotate bg
+    $mod+Shift+v exec ~/.config/sway/bgrot.sh
 }
 
 # kill focused window
