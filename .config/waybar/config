@@ -136,6 +136,6 @@
         "return-type": "",
         "exec": "hamster current",
         "on-click": "hamster overview",
-        "interval": "60"
+        "interval": 60
     }
 }
