@@ -139,6 +139,28 @@ require("lazy").setup({
             { 'j-hui/fidget.nvim', opts = {}, tag = 'legacy' }, 'folke/neodev.nvim', },
     },
     { 'hrsh7th/nvim-cmp',       dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' }, },
+    {
+        'https://gitlab.com/schrieveslaach/sonarlint.nvim',
+        opts = {
+            server = {
+                cmd = {
+                    'sonarlint-language-server',
+                    -- Ensure that sonarlint-language-server uses stdio channel
+                    '-stdio',
+                    '-analyzers',
+                    -- paths to the analyzers you need, using those for python and java in this example
+                    vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarpython.jar"),
+                    vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarcfamily.jar"),
+                }
+            },
+            filetypes = {
+                'python',
+                'c',
+                'cpp',
+            }
+        }
+
+    },
     -- non-lua
     { 'tpope/vim-fugitive',     cmd = { "Git" } },
     { 'mboughaba/i3config.vim', ft = { 'i3config' } },
