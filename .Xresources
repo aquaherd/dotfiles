@@ -14,7 +14,7 @@ Xcursor.theme: "Adwaita"
 ! --------------------------------------------------
 URxvt.iso14755: false
 URxvt.iso14755_52: false
-URxvt.font: xft:Iosevka Term:size=13
+URxvt.font: xft:Iosevka NFM:size=13
 URxvt.letterSpace:0 
 URxvt.lineSpace: 0
 URxvt.internalBorder: 20
@@ -109,11 +109,11 @@ XLoad*Label*Justify: center
 *internalBorderWidth: 8
 
 !suckless
-st.font: Iosevka:pixelsize=17:style=Medium
+st.font: Iosevka NFM:pixelsize=17:style=Medium
 st.alpha: 0.95
 st.borderpx: 16
 
-dmenu.font: Iosevka:pixelsize=20:style=Medium
+dmenu.font: Iosevka NFM:pixelsize=20:style=Medium
 dmenu.alpha: 0.99
 dmenu.background: #44475a
 dmenu.selbackground: #bd93f9
