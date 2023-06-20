@@ -27,6 +27,11 @@ if [ ! -e $VMLINUZ -o ! -e $INITRD ]; then
 	exit 1
 fi
 
+if [ ! -d /sys/firmware/efi ]; then
+    echo "BIOS boot, skipping efimgr"
+    exit 0
+fi
+
 if [ -e $TARGET ]; then
 	if [ $TARGET -nt $VMLINUZ -a $TARGET -nt $INITRD ]; then
 		echo "$TARGET is already up-to-date."
