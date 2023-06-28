@@ -160,7 +160,6 @@ require("lazy").setup({
                 'cpp',
             }
         }
-
     },
     -- non-lua
     { 'tpope/vim-fugitive',     cmd = { "Git" } },
@@ -358,6 +357,8 @@ local on_attach = function(_, bufnr)
         end
         vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
+    nmap('[d', vim.diagnostic.goto_prev, 'Go to previous diagnostic message')
+    nmap(']d', vim.diagnostic.goto_next, 'Go to next diagnostic message')
     nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
     nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
     nmap('<leader>H', function()
