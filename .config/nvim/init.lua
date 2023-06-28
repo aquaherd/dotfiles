@@ -4,6 +4,7 @@ local opt = vim.opt
 local o = vim.o
 g.mapleader = ' '
 g.maplocalleader = ' '
+g.virtTextShow = true
 -- package manager
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -51,10 +52,10 @@ require("lazy").setup({
                 defaults = {
                     mappings = {
                         n = {
-                                ["<M-p>"] = l.toggle_preview
+                            ["<M-p>"] = l.toggle_preview
                         },
                         i = {
-                                ["<M-p>"] = l.toggle_preview
+                            ["<M-p>"] = l.toggle_preview
                         },
                     },
                     file_ignore_patterns = {
@@ -214,7 +215,7 @@ o.showtabline = 1
 o.number = true
 o.numberwidth = 1
 o.relativenumber = true
-o.signcolumn = "yes"
+o.signcolumn = "auto"
 o.wildmode = 'longest:full'
 -- window, buffer, tabs
 o.splitbelow = true
@@ -266,51 +267,51 @@ end
 -- mappings
 local wk = require("which-key")
 wk.register({
-        ['<A-down>'] = { ":wincmd j<cr>", "window down" },
-        ['<A-left>'] = { ":wincmd h<cr>", "window left" },
-        ['<A-right>'] = { ":wincmd l<cr>", "window right" },
-        ['<A-t>'] = { ":ToggleTerm<cr>", "toggle terminal" },
-        ['<A-up>'] = { ":wincmd k<cr>", "window up" },
-        ['<AS-down>'] = { ":wincmd -<cr>", "resize window down" },
-        ['<AS-left>'] = { ":wincmd <<cr>", "resize window left" },
-        ['<AS-right>'] = { ":wincmd ><cr>", "resize window right" },
-        ['<AS-up>'] = { ":wincmd +<cr>", "resize window up" },
-        ['<C-n>'] = { ":cnext<cr>", "qflist next" },
-        ['<C-p>'] = { ":cprev<cr>", "qflist prev" },
-        ['<C-s>'] = { ":w<cr>", "save" },
-        ['<S-TAB>'] = { ":tabprev<cr>", "previous tab" },
-        ['<TAB>'] = { ":tabnext<cr>", "next tab" },
-        ['<leader><space>'] = { ":Telescope<cr>", "telescope" },
-        ['<leader>F'] = { ":Telescope find_files<cr>", "ts: Find files" },
-        ['<leader>W'] = { ":Telescope lsp_dynamic_workspace_symbols<cr>", "LSP: Workspace symbols" },
-        ['<leader>b'] = { ":Telescope buffers<cr>", "ts: buffers" },
-        ['<leader>cc'] = { ":ColorizerToggle<cr>", "colorizer" },
-        ['<leader>cd'] = { ":Neogen<cr>", "generate doxygen" },
-        ['<leader>cg'] = { ":Gitsigns setqflist<cr>", "git changes" },
-        ['<leader>e'] = { ":Neotree toggle<cr>", "tree" },
-        ['<leader>g'] = { ":Telescope live_grep<cr>", "ts: Live grep" },
-        ['<leader>o'] = { ":Telescope oldfiles<cr>", "ts: oldfiles" },
-        ['<leader>s'] = { ":Telescope lsp_document_symbols<cr>", "LSP: Document Symbols" },
-        ['<leader>t'] = { ":ToggleTerm<cr>", "toggle terminal" },
-        ['<leader>z'] = { ":Telescope zoxide list<cr>", "ts: zoxide list" },
-        ['[c'] = { ":Gitsigns prev_hunk<cr>", "prev hunk" },
-        [']c'] = { ":Gitsigns next_hunk<cr>", "next hunk" },
+    ['<A-down>'] = { ":wincmd j<cr>", "window down" },
+    ['<A-left>'] = { ":wincmd h<cr>", "window left" },
+    ['<A-right>'] = { ":wincmd l<cr>", "window right" },
+    ['<A-t>'] = { ":ToggleTerm<cr>", "toggle terminal" },
+    ['<A-up>'] = { ":wincmd k<cr>", "window up" },
+    ['<AS-down>'] = { ":wincmd -<cr>", "resize window down" },
+    ['<AS-left>'] = { ":wincmd <<cr>", "resize window left" },
+    ['<AS-right>'] = { ":wincmd ><cr>", "resize window right" },
+    ['<AS-up>'] = { ":wincmd +<cr>", "resize window up" },
+    ['<C-n>'] = { ":cnext<cr>", "qflist next" },
+    ['<C-p>'] = { ":cprev<cr>", "qflist prev" },
+    ['<C-s>'] = { ":w<cr>", "save" },
+    ['<S-TAB>'] = { ":tabprev<cr>", "previous tab" },
+    ['<TAB>'] = { ":tabnext<cr>", "next tab" },
+    ['<leader><space>'] = { ":Telescope<cr>", "telescope" },
+    ['<leader>F'] = { ":Telescope find_files<cr>", "ts: Find files" },
+    ['<leader>W'] = { ":Telescope lsp_dynamic_workspace_symbols<cr>", "LSP: Workspace symbols" },
+    ['<leader>b'] = { ":Telescope buffers<cr>", "ts: buffers" },
+    ['<leader>cc'] = { ":ColorizerToggle<cr>", "colorizer" },
+    ['<leader>cd'] = { ":Neogen<cr>", "generate doxygen" },
+    ['<leader>cg'] = { ":Gitsigns setqflist<cr>", "git changes" },
+    ['<leader>e'] = { ":Neotree toggle<cr>", "tree" },
+    ['<leader>g'] = { ":Telescope live_grep<cr>", "ts: Live grep" },
+    ['<leader>o'] = { ":Telescope oldfiles<cr>", "ts: oldfiles" },
+    ['<leader>s'] = { ":Telescope lsp_document_symbols<cr>", "LSP: Document Symbols" },
+    ['<leader>t'] = { ":ToggleTerm<cr>", "toggle terminal" },
+    ['<leader>z'] = { ":Telescope zoxide list<cr>", "ts: zoxide list" },
+    ['[c'] = { ":Gitsigns prev_hunk<cr>", "prev hunk" },
+    [']c'] = { ":Gitsigns next_hunk<cr>", "next hunk" },
 }) -- normal mode
 wk.register({
-        ['<C-a>'] = { [[<Home>]], "go home" },
-        ['<C-e>'] = { [[<End>]], "go end" },
-        ['<C-b>'] = { [[<left>]], "left" },
-        ['<C-f>'] = { [[<right>]], "right" },
+    ['<C-a>'] = { [[<Home>]], "go home" },
+    ['<C-e>'] = { [[<End>]], "go end" },
+    ['<C-b>'] = { [[<left>]], "left" },
+    ['<C-f>'] = { [[<right>]], "right" },
 }, { mode = "i" }) -- insert mode
 wk.register({
-        ['<C-h>'] = { [[<C-\><C-n><C-W>h]], "window left" },
-        ['<C-j>'] = { [[<C-\><C-n><C-W>j]], "window down" },
-        ['<A-down>'] = { [[<C-\><C-n><C-W>j]], "window down" },
-        ['<C-k>'] = { [[<C-\><C-n><C-W>k]], "window up" },
-        ['<A-up>'] = { [[<C-\><C-n><C-W>k]], "window up" },
-        ['<C-l>'] = { [[<C-\><C-n><C-W>l]], "window right" },
+    ['<C-h>'] = { [[<C-\><C-n><C-W>h]], "window left" },
+    ['<C-j>'] = { [[<C-\><C-n><C-W>j]], "window down" },
+    ['<A-down>'] = { [[<C-\><C-n><C-W>j]], "window down" },
+    ['<C-k>'] = { [[<C-\><C-n><C-W>k]], "window up" },
+    ['<A-up>'] = { [[<C-\><C-n><C-W>k]], "window up" },
+    ['<C-l>'] = { [[<C-\><C-n><C-W>l]], "window right" },
     -- Normal Map
-        ['<A-t>'] = { [[<C-\><C-n><Cmd>ToggleTerm<CR>]], "toggle terminal" },
+    ['<A-t>'] = { [[<C-\><C-n><Cmd>ToggleTerm<CR>]], "toggle terminal" },
 }, { mode = "t" }) -- terminal mode
 -- Auto commands
 local user_group = vim.api.nvim_create_augroup('UserCommands', { clear = true })
@@ -334,23 +335,22 @@ vim.filetype.add({
         json = "jsonc",
     },
     pattern = {
-            [".clang.*"] = "yaml",
+        [".clang.*"] = "yaml",
     }
 })
 -- lsp & cmp setup
 local sign = function(opts)
-  -- See :help sign_define()
-  vim.fn.sign_define(opts.name, {
-    texthl = opts.name,
-    text = opts.text,
-    numhl = ''
-  })
+    -- See :help sign_define()
+    vim.fn.sign_define(opts.name, {
+        texthl = opts.name,
+        text = opts.text,
+        numhl = ''
+    })
 end
-
-sign({name = 'DiagnosticSignError', text = '✘'})
-sign({name = 'DiagnosticSignWarn', text = '▲'})
-sign({name = 'DiagnosticSignHint', text = '⚑'})
-sign({name = 'DiagnosticSignInfo', text = ''})
+sign({ name = 'DiagnosticSignError', text = '✘' })
+sign({ name = 'DiagnosticSignWarn', text = '▲' })
+sign({ name = 'DiagnosticSignHint', text = '⚑' })
+sign({ name = 'DiagnosticSignInfo', text = '' })
 local on_attach = function(_, bufnr)
     local nmap = function(keys, func, desc)
         if desc then
@@ -360,12 +360,20 @@ local on_attach = function(_, bufnr)
     end
     nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
     nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-    nmap('<leader>Q', '<cmd>vim.diagnostic.setqflist({severity=vim.diagnostic.severity.ERROR})<cr>', 'diagnostic setqflist errors')
+    nmap('<leader>H', function()
+        vim.g.virtTextShow = not vim.g.virtTextShow
+        vim.diagnostic.config({ virtual_text = vim.g.virtTextShow })
+    end, 'Toggle [H]ints')
+    nmap('<leader>Q', vim.diagnostic.setqflist, 'diagnostic setqflist all')
     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
     nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
     nmap('<leader>f', vim.lsp.buf.format, '[F]ormat buffer')
     nmap('<leader>h', vim.diagnostic.open_float, 'Show [h]int')
-    nmap('<leader>q', vim.diagnostic.setqflist, 'diagnostic setqflist')
+    nmap('<leader>q', function()
+            vim.fn.setqflist(vim.diagnostic.toqflist(vim.diagnostic.get(0)), 'r')
+            vim.api.nvim_command('botright cwindow')
+        end,
+        'diagnostic setqflist current buffer')
     nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
     nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
     nmap('<leader>wd', require('telescope.builtin').diagnostics, '[W]orkspace [D]iagnostics')
@@ -421,14 +429,14 @@ cmp.setup {
         end,
     },
     mapping = cmp.mapping.preset.insert {
-            ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-            ['<C-f>'] = cmp.mapping.scroll_docs(4),
-            ['<C-Space>'] = cmp.mapping.complete {},
-            ['<CR>'] = cmp.mapping.confirm {
+        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-Space>'] = cmp.mapping.complete {},
+        ['<CR>'] = cmp.mapping.confirm {
             behavior = cmp.ConfirmBehavior.Replace,
             select = true,
         },
-            ['<Tab>'] = cmp.mapping(function(fallback)
+        ['<Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
                 cmp.select_next_item()
             elseif luasnip.expand_or_jumpable() then
@@ -437,7 +445,7 @@ cmp.setup {
                 fallback()
             end
         end, { 'i', 's' }),
-            ['<S-Tab>'] = cmp.mapping(function(fallback)
+        ['<S-Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
                 cmp.select_prev_item()
             elseif luasnip.jumpable(-1) then
@@ -474,44 +482,56 @@ require('nvim-treesitter.configs').setup {
             lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
             keymaps = {
                 -- You can use the capture groups defined in textobjects.scm
-                    ['aa'] = '@parameter.outer',
-                    ['ia'] = '@parameter.inner',
-                    ['af'] = '@function.outer',
-                    ['if'] = '@function.inner',
-                    ['ac'] = '@class.outer',
-                    ['ic'] = '@class.inner',
+                ['aa'] = '@parameter.outer',
+                ['ia'] = '@parameter.inner',
+                ['af'] = '@function.outer',
+                ['if'] = '@function.inner',
+                ['ac'] = '@class.outer',
+                ['ic'] = '@class.inner',
             },
         },
         move = {
             enable = true,
             set_jumps = true, -- whether to set jumps in the jumplist
             goto_next_start = {
-                    [']m'] = '@function.outer',
-                    [']]'] = '@class.outer',
+                [']m'] = '@function.outer',
+                [']]'] = '@class.outer',
             },
             goto_next_end = {
-                    [']M'] = '@function.outer',
-                    [']['] = '@class.outer',
+                [']M'] = '@function.outer',
+                [']['] = '@class.outer',
             },
             goto_previous_start = {
-                    ['[m'] = '@function.outer',
-                    ['[['] = '@class.outer',
+                ['[m'] = '@function.outer',
+                ['[['] = '@class.outer',
             },
             goto_previous_end = {
-                    ['[M'] = '@function.outer',
-                    ['[]'] = '@class.outer',
+                ['[M'] = '@function.outer',
+                ['[]'] = '@class.outer',
             },
         },
         swap = {
             enable = true,
             swap_next = {
-                    ['<leader>p'] = '@parameter.inner',
+                ['<leader>p'] = '@parameter.inner',
             },
             swap_previous = {
-                    ['<leader>P'] = '@parameter.inner',
+                ['<leader>P'] = '@parameter.inner',
             },
         },
     },
 }
 -- dispatch left of the dial
 vim.api.nvim_set_hl(0, 'NeoTreeNormal', { bg = 'NONE' })
+vim.cmd.aunmenu([[PopUp.How-to\ disable\ mouse]])
+vim.cmd.amenu([[PopUp.:Inspect <Cmd>Inspect<CR>]])
+vim.cmd.amenu([[PopUp.:Telescope <Cmd>Telescope<CR>]])
+vim.diagnostic.config({
+    virtual_text = true,
+    virtual_lines = { only_current_line = true },
+    signs = true,
+    float = {
+        border = "single",
+        source = "if_many"
+    },
+})
