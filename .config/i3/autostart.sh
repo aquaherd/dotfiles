@@ -18,7 +18,9 @@ for d in "$XDG_RUNTIME_DIR"/i3/*.pid; do
     rm "$pid"
 done
 start redshift
-start picom 
+if [ -z "$XRDP_SESSION" ]; then
+    start picom 
+fi
 start dunst
 start xsettingsd -c ~/.config/i3/xsettings.conf
 start i3-autotiling 
