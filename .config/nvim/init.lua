@@ -214,7 +214,7 @@ o.showtabline = 1
 o.number = true
 o.numberwidth = 1
 o.relativenumber = true
-o.signcolumn = "auto"
+o.signcolumn = "yes"
 o.wildmode = 'longest:full'
 -- window, buffer, tabs
 o.splitbelow = true
