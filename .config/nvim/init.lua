@@ -234,10 +234,14 @@ opt.whichwrap:append "<>[]hl"
 -- remove intro
 opt.shortmess:append "sI"
 -- neovide
-opt.guifont = { 'Iosevka', ':h12' }
+opt.guifont = { 'Iosevka Nerd Font Mono', ':h12' }
 if g.neovide then
     g.neovide_transparency = 0.85
     g.neovide_cursor_animation_length = 0.01
+    g.neovide_padding_top = 18
+    g.neovide_padding_bottom = 18
+    g.neovide_padding_right = 18
+    g.neovide_padding_left = 18
 end
 -- disable inbuilt vim plugins
 local built_ins = {
