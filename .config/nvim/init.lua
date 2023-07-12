@@ -223,10 +223,7 @@ o.hidden = true
 opt.fillchars.vert = "│"
 o.cursorline = true
 o.scrolloff = 8
--- text formatting
-o.expandtab = true
-o.shiftwidth = 4
-o.tabstop = 4
+-- text formatting (shiftwidth, tabstops etc: use .editorconfig, .clangd or modeline)
 o.smartindent = true
 o.showmatch = true
 o.smartcase = true
