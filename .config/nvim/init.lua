@@ -163,6 +163,7 @@ require("lazy").setup({
     },
     -- non-lua
     { 'tpope/vim-fugitive',     cmd = { "Git" } },
+    { 'tpope/vim-sleuth' },
     { 'mboughaba/i3config.vim', ft = { 'i3config' } },
     -- status
     {
