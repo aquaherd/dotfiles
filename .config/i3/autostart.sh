@@ -25,6 +25,7 @@ start dunst
 start xsettingsd -c ~/.config/i3/xsettings.conf
 start i3-autotiling 
 start xsetroot -cursor_name left_ptr
+start stalonetray
 if test -f ~/.config/barrier.sgc; then
     start barriers -f --debug INFO --name "$HOSTNAME" --enable-crypto -c ~/.config/barrier.sgc --address '[127.0.0.1]:24800'
 fi
