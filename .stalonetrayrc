@@ -34,17 +34,17 @@ fuzzy_edges 0
 
 # geometry <geometry>        # tray's geometry in standard X notation; width and
                              # height are specified in slot_size multiples
-geometry 1x1-0+0
+geometry 1x1-2-2
 
 # grow_gravity <gravity>     # one of N, S, E, W, NW, NE, SW, SE; tray will grow
                              # in the direction opposite to one specified by
 							 # grow_gravity; if horizontal or vertical
 							 # direction is not specified, tray will not grow in
 							 # that direction
-grow_gravity N
+grow_gravity S
 
 # icon_gravity <gravity>     # icon placement gravity, one of NW, NE, SW, SE
-icon_gravity SW
+icon_gravity S
 
 # icon_size <int>            # specifies dimensions of typical icon slot
 icon_size 24
@@ -66,7 +66,7 @@ log_level err
                              #     icon_size
                              # * use_icon_hints - use icon window hints to
                              #     dtermine icon size
-
+kludges fix_window_pos
 # max_geometry <geometry>    # maximal tray dimensions; 0 in width/height means
                              # no limit
 max_geometry 0x0
@@ -126,11 +126,11 @@ window_layer normal
                              # windows); mode defines to which screen border tray
                              # will be attached; it can be either top, bottom,
                              # left, right, none or auto (default)
-window_strut auto
+window_strut bottom
 
 # window_type <type>         # set the EWMH-compatible window type; one of:
                              # desktop, dock, normal, toolbar, utility
-window_type dock
+window_type utility
 
 # xsync [<bool>]             # whether to operate on X server synchronously (SLOOOOW)
 xsync false
