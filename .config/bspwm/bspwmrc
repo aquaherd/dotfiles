@@ -73,7 +73,7 @@ bspc rule -a "Microsoft Teams - Preview" border=off
 bspc rule -a "Xfce4-panel" state=floating
 
 # backdrop
-update-hsetroot.sh &
+update-hsetroot.sh -r &
 
 # closure in dmenu-sys.sh
 launch xsettingsd

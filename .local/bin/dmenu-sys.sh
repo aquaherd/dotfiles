@@ -161,8 +161,14 @@ randr_default()
 randr()
 {
     fix_desktop
+    read -r oldrandr < .cache/xrandr
     echo "randr: $PRIMARY $SECONDARY randr_${DESKTOP_SESSION}  $*"
     "randr_${DESKTOP_SESSION}" "$*" || randr_default "$*"
+    echo "$*" > .cache/xrandr
+    if [ "$*" != "$oldrandr" ]; then
+        update_backdrop || .local/bin/update-hsetroot.sh
+    fi
+
 }
 
 # requires an efi where each kernel is booted directly

@@ -1,5 +1,7 @@
 #!/bin/bash 
 PATH+=:~/.local/bin
+. ~/.local/lib/dmenu-lib.sh
+restore_backdrop
 pids="$XDG_RUNTIME_DIR/i3"
 mkdir "$pids"
 start()
@@ -11,7 +13,6 @@ start()
     echo $pid > "$pids/$1.pid"
 
 }
-
 for d in "$XDG_RUNTIME_DIR"/i3/*.pid; do 
     read -r pid < "$d"
     kill "$pid"
@@ -29,4 +30,3 @@ start stalonetray
 if test -f ~/.config/barrier.sgc; then
     start barriers -f --debug INFO --name "$HOSTNAME" --enable-crypto -c ~/.config/barrier.sgc --address '[127.0.0.1]:24800'
 fi
-start update-hsetroot.sh

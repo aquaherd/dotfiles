@@ -1,6 +1,5 @@
 #!/bin/sh
 export DESKTOP_SESSION=2bwm
-CONF=~/.config/2bwm
 LOG=~/.cache/2bwm.log
 savelog -c 7 $LOG || true
 touch $LOG
