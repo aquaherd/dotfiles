@@ -35,7 +35,7 @@ return {
     color_scheme = "Dracula",
     default_gui_startup_args = { 'connect', 'unix' },
     default_prog = default_prog,
-    font = wezterm.font("Iosevka"),
+    font = wezterm.font("Iosevka Nerd Font Mono"),
     font_size = 13.0,
     hide_tab_bar_if_only_one_tab = true,
     -- hide_mouse_cursor_when_typing = true,   
