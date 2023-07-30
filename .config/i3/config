@@ -169,12 +169,18 @@ bindsym Mod1+Tab exec --no-startup-id rofi -modi $rofi_modes -show window
 bindsym $mod+Shift+p exec --no-stairtup-id pkill -SIGUSR1 picom
 bindsym $mod+p exec scrot $HOME'/Pictures/Screenshots/%Y-%m-%d_%H%M%S-$wx$h_scrot.png' --exec 'pqiv $f'
 # media keys
+bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
 bindsym XF86AudioNext exec --no-startup-id playerctl next
-bindsym XF86AudioPrev exec --no-startup-id playerctl previous
-bindsym XF86AudioRaiseVolume exec --no-startup-id amixer set Master 5%+
-bindsym XF86AudioLowerVolume exec --no-startup-id amixer set Master 5%-
 bindsym XF86AudioMute exec --no-startup-id amixer set Master toggle
+bindsym XF86AudioLowerVolume exec --no-startup-id amixer set Master 5%-
+bindsym XF86AudioRaiseVolume exec --no-startup-id amixer set Master 5%+
+bindsym $mod+F7 exec --no-startup-id playerctl previous
+bindsym $mod+F8 exec --no-startup-id playerctl play-pause
+bindsym $mod+F9 exec --no-startup-id playerctl next
+bindsym $mod+F10 exec --no-startup-id amixer set Master toggle
+bindsym $mod+F11 exec --no-startup-id amixer set Master 5%-
+bindsym $mod+F12 exec --no-startup-id amixer set Master 5%+
 
 # Cause Settings app to float above tiled windows
 floating_maximum_size -1 x -1

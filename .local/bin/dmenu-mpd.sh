@@ -5,7 +5,7 @@ all_name='[ALL]'
 mode=Library
 
 d_artist() {
-    mpc list artist | sort -f | ask 'Artist:' $DMENU_DEFAULTS
+    mpc list artist | sort -f | ask 'Artist:' "$DMENU_DEFAULTS"
 }
 
 d_album() {
@@ -17,7 +17,7 @@ d_album() {
         {
             printf '%s\n' "$all_name"
             printf '%s\n' "${albums[@]}" | sort -f
-        } | ask 'Album:' $DMENU_DEFAULTS
+        } | ask 'Album:' "$DMENU_DEFAULTS"
     else
         # We only have one album, so just use that.
         printf '%s\n' "${albums[0]}"
@@ -25,32 +25,27 @@ d_album() {
 }
 
 d_song() {
-	mpc list title | sort -f |  ask 'Song:' $DMENU_DEFAULTS 
+    mpc list title | sort -f |  ask 'Song:' "$DMENU_DEFAULTS" 
 }
 
 d_playlist() {
-	mpc lsplaylists | ask 'Playlist:' $DMENU_DEFAULTS
+    mpc lsplaylists | ask 'Playlist:' "$DMENU_DEFAULTS"
 }
 
-i=2
+usage() {
+    echo 'dmenu-mpc.sh [-l|-p|-s|-a]'
+    exit 1
+}
 
-for arg do
-    if [[ $arg == :: ]]; then
-        dmenu_args=( "${@:$i}" )
-        break
-    fi
-
-    case "$arg" in
-	-l) mode=Library ;;
-	-p) mode=Playlist ;;
-	-s) mode=Song ;;
-	-a) 
-			MODE=$(echo -e "Library\nSong\nPlaylist" | ask 'mpd:' $DMENU_DEFAULTS)
-			mode=$MODE ;;
-    esac
-
-    let i++
-done
+case "$1" in
+    -l) mode=Library ;;
+    -p) mode=Playlist ;;
+    -s) mode=Song ;;
+    -a) 
+        MODE=$(echo -e "Library\nSong\nPlaylist" | ask 'mpd:' "$DMENU_DEFAULTS")
+        mode=$MODE ;;
+    *) usage
+esac
 
 case "$mode" in
     Library)
@@ -68,14 +63,14 @@ case "$mode" in
         fi
 
         mpc play >/dev/null
-    ;;
-	Playlist)
-	mpc clear
+        ;;
+    Playlist)
+        mpc clear
         mpc load "$(d_playlist)" > /dev/null && mpc play >/dev/null
-    ;;
-	Song)
-		mpc clear
-		mpc search title "$(d_song)" | mpc add
-		mpc play >/dev/null
-	;;
+        ;;
+    Song)
+        mpc clear
+        mpc search title "$(d_song)" | mpc add
+        mpc play >/dev/null
+        ;;
 esac
