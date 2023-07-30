@@ -125,7 +125,7 @@ closeall_gnome()
 
 closeall()
 {
-	fix_desktop
+    fix_desktop
     "closeall_${DESKTOP_SESSION}" "$*" || true
 }
 
@@ -214,6 +214,21 @@ ask_sys()
     echo "$prompt"|tr " " "\n"|ask "sys:"|| true
 }
 
+lock_i3()
+{
+    for d in i3lock-fancy i3lock xflock4; do
+        if command -v $d > /dev/null; then
+            $d 
+            return
+        fi
+    done
+}
+
+lock()
+{
+    "lock_$DESKTOP_SESSION" || dm-tool lock
+}
+
 # determine init system
 res=$(ask_sys)
 read -r r < /proc/1/comm
@@ -232,7 +247,7 @@ case $res in
     logout)             closeall quit;;
     reboot|poweroff)    closeall && $ctl "$res";;
     single|dual)        randr "$res";;
-    lock)               dm-tool lock;;
+    lock)               lock;;
     sleep)              $ctl suspend;;
     reload)             reload;;
     boot)               boot && $ctl reboot;;
