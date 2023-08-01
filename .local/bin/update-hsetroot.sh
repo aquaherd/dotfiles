@@ -21,7 +21,7 @@ Options:
 
 }
 
-shuffle()
+mode()
 {
     m=dual
     if [ 1 -eq "$(xrandr --listactivemonitors | grep Monitors | cut -d' ' -f2)" ]; then
@@ -29,6 +29,12 @@ shuffle()
     else
 	m=dual
     fi
+    echo $m
+}
+
+shuffle()
+{
+    m=$(mode)
     DIR=~/Pictures/Backdrops/${m}
     DST=~/.cache/i3.current.backdrop
     CUR=$(readlink "$DST" || echo none)
@@ -39,33 +45,39 @@ shuffle()
     echo "$CUR $SET $DST"
     ln -svf "$SET" "$DST"
     cp -v "$SET" "/usr/local/share/backgrounds/$(id -un)" 
-    apply "$DST"
+    echo "$m" > "${DST}.mode"
+    apply "$DST" 
 }
 
 restore()
 {
     DST=/usr/local/share/backgrounds/$(id -un)
-
+    modeNew="$(mode)"
+    read -r modeOld < ~/.cache/i3.current.backdrop.mode 
     if [  ! -f "$DST" ]; then
 	echo "$DST not found. Shuffle."
+	shuffle
+    fi
+    if [ "$modeNew" != "$modeOld" ]; then
+	echo "mode not found. Shuffle."
 	shuffle
     fi
     apply "$DST"
 }
 
-    if ! GETOPT=$(getopt -o rhs --long restore,help,shuffle -n 'update-hsetroot.sh' -- "$@"); then
-	usage
-    fi
+if ! GETOPT=$(getopt -o rhs --long restore,help,shuffle -n 'update-hsetroot.sh' -- "$@"); then
+    usage
+fi
 
-    eval set -- "$GETOPT"
-    while true; do
-	case $1 in
-	    -r|--restore) restore;;
-	    -h|--help) usage;;
-	    -s|--shuffle) shuffle;;
-	    --) shift;break;;
-	    *) usage "$*";;
-	esac
-    done
+eval set -- "$GETOPT"
+while true; do
+    case $1 in
+	-r|--restore) restore;;
+	-h|--help) usage;;
+	-s|--shuffle) shuffle;;
+	--) shift;break;;
+	*) usage "$*";;
+    esac
+done
 # default action
 shuffle
