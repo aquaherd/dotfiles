@@ -1,5 +1,11 @@
 #!/bin/sh
 
+for sudo in doas sudo; do
+	if command -v $sudo > /dev/null; then
+		break
+	fi
+done
+export sudo
 . ~/.local/lib/chroot.sh
 
 shells="/bin/bash /bin/ash /bin/sh"
@@ -21,7 +27,7 @@ enter()
 
 	for s in $shells; do
 		if [ -f /run/mount/$n/$s ]; then
-			sudo chroot /run/mount/$n $s -l
+			$sudo chroot /run/mount/$n $s -l
 			break
 		fi
 	done
