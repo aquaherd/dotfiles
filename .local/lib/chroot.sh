@@ -20,7 +20,7 @@ chroot_mount()
     echo not mounting $d
   done
 
-  for d in Applications Documents Downloads Firmware Logfiles Music Pictures Projects Videos; do
+  for d in Documents Downloads Firmware Logfiles Music Pictures Projects Videos; do
     $sudo mount -o bind /mnt/data/hakan/$d /run/mount/$2/home/herd/$d || echo $d was not mounted.
   done
 }
