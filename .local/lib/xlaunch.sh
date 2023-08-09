@@ -10,6 +10,9 @@ if [ -z "$XDG_RUNTIME_DIR" ]; then
     sudo chown $USER:$USER $XDG_RUNTIME_DIR
     chmod 0700 $XDG_RUNTIME_DIR
 fi
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    eval $(ssh-agent)
+fi
 if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
     exec dbus-run-session $1
 fi

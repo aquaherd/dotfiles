@@ -2,6 +2,12 @@
 
 managers="apk apt dnf kiss pacman swupd xbps-install yum"
 
+for sudo in doas sudo; do
+	if command -v $sudo > /dev/null; then
+		break
+	fi
+done
+export sudo
 . ~/.local/lib/chroot.sh
 
 action_get() 

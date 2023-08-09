@@ -1,0 +1,4 @@
+#!/bin/sh
+path=/run/user/$(id -u)
+mkdir -p ${path}/podman
+exec podman system service --time=0 "unix://${path}/podman.sock"
