@@ -1,6 +1,7 @@
 #!/bin/bash 
 PATH+=:~/.local/bin
 . ~/.local/lib/dmenu-lib.sh
+randr_restore
 restore_backdrop
 pids="$XDG_RUNTIME_DIR/i3"
 mkdir "$pids"

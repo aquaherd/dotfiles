@@ -7,7 +7,7 @@ fpk=~/.local/share/flatpak/exports/share/applications
 cache=~/.cache/applications.txt
 
 if [ $# -eq 0 ];then
-    if [ $cache -nt $usr -a $cache -nt $loc -a $cache -tn $fpk ]; then
+    if [ $cache -nt $usr -a $cache -nt $loc -a $cache -nt $fpk ]; then
         echo app cache is up to date.
         exit 0
     fi
