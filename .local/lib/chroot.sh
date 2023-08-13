@@ -1,5 +1,12 @@
 chroot_mount() 
 {
+  sudo=""
+  for s in doas sudo; do
+    if command -v $s > /dev/null; then
+      sudo=$s 
+      break
+    fi
+  done
   echo "chroot_mount $1 to $2"
   $sudo mkdir -p /run/mount/"$2"
   $sudo mount -t auto "$1" /run/mount/"$2"
