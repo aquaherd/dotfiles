@@ -68,7 +68,7 @@ return {
         { name = 'pc198', remote_address = 'pc198:8192', bootstrap_via_ssh = 'z003tnse@pc198' },
         { name = 'rda', remote_address = 'win043:8192', bootstrap_via_ssh = 'z003tnse@win043', accept_invalid_hostnames = true },
     },
-
+    tls_servers = { { bind_address = '192.168.23.198:8192' } },
     ssh_domains = {
         { name = 'pc105', remote_address = '192.168.23.105', username = 'Tester' }, -- OK
         { name = 'pc106', remote_address = '192.168.188.106', username = 'sshuser' }, -- OK
