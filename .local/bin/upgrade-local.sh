@@ -15,15 +15,15 @@ export sudo
 action_get() 
 {
     case $1 in
-	apk)			echo 'apk upgrade -a' ;;
-	apt) 			echo 'apt-get update && apt-get dist-upgrade -y && apt-get autoremove --purge -y && apt-get autoclean' ;;
-	dnf) 			echo 'dnf upgrade && dnf autoremove' ;;
-	kiss) 			echo 'KISS_PROMPT=0 kiss u && KISS_PROMPT=0 kiss u' ;;
-	pacman) 		echo 'pacman -Syu --noconfirm && pacman -Sc --noconfirm' ;;
-	swupd) 			echo 'swupd update' ;;
-	xbps-install) 	echo 'xbps-install -Syu && xbps-remove -oy' ;;
-	yum) 			echo "yum upgrade" ;;
-	*) 				return 1 ;;
+	apk)		echo 'apk upgrade -a' ;;
+	apt) 		echo 'apt-get update && apt-get dist-upgrade -y && apt-get autoremove --purge -y && apt-get autoclean' ;;
+	dnf) 		echo 'dnf upgrade && dnf autoremove' ;;
+	kiss) 		echo 'KISS_PROMPT=0 kiss u && KISS_PROMPT=0 kiss u' ;;
+	pacman) 	echo 'pacman -Syu --noconfirm && pacman -Sc --noconfirm' ;;
+	swupd) 		echo 'swupd update' ;;
+	xbps-install)	echo 'xbps-install -Syu && xbps-remove -oy' ;;
+	yum) 		echo "yum upgrade" ;;
+	*) 		return 1 ;;
     esac
 }
 
@@ -31,23 +31,19 @@ chroot_upgrade()
 {
     u=""
     c=""
-
     echo "Checking $1 $2"
     if mount | grep -q "$1"; then
 	echo will not fsck "$1"
     else
 	sudo fsck -y "$1"
     fi
-
     chroot_mount "$1" "$2"
-
     if [ -f /run/mount/"$2"/etc/os-release ]; then
 	# shellcheck source=/etc/os-release
 	. /run/mount/"$2"/etc/os-release
 	echo "Found $PRETTY_NAME"
-
 	for u in $managers; do
-	    if ! sudo chroot /run/mount/"$2" command -v "$u" 2>/dev/null; then
+	    if ! sudo chroot /run/mount/"$2" sh -c "command -v $u" >/dev/null; then
 		continue
 	    fi
 
@@ -58,12 +54,10 @@ chroot_upgrade()
 	    fi
 	    break
 	done
-
 	MTP=/run/mount/$2 build-uefi.sh
     else
 	echo "Skipped non-linux"
     fi
-
     chroot_umount "$1" "$2"
 }
 
@@ -83,7 +77,6 @@ local_upgrade()
 	fi
 	break
     done
-
     build-uefi.sh
 }
 
@@ -115,7 +108,6 @@ chroot_upgrade_one()
 		;;
 	esac
     fi
-
     return 0
 }
 
