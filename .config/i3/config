@@ -118,8 +118,8 @@ bindsym $mod+8 workspace $ws8
 bindsym $mod+Tab workspace back_and_forth
 bindsym $mod+bracketleft workspace prev
 bindsym $mod+bracketright workspace next
-bindsym $mod+Comma workspace prev_on_output
-bindsym $mod+Dot workspace next_on_output
+bindsym $mod+comma workspace prev_on_output
+bindsym $mod+period workspace next_on_output
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace $ws1
@@ -168,6 +168,7 @@ bindsym $mod+Shift+d exec --no-startup-id rofi -sort -sidebar-mode -modi $rofi_m
 bindsym Mod1+Tab exec --no-startup-id rofi -modi $rofi_modes -show window
 bindsym $mod+Shift+p exec --no-stairtup-id pkill -SIGUSR1 picom
 bindsym $mod+p exec scrot $HOME'/Pictures/Screenshots/%Y-%m-%d_%H%M%S-$wx$h_scrot.png' --exec 'pqiv $f'
+bindsym $mod+Shift+s exec xfce4-screenshooter -r
 # media keys
 bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause

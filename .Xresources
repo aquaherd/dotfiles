@@ -76,7 +76,7 @@ rofi.show-icons: true
 	#define LAYOUT dual
 ! work:
 #elif SRVR_pc198 // work
-	#define PRIMARY DP-1
+	#define PRIMARY DP-2
 	#define SECONDARY DP-3
 	#define TEMP /sys/class/hwmon/hwmon0/temp1_input
 	#define LAYOUT dual

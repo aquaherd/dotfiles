@@ -129,48 +129,6 @@ closeall()
     "closeall_${DESKTOP_SESSION}" "$*" || true
 }
 
-randr_bspwm()
-{
-    .config/bspwm/xrandr.sh "$res"
-}
-
-randr_sway()
-{
-    case $1 in 
-        single) swaymsg output \$secondary disable;;
-        dual) swaymsg output \$secondary enable;;
-    esac 
-}
-
-randr_default()
-{
-    case $1 in
-    single)
-        xrandr \
-            --output "$PRIMARY" --primary --auto \
-            --output "$SECONDARY" --off
-        ;;
-    dual)
-        xrandr \
-            --output "$PRIMARY" --primary --auto \
-            --output "$SECONDARY" --auto --left-of "$PRIMARY"
-        ;;
-    esac
-}
-
-randr()
-{
-    fix_desktop
-    read -r oldrandr < .cache/xrandr
-    echo "randr: $PRIMARY $SECONDARY randr_${DESKTOP_SESSION}  $*"
-    "randr_${DESKTOP_SESSION}" "$*" || randr_default "$*"
-    echo "$*" > .cache/xrandr
-    if [ "$*" != "$oldrandr" ]; then
-        update_backdrop || .local/bin/update-hsetroot.sh
-    fi
-
-}
-
 # requires an efi where each kernel is booted directly
 ask_boot()
 {
