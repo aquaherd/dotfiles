@@ -7,6 +7,10 @@
   enabled_plugins = CustomCommandsMenu, TerminalShot, Logger, ActivityWatch, SSHMenu
   always_split_with_profile = True
 [keybindings]
+  go_up = <Primary><Alt>Up
+  go_down = <Primary><Alt>Down
+  go_left = <Primary><Alt>Left
+  go_right = <Primary><Alt>Right
   rotate_cw = <Primary><Alt>r
   new_terminator = <Alt>Return
 [profiles]

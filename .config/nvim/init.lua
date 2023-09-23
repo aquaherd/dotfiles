@@ -231,15 +231,27 @@ o.smartcase = true
 opt.whichwrap:append "<>[]hl"
 -- remove intro
 opt.shortmess:append "sI"
+local wk = require("which-key")
 -- neovide
 opt.guifont = { 'Iosevka Nerd Font Mono', ':h12' }
 if g.neovide then
-    g.neovide_transparency = 0.85
     g.neovide_cursor_animation_length = 0.01
-    g.neovide_padding_top = 18
     g.neovide_padding_bottom = 18
-    g.neovide_padding_right = 18
     g.neovide_padding_left = 18
+    g.neovide_padding_right = 18
+    g.neovide_padding_top = 18
+    g.neovide_remember_window_size = true
+    g.neovide_transparency = 0.85
+    g.neovide_scale_factor = 1.0
+    wk.register({
+        ['<C-ScrollWheelUp>'] = { function() g.neovide_scale_factor = g.neovide_scale_factor + 0.1 end,
+            "neovide: zoom ++" },
+        ['zp'] = { function() g.neovide_scale_factor = g.neovide_scale_factor + 0.1 end, "neovide: zoom ++" },
+        ['<C-ScrollWheelDown>'] = { function() g.neovide_scale_factor = g.neovide_scale_factor - 0.1 end,
+            "neovide: zoom --" },
+        ['zm'] = { function() g.neovide_scale_factor = g.neovide_scale_factor - 0.1 end, "neovide: zoom --" },
+        ['zr'] = { function() g.neovide_scale_factor = 1 end, "neovide: zoom reset" },
+    })
 end
 -- disable inbuilt vim plugins
 local built_ins = {
@@ -266,7 +278,6 @@ for _, plugin in pairs(built_ins) do
     g["loaded_" .. plugin] = 1
 end
 -- mappings
-local wk = require("which-key")
 wk.register({
     ['<A-down>'] = { ":wincmd j<cr>", "window down" },
     ['<A-left>'] = { ":wincmd h<cr>", "window left" },
@@ -312,6 +323,7 @@ wk.register({
     ['<A-up>'] = { [[<C-\><C-n><C-W>k]], "window up" },
     ['<C-l>'] = { [[<C-\><C-n><C-W>l]], "window right" },
     -- Normal Map
+    ['<Esc>'] = { [[<C-\><C-n>]], "normal mode" },
     ['<A-t>'] = { [[<C-\><C-n><Cmd>ToggleTerm<CR>]], "toggle terminal" },
 }, { mode = "t" }) -- terminal mode
 -- Auto commands
@@ -328,6 +340,10 @@ vim.api.nvim_create_autocmd('FileType', {
     pattern = { 'help', 'man', 'qflist' },
     group = user_group,
     command = 'nnoremap <buffer> q <cmd>quit<cr>'
+})
+vim.api.nvim_create_autocmd('VimLeave', {
+    group = user_group,
+    command = 'set guicursor= | call chansend(v:stderr, "\x1b[ q")'
 })
 -- custom filetypes
 vim.filetype.add({
