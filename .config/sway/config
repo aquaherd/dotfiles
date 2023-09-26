@@ -259,9 +259,9 @@ bindsym $mod+minus scratchpad show
 bindsym XF86AudioNext exec mpc next
 bindsym XF86AudioPrev exec mpc prev
 bindsym XF86AudioPlay exec mpc toggle
-bindsym Mod1+q exec mpc prev
-bindsym Mod1+w exec mpc toggle
-bindsym Mod1+e exec mpc next
+bindsym Mod1+q exec playerctl previous
+bindsym Mod1+w exec playerctl play-pause
+bindsym Mod1+e exec playerctl next
 bindsym $mod+i exec killall -USR1 waybar
 #bindsym $mod+i bar mode toggle
 #bindsym XF86AudioRaiseVolume exec
