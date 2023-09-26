@@ -134,7 +134,7 @@
     "custom/hamster": {
         "format": "{}",
         "return-type": "",
-        "exec": "hamster current",
+        "exec": "hamster current | cut -b 18-",
         "on-click": "hamster overview",
         "interval": 60
     }
