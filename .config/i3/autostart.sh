@@ -36,3 +36,8 @@ if test -f "$BARRIERRC"; then
 else
     echo "$BARRIERRC does not exist"
 fi
+
+# e.g. alpine has no user services
+test -d "$HOME/.local/service" && if ! pidof runsvdir; then
+        start runsvdir ~/.local/service
+fi
