@@ -120,6 +120,9 @@ chroot_upgrade_all()
 	echo "*** $basename end ***"
 	echo
     done
+    if command -v flatpak > /dev/null; then
+	flatpak update -y
+    fi
 }
 
 usage() 
