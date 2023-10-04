@@ -58,14 +58,7 @@ require("lazy").setup({
                             ["<M-p>"] = l.toggle_preview
                         },
                     },
-                    file_ignore_patterns = {
-                        "%.jpg",
-                        "%.jpeg",
-                        "%.png",
-                        "%.otf",
-                        "%.ttf",
-                        ".git",
-                    },
+                    file_ignore_patterns = { "%.jpg", "%.jpeg", "%.png", "%.otf", "%.ttf", ".git" },
                     prompt_prefix = "   ",
                     selection_caret = "  ",
                     entry_prefix = "  ",
@@ -76,9 +69,7 @@ require("lazy").setup({
                         },
                     },
                 },
-                extensions = {
-                    zoxide = {}
-                },
+                extensions = { zoxide = {} },
             }
             t.load_extension("zoxide")
         end
@@ -87,17 +78,13 @@ require("lazy").setup({
     { 'numToStr/Comment.nvim',   opts = {}, },
     {
         'lukas-reineke/indent-blankline.nvim',
-        opts = {
-            char = '┊',
-            show_trailing_blankline_indent = false,
-        },
+        main = "ibl",
+        opts = { indent = { char = '┊' } }
     },
     -- treesitter
     {
         'nvim-treesitter/nvim-treesitter',
-        dependencies = {
-            'nvim-treesitter/nvim-treesitter-textobjects',
-        },
+        dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
         config = function()
             pcall(require('nvim-treesitter.install').update { with_sync = true })
         end,
@@ -144,21 +131,12 @@ require("lazy").setup({
         'https://gitlab.com/schrieveslaach/sonarlint.nvim',
         opts = {
             server = {
-                cmd = {
-                    'sonarlint-language-server',
-                    -- Ensure that sonarlint-language-server uses stdio channel
-                    '-stdio',
-                    '-analyzers',
-                    -- paths to the analyzers you need
+                cmd = { 'sonarlint-language-server', '-stdio', '-analyzers',
                     vim.fn.stdpath('data') .. "/mason/share/sonarlint-analyzers/sonarpython.jar",
                     vim.fn.stdpath('data') .. "/mason/share/sonarlint-analyzers/sonarcfamily.jar",
                 }
             },
-            filetypes = {
-                'python',
-                'c',
-                'cpp',
-            }
+            filetypes = { 'python', 'c', 'cpp' }
         }
     },
     -- non-lua
@@ -170,22 +148,9 @@ require("lazy").setup({
         'nvim-lualine/lualine.nvim',
         dependencies = { 'nvim-tree/nvim-web-devicons' },
         opts = {
-            options = {
-                globalstatus = true,
-                component_separators = '',
-                section_separators = '',
-                theme = 'dracula',
-            },
-            extensions = {
-                'aerial',
-                -- 'nvim-tree',
-                'fugitive',
-                'toggleterm',
-                'quickfix',
-            },
-            sections = {
-                lualine_c = { { 'filename', path = 1 }, 'aerial' },
-            }
+            options = { globalstatus = true, component_separators = '', section_separators = '', theme = 'dracula' },
+            extensions = { 'aerial', 'fugitive', 'toggleterm', 'quickfix' },
+            sections = { lualine_c = { { 'filename', path = 1 }, 'aerial' } }
         }
     },
     -- misc
