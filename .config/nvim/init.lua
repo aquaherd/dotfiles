@@ -79,7 +79,7 @@ require("lazy").setup({
     {
         'lukas-reineke/indent-blankline.nvim',
         main = "ibl",
-        opts = { indent = { char = '┊' } }
+        opts = { indent = { char = '┊' }, scope = { show_start = false } }
     },
     -- treesitter
     {
@@ -186,7 +186,7 @@ o.wildmode = 'longest:full'
 o.splitbelow = true
 o.splitright = true
 o.hidden = true
-opt.fillchars.vert = "│"
+-- opt.fillchars.vert = "│"
 o.cursorline = true
 o.scrolloff = 8
 -- text formatting (shiftwidth, tabstops etc: use .editorconfig, .clangd or modeline)
