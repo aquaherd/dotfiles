@@ -24,6 +24,9 @@ require("lazy").setup({
                 italic_comment = true,
                 transparent_bg = true,
                 lualine_bg_color = "#282a36",
+                overrides = {
+                    MatchParen = { underline = false, fg = "#ff5555", bg = "#abb2bf" }
+                },
             }
             vim.cmd.colorscheme 'dracula'
         end
