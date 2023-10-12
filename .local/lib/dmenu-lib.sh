@@ -10,6 +10,12 @@ fix_desktop() # in case you start without display manager
         elif [ -z "$DISPLAY"  ]; then
             export DESKTOP_SESSION=none
             return
+        elif [ -n "$WSL_DISTRO_NAME" ]; then
+            if [ "$WSL2_GUI_APPS_ENABLED" = "1" ]; then
+                export DESKTOP_SESSION=wslg
+            else
+                export DESKTOP_SESSION=none 
+            fi
         else
             DESKTOP_SESSION="$(wmname)"
             export DESKTOP_SESSION
@@ -98,7 +104,8 @@ restore_backdrop()
         *) return 1;;
     esac
 }
-ask() # bifurcate to dmenu or dmenu-wl
+
+ask()
 {
     fix_desktop
     case $DESKTOP_SESSION in
@@ -126,6 +133,9 @@ ask() # bifurcate to dmenu or dmenu-wl
             ;;
         none)
             fzf
+            ;;
+        wslg)
+            wofi -p "$1" -S dmenu 
             ;;
         *)
             dmenu -b -i -p "$1"
