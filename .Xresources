@@ -109,7 +109,7 @@ XLoad*Label*Justify: center
 *internalBorderWidth: 8
 
 !suckless
-st.font: Iosevka NFM:pixelsize=17:style=Medium
+st.font: Iosevka NFM:pixelsize=19:style=Medium
 st.alpha: 0.95
 st.borderpx: 16
 
