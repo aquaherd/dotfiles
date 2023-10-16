@@ -99,7 +99,7 @@ chroot_upgrade_one()
 	    ext*)
 		chroot_upgrade "$d" "$n" || return 1
 		;;
-	    vfat|swap)
+	    vfat|swap|btrfs|ntfs)
 		echo "Skip $n: type $t at $d"
 		;;
 	    *)
