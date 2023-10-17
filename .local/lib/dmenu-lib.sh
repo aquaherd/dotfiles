@@ -1,4 +1,4 @@
-# this is a posix shell fragment for inclusion not execution
+# this is a posix shell fragment for inclusion not executioe
 
 fix_desktop() # in case you start without display manager
 {
@@ -39,7 +39,7 @@ fix_desktop() # in case you start without display manager
 
 randr_bspwm()
 {
-    ~/.config/bspwm/xrandr.sh "$res"
+    ~/.config/bspwm/xrandr.sh "$1"
 }
 
 randr_sway()
