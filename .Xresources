@@ -48,6 +48,8 @@ rofi.show-icons: true
 ! --------------------------------------------------
 *.foreground: #f8f8f2
 *.background: #282a36
+*.fg:         #f8f8f2
+*.bg:         #282a36
 *.color0:     #44475a
 *.color8:     #44475a
 *.color1:     #ff5555
@@ -125,3 +127,7 @@ dwm.selbgcolor: #bd93f9
 dwm.tagsselbgcolor: #bd93f9
 dwm.titlenormbgcolor: #bd93f9
 
+! zutty
+Zutty.font:	JetBrainsMono
+Zutty.fontsize:	18
+Zutty.border:	20
