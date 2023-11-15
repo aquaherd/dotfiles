@@ -1,0 +1,2 @@
+#!/bin/sh
+cd ~/.ssh/controlmasters && stat -c "%w %n" ./* 2> /dev/null | cut -d" " -f1,2,4 || echo none
