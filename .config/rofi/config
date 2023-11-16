@@ -1,3 +1,0 @@
-#rofi.theme: /usr/share/rofi/themes/Adapta-Nokto.rasi
-rofi.theme: ~/.config/rofi/dracula.rasi
-rofi.modi:  drun,window,run,ssh
