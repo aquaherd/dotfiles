@@ -19,9 +19,7 @@ INITRD="$MTP/initrd.img"
 STUB="$HOME/.local/lib/linuxx64.efi.stub"
 BMP="$HOME/.local/lib/$ID.bmp"
 if [ -f "$BMP" ]; then
-	SPLASH="--add-section .splash=$BMP --change-section-vma .splash=0x40000"
-else
-	SPLASH=""
+	STUB="--add-section .splash=$BMP --change-section-vma .splash=0x40000 $STUB"
 fi
 TARGET=/boot/efi/EFI/Linux/$ID.efi
 DISK=/dev/$(lsblk -no pkname /dev/disk/by-label/EF00)
@@ -46,7 +44,7 @@ fi
 
 echo "Building image for $PRETTY_NAME disk $DISK part $PART"
 sudo chmod +r "$VMLINUZ" "$INITRD"
-objcopy "$SPLASH" \
+objcopy \
     --add-section .osrel="$OS_RELEASE" --change-section-vma .osrel=0x20000 \
     --add-section .cmdline="/tmp/kernel-command-line.txt" --change-section-vma .cmdline=0x30000 \
     --add-section .linux="$VMLINUZ" --change-section-vma .linux=0x2000000 \

@@ -79,11 +79,6 @@ require("lazy").setup({
     },
     'jvgrootveld/telescope-zoxide',
     { 'numToStr/Comment.nvim',   opts = {}, },
-    {
-        'lukas-reineke/indent-blankline.nvim',
-        main = "ibl",
-        opts = { indent = { char = '┊' }, scope = { show_start = false } }
-    },
     -- treesitter
     {
         'nvim-treesitter/nvim-treesitter',
