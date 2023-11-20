@@ -1,4 +1,5 @@
-#/bin/sh
+#!/bin/sh
+# shellcheck source=../lib/dmenu-lib.sh
 . ~/.local/lib/dmenu-lib.sh
 
 verbatim='stop|overview|preferences|add|about'
@@ -22,9 +23,9 @@ hamster_makeitso()
 {
     if [ -n $1 ]; then
         if [ "$1" = "start" ]; then
-            hamster add $(hamster_start)
+            hamster add "$(hamster_start)"
         else
-            hamster $* & 
+            hamster "$*" & 
         fi
     else
         echo "unknown selection: $*"
@@ -40,11 +41,11 @@ hamster_usage()
 hamster_dispatch()
 {
     case $1 in
-    ask) hamster_makeitso $(hamster_ask);;
-    start) hamster add $(hamster_start);;
-    stop|overview|preferences|add|about) hamster_makeitso $1;;
+    ask) hamster_makeitso "$(hamster_ask)";;
+    start) hamster add "$(hamster_start)";;
+    stop|overview|preferences|add|about) hamster_makeitso "$1";;
     *) hamster_usage;;
     esac
 }
 
-hamster_dispatch $1
+hamster_dispatch "$1"

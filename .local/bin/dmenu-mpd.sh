@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck source=../lib/dmenu-lib.sh
 . ~/.local/lib/dmenu-lib.sh
 
 all_name='[ALL]'

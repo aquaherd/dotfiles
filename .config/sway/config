@@ -52,7 +52,8 @@ set {
     # application launchers
     # Note: it's recommended that you pass the final command to sway
     #set $menu dmenu_path | bemenu | xargs swaymsg exec --
-    $menu wofi --show=drun | xargs swaymsg exec --
+    # $menu wofi --show=drun | xargs swaymsg exec --
+    $menu rofi -show drun -modi "drun#run#ssh#filebrowser#keys" -terminal $term
 }
 ### Output configuration
 # is in $HOSTNAME.conf
@@ -113,14 +114,16 @@ bindsym {
 	$mod+Mod1+t exec thunar
 	$mod+Mod1+c exec code
 	$mod+Mod1+g exec geany
+	$mod+Mod1+h exec ~/.local/bin/dmenu-hamster.sh ask
+	$mod+Mod1+m exec ~/.local/bin/dmenu-mpd.sh -a
 	# Take a screenshot with all output and save it into screenshots
 	Print exec grim -t jpeg ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).jpg
 
 	# Take a Screenshot with the region select
 	$mod+Print exec grim -t jpeg -g "$(slurp)" ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).jpg
 
-    # Rotate bg
-    $mod+Shift+v exec ~/.config/sway/bgrot.sh
+	# Rotate bg
+	$mod+Shift+v exec ~/.config/sway/bgrot.sh
 }
 
 # kill focused window

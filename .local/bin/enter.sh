@@ -6,13 +6,14 @@ for sudo in doas sudo; do
 	fi
 done
 export sudo
+# shellcheck source=../lib/chroot.sh
 . ~/.local/lib/chroot.sh
 
 shells="/bin/bash /bin/ash /bin/sh"
 
 usage()
 {
-	echo "Usage: $(basename $0) list | [parition]"
+	echo "Usage: $(basename "$0") list | [parition]"
 }
 
 enter()

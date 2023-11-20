@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck source=../lib/dmenu-lib.sh
 . ~/.local/lib/dmenu-lib.sh
 
 prompt="logout reboot poweroff lock sleep single dual boot reload"

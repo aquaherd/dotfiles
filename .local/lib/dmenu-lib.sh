@@ -118,7 +118,8 @@ ask()
                 fi
                 m=$((1+m))
             done
-            dmenu-wl -i -p "$1" -fn 'Iosevka 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m $m -b
+            # dmenu-wl -i -p "$1" -fn 'Iosevka 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m $m -b
+            rofi -m "XWAYLAND$m" -dmenu -p "$1"
             ;;
         hikari|wayfire)
             # dont know how to determine current monitor in hikari

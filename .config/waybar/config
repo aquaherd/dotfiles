@@ -8,7 +8,7 @@
     // Choose the order of the modules
     "modules-left": ["sway/workspaces", "sway/mode"],
     "modules-center": ["sway/window"],
-    "modules-right": ["custom/hamster", "mpd", "idle_inhibitor", "tray", "pulseaudio"],
+    "modules-right": ["custom/hamster", "idle_inhibitor", "tray", "mpd", "pulseaudio"],
     // Modules configuration
     "sway/workspaces": {
         "disable-scroll": false,
@@ -34,7 +34,7 @@
     "mpd": {
         "format": " {stateIcon} {artist} - {title} ",
         "format-disconnected": " Disconnected ",
-        "format-stopped": " Stopped ",
+        "format-stopped": "",
         "unknown-tag": "N/A",
         "interval": 2,
         "consume-icons": {
