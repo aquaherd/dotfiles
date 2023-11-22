@@ -1,0 +1,35 @@
+#!/bin/sh
+# getrev.sh calculates a SVN revision number based on the last known
+# svn revision in this branch and adds the logged commits on top of that.
+# may yield different versions per folder.
+# Only argument is which folder to generate SVN revision for.
+# Environment variable V=1 will produce verbose output.
+
+PROC=$$
+
+die_sub()
+{
+	kill $PROC
+}
+
+log()
+{
+	if [ "$V" = "1" ]; then
+		echo $*
+	fi
+}
+
+start_path="${1:-.}"
+log "path=$start_path"
+start_hash=$(git log --grep=git-svn-id -n1 --pretty=format:%h "$start_path" || die_sub)
+if [ -z "$start_hash" ]; then
+	start_hash=$(git log --grep=git-svn-id -n1 --pretty=format:%h || die_sub)
+	start_path="."
+fi
+log "hash=$start_hash"
+start_revn=$(git log -n1 $start_hash -- $start_path | grep -oP '(?<=@)[0-9]+ ')
+log "revn=$start_revn"
+start_addn=$(git rev-list --count "${start_hash}..HEAD" "$start_path")
+log "addn=$start_addn"
+
+echo "$(($start_revn+$start_addn))"

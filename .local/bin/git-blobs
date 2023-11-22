@@ -1,0 +1,2 @@
+#!/bin/bash
+git rev-list --objects --all |     git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' |     sed -n 's/^blob //p' |     sort -rnk2 |     numfmt --field 2 --to=iec |head $*

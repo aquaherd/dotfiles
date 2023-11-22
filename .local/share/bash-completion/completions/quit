@@ -1,0 +1,12 @@
+#!/bin/bash
+__quit() 
+{
+	if [ "${#COMP_WORDS[@]}" == "2" ]; then
+		# shellcheck disable=SC2207
+		COMPREPLY=($(compgen -W "$(sess)" "${COMP_WORDS[1]}"))
+	elif [ "${#COMP_WORDS[@]}" -gt "2" ]; then
+		return 1
+	fi
+}
+
+complete -F __quit quit

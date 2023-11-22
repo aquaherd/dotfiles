@@ -1,2 +1,16 @@
 #!/bin/sh
-cd ~/.ssh/controlmasters && stat -c "%w %n" ./* 2> /dev/null | cut -d" " -f1,2,4 || echo none
+
+CTRLPATH=$(grep ControlPath ~/.ssh/config|cut -d' ' -f2|head -n1|sed "s:~:$HOME:g")
+CTRLDIR=$(dirname "$CTRLPATH")
+list="none"
+find_all()
+{
+	find "$CTRLDIR" -maxdepth 1 -type s -exec basename {} \; | cut -d'.' -f1
+}
+if [ -d "$CTRLDIR" ]; then
+	list=$(find_all|sort)	
+fi
+
+echo "$list"
+
+
