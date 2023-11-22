@@ -53,7 +53,8 @@ set {
     # Note: it's recommended that you pass the final command to sway
     #set $menu dmenu_path | bemenu | xargs swaymsg exec --
     # $menu wofi --show=drun | xargs swaymsg exec --
-    $menu rofi -i -m XWAYLAND0 -show drun -modi "drun#run#ssh#filebrowser#keys" -terminal $term
+    $menu rofi -i -m XWAYLAND0 -show drun -modi "drun#run#ssh#filebrowser#window#keys" -terminal $term
+    $alttab rofi -i -m XWAYLAND0 -show window 
 }
 ### Output configuration
 # is in $HOSTNAME.conf
@@ -110,7 +111,6 @@ exec swayidle -w \
 bindsym {
 	$mod+Return exec $term
 	$mod+Mod1+f exec $browser
-	$mod+Mod1+n exec nautilus
 	$mod+Mod1+t exec thunar
 	$mod+Mod1+c exec code
 	$mod+Mod1+g exec geany
@@ -124,6 +124,9 @@ bindsym {
 
 	# Rotate bg
 	$mod+Shift+v exec ~/.config/sway/bgrot.sh
+
+	# poor mans alt+tab
+	$mod+Tab exec $alttab
 }
 
 # kill focused window
@@ -158,8 +161,6 @@ bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
-# poor mans alt+tab
-bindsym $mod+Tab exec ~/.config/sway/alttab.sh
 
 # _move_ the focused window with the same, but add Shift
 bindsym $mod+Shift+$left move left
