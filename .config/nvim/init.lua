@@ -204,8 +204,9 @@ if g.neovide then
     g.neovide_padding_right = 18
     g.neovide_padding_top = 18
     g.neovide_remember_window_size = true
-    g.neovide_transparency = 0.85
     g.neovide_scale_factor = 1.0
+    g.neovide_theme = 'auto'
+    g.neovide_transparency = 0.70
     wk.register({
         ['<C-ScrollWheelUp>'] = { function() g.neovide_scale_factor = g.neovide_scale_factor + 0.1 end,
             "neovide: zoom ++" },

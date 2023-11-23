@@ -5,7 +5,7 @@ CTRLDIR=$(dirname "$CTRLPATH")
 list="none"
 find_all()
 {
-	find "$CTRLDIR" -maxdepth 1 -type s -exec basename {} \; | cut -d'.' -f1
+	find "$CTRLDIR" -maxdepth 1 -type s -exec basename {} .ssh \;
 }
 if [ -d "$CTRLDIR" ]; then
 	list=$(find_all|sort)	
