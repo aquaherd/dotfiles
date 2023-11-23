@@ -1,4 +1,5 @@
 #!/bin/bash
+alias quit='ssh -O exit '
 __quit() 
 {
 	if [ "${#COMP_WORDS[@]}" == "2" ]; then
