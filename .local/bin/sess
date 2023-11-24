@@ -2,7 +2,6 @@
 
 CTRLPATH=$(grep ControlPath ~/.ssh/config|cut -d' ' -f2|head -n1|sed "s:~:$HOME:g")
 CTRLDIR=$(dirname "$CTRLPATH")
-list="none"
 find_all()
 {
 	find "$CTRLDIR" -maxdepth 1 -type s -exec basename {} .ssh \;
@@ -11,6 +10,6 @@ if [ -d "$CTRLDIR" ]; then
 	list=$(find_all|sort)	
 fi
 
-echo "$list"
+echo "${list:-none}"
 
 
