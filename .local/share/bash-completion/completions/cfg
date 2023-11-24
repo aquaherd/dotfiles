@@ -1,4 +1,3 @@
 #!/bin/bash
-alias cfg='git --git-dir=$HOME/.cfg --work-tree=$HOME '
 source /usr/share/bash-completion/completions/git
 __git_complete cfg __git_main
