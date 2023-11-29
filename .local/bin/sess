@@ -4,7 +4,7 @@ CTRLPATH=$(grep ControlPath ~/.ssh/config|cut -d' ' -f2|head -n1|sed "s:~:$HOME:
 CTRLDIR=$(dirname "$CTRLPATH")
 find_all()
 {
-	find "$CTRLDIR" -maxdepth 1 -type s -exec basename {} .ssh \;
+	find "$CTRLDIR" -maxdepth 1 -type s -name '*.ssh' -exec basename {} .ssh \;
 }
 if [ -d "$CTRLDIR" ]; then
 	list=$(find_all|sort)	

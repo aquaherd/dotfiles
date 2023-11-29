@@ -7,8 +7,8 @@ else
     host=$1
 fi
 ssh "$host" echo OK
-for d in Firmware Logfiles; do
-    if mountpoint -q ~/$d; then
+for d in Firmware Logfiles gta; do
+    if mountpoint -q ~/$d > /dev/null; then
         echo "unmounting \~/$d ..."
         fusermount -u ~/$d
     fi
