@@ -148,7 +148,7 @@ require("lazy").setup({
         opts = {
             options = { globalstatus = true, component_separators = '', section_separators = '', theme = 'dracula' },
             extensions = { 'aerial', 'fugitive', 'toggleterm', 'quickfix' },
-            sections = { lualine_c = { { 'hostname', vim.fn.hostname }, { 'filename', path = 1 }, 'aerial' } }
+            sections = { lualine_c = { 'hostname', { 'filename', path = 1 }, 'aerial' } }
         }
     },
     -- misc
