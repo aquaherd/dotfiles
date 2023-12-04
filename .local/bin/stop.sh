@@ -6,7 +6,7 @@ die()
     echo "$appname: $*"
     exit 1
 }
-for d in Firmware Logfiles gta; do
+for d in Firmware Logfiles; do
     if fusermount -u ~/$d 2> /dev/null; then
 	echo "$d: unmounted"
     fi

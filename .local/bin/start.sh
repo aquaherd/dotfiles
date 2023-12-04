@@ -9,8 +9,13 @@ if [ $# -eq 0 ]; then
 else
     host=$1
 fi
-ssh "$host" echo OK
-for d in Firmware Logfiles gta; do
+ssh "$host" \
+    -L '127.0.0.1:2323:192.168.184.40:23' \
+    -L '127.0.0.1:3240:localhost:3240' \
+    -L '127.0.0.1:8192:localhost:8192' \
+    echo OK
+
+for d in Firmware Logfiles; do
     if mountpoint -q ~/$d > /dev/null; then
         echo "unmounting \~/$d ..."
         fusermount -u ~/$d
@@ -27,5 +32,11 @@ for b in $(sudo usbip list -r localhost 2> /dev/null |grep UART|cut -d':' -f1); 
             ;;
         *) continue;;
     esac
+done
+for u in /dev/ttyUSB?; do
+    if test -c "$u"; then
+        sudo chown root:dialout "$u"
+        sudo chmod g+rw "$u"
+    fi
 done
 echo OK
