@@ -12,6 +12,16 @@ if not vim.loop.fs_stat(lazypath) then
         "--branch=stable", lazypath, })
 end
 vim.opt.rtp:prepend(lazypath)
+local function get_args(config)
+    local args = type(config.args) == "function" and (config.args() or {}) or config.args or {}
+    config = vim.deepcopy(config)
+    ---@cast args string[]
+    config.args = function()
+        local new_args = vim.fn.input("Run with args: ", table.concat(args, " ")) --[[@as string]]
+        return vim.split(vim.fn.expand(new_args) --[[@as string]], " ")
+    end
+    return config
+end
 -- plugins
 require("lazy").setup({
     -- Theme
@@ -31,10 +41,15 @@ require("lazy").setup({
             vim.cmd.colorscheme 'dracula'
         end
     },
-    -- Coding
+    -- git
     {
         'lewis6991/gitsigns.nvim',
         dependencies = { 'nvim-lua/plenary.nvim' },
+        keys = {
+            { '<leader>cg', ":Gitsigns setqflist<cr>", desc = "git changes" },
+            { '[c',         ":Gitsigns prev_hunk<cr>", desc = "prev hunk" },
+            { ']c',         ":Gitsigns next_hunk<cr>", desc = "next hunk" },
+        },
         opts = {
             signs = {
                 add = { text = "+", numhl = "GitSignsAddNr" },
@@ -45,9 +60,20 @@ require("lazy").setup({
             }
         }
     },
+    --telescope
     {
         'nvim-telescope/telescope.nvim',
-        dependencies = { 'nvim-lua/plenary.nvim' },
+        dependencies = { 'nvim-lua/plenary.nvim', 'jvgrootveld/telescope-zoxide' },
+        keys = {
+            { '<leader><space>', ":Telescope<cr>",                               desc = "telescope" },
+            { '<leader>g',       ":Telescope live_grep<cr>",                     desc = "ts: Live grep" },
+            { '<leader>o',       ":Telescope oldfiles<cr>",                      desc = "ts: oldfiles" },
+            { '<leader>s',       ":Telescope lsp_document_symbols<cr>",          desc = "LSP: Document Symbols" },
+            { '<leader>F',       ":Telescope find_files<cr>",                    desc = "ts: Find files" },
+            { '<leader>W',       ":Telescope lsp_dynamic_workspace_symbols<cr>", desc = "LSP: Workspace symbols" },
+            { '<leader>b',       ":Telescope buffers<cr>",                       desc = "ts: buffers" },
+            { '<leader>z',       ":Telescope zoxide list<cr>",                   desc = "ts: zoxide list" },
+        },
         config = function()
             local l = require("telescope.actions.layout")
             local t = require('telescope')
@@ -77,8 +103,11 @@ require("lazy").setup({
             t.load_extension("zoxide")
         end
     },
-    'jvgrootveld/telescope-zoxide',
-    { 'numToStr/Comment.nvim',   opts = {}, },
+    {
+        'numToStr/Comment.nvim',
+        config = true,
+        keys = { { 'gb', desc = 'Comment toggle blockwise' }, { 'gc', desc = 'Comment toggle linewise' } }
+    },
     -- treesitter
     {
         'nvim-treesitter/nvim-treesitter',
@@ -102,7 +131,16 @@ require("lazy").setup({
         opts = { sources = { 'filesystem', 'buffers', 'git_status', 'netman.ui.neo-tree' } },
         cmd = { 'Neotree' }
     },
-    { 'akinsho/toggleterm.nvim', opts = {}, },
+    {
+        'akinsho/toggleterm.nvim',
+        config = true,
+        cmd = 'ToggleTerm',
+        keys = {
+            { '<A-t>',     ":ToggleTerm<cr>", desc = "toggle terminal" },
+            { '<leader>t', ":ToggleTerm<cr>", desc = "toggle terminal" },
+
+        }
+    },
     {
         'stevearc/aerial.nvim',
         dependencies = { 'nvim-tree/nvim-web-devicons' },
@@ -121,10 +159,130 @@ require("lazy").setup({
     -- lsp
     {
         'neovim/nvim-lspconfig',
-        dependencies = { 'williamboman/mason.nvim', 'williamboman/mason-lspconfig.nvim',
-            { 'j-hui/fidget.nvim', opts = {}, tag = 'legacy' }, 'folke/neodev.nvim', },
+        event = { "BufReadPost", "BufNewFile" },
+        cmd = { "LspInfo", "LspInstall", "LspUninstall" },
+        dependencies = {
+            { 'williamboman/mason.nvim', cmd = "Mason", config = true },
+            'williamboman/mason-lspconfig.nvim',
+            { 'j-hui/fidget.nvim',       config = true, tag = 'legacy' },
+            { 'folke/neodev.nvim',       config = true }
+        },
+        config = function()
+            local on_attach = function(_, bufnr)
+                local nmap = function(keys, func, desc)
+                    if desc then
+                        desc = 'LSP: ' .. desc
+                    end
+                    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+                end
+                nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+                nmap('<leader>wd', require('telescope.builtin').diagnostics, '[W]orkspace [D]iagnostics')
+                nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+                nmap('[d', vim.diagnostic.goto_prev, 'Go to previous diagnostic message')
+                nmap(']d', vim.diagnostic.goto_next, 'Go to next diagnostic message')
+                nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+                nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
+                nmap('<leader>H', function()
+                    vim.g.virtTextShow = not vim.g.virtTextShow
+                    vim.diagnostic.config({ virtual_text = vim.g.virtTextShow })
+                end, 'Toggle [H]ints')
+                nmap('<leader>Q', vim.diagnostic.setqflist, 'diagnostic setqflist all')
+                nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+                nmap('<leader>f', vim.lsp.buf.format, '[F]ormat buffer')
+                nmap('<leader>h', vim.diagnostic.open_float, 'Show [h]int')
+                nmap('<leader>q', function()
+                        vim.fn.setqflist(vim.diagnostic.toqflist(vim.diagnostic.get(0)), 'r')
+                        vim.api.nvim_command('botright cwindow')
+                    end,
+                    'diagnostic setqflist current buffer')
+                nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+                nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
+                nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+                nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
+                nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+                nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+                nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+                nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
+                nmap('<leader>wl', function()
+                    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+                end, '[W]orkspace [L]ist Folders')
+            end
+            local servers = {
+                clangd = {},
+                lua_ls = {
+                    Lua = {
+                        workspace = { checkThirdParty = false },
+                        telemetry = { enable = false },
+                    },
+                },
+            }
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
+            capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+            capabilities.offsetEncoding = { "utf-16" }
+            local mason_lspconfig = require 'mason-lspconfig'
+            mason_lspconfig.setup {
+                ensure_installed = vim.tbl_keys(servers),
+            }
+            mason_lspconfig.setup_handlers {
+                function(server_name)
+                    require('lspconfig')[server_name].setup {
+                        capabilities = capabilities,
+                        on_attach = on_attach,
+                        settings = servers[server_name],
+                    }
+                end,
+            }
+        end
     },
-    { 'hrsh7th/nvim-cmp',       dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' }, },
+    {
+        'hrsh7th/nvim-cmp',
+        event = "InsertEnter",
+        dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
+        opts = function()
+            -- nvim-cmp setup
+            local cmp = require 'cmp'
+            local luasnip = require 'luasnip'
+            luasnip.config.setup {}
+            cmp.setup {
+                snippet = {
+                    expand = function(args)
+                        luasnip.lsp_expand(args.body)
+                    end,
+                },
+                mapping = cmp.mapping.preset.insert {
+                    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+                    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+                    ['<C-Space>'] = cmp.mapping.complete {},
+                    ['<CR>'] = cmp.mapping.confirm {
+                        behavior = cmp.ConfirmBehavior.Replace,
+                        select = true,
+                    },
+                    ['<Tab>'] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item()
+                        elseif luasnip.expand_or_jumpable() then
+                            luasnip.expand_or_jump()
+                        else
+                            fallback()
+                        end
+                    end, { 'i', 's' }),
+                    ['<S-Tab>'] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item()
+                        elseif luasnip.jumpable(-1) then
+                            luasnip.jump(-1)
+                        else
+                            fallback()
+                        end
+                    end, { 'i', 's' }),
+                },
+                sources = {
+                    { name = 'nvim_lsp' },
+                    { name = 'luasnip' },
+                },
+            }
+        end
+    },
     {
         'https://gitlab.com/schrieveslaach/sonarlint.nvim',
         opts = {
@@ -135,11 +293,110 @@ require("lazy").setup({
                 }
             },
             filetypes = { 'python', 'c', 'cpp' }
-        }
+        },
+        ft = { 'python', 'c', 'cpp' }
+    },
+    -- dep
+    {
+        "mfussenegger/nvim-dap",
+        dependencies = {
+            {
+                "rcarriga/nvim-dap-ui",
+                -- stylua: ignore
+                keys = {
+                    { "<leader>du", function() require("dapui").toggle({}) end, desc = "Dap UI" },
+                    { "<leader>de", function() require("dapui").eval() end,     desc = "Eval",  mode = { "n", "v" } },
+                },
+                opts = {},
+                config = function(_, opts)
+                    require("dap.ext.vscode").load_launchjs(nil, { cppdbg = { 'c', 'cpp' } })
+                    local dap = require("dap")
+                    local dapui = require("dapui")
+                    dapui.setup(opts)
+                    dap.listeners.after.event_initialized["dapui_config"] = function()
+                        dapui.open({})
+                    end
+                    dap.listeners.before.event_terminated["dapui_config"] = function()
+                        dapui.close({})
+                    end
+                    dap.listeners.before.event_exited["dapui_config"] = function()
+                        dapui.close({})
+                    end
+                end,
+            },
+            {
+                "theHamsta/nvim-dap-virtual-text",
+                opts = {},
+            },
+            {
+                "folke/which-key.nvim",
+                optional = true,
+                opts = {
+                    defaults = {
+                        ["<leader>d"] = { name = "+debug" },
+                    },
+                },
+            },
+            {
+                "jay-babu/mason-nvim-dap.nvim",
+                dependencies = "mason.nvim",
+                cmd = { "DapInstall", "DapUninstall" },
+                opts = {
+                    automatic_installation = true,
+                    handlers = {},
+                    ensure_installed = {},
+                },
+            },
+        },
+        keys = {
+            { "<leader>dB", function() require("dap").set_breakpoint(vim.fn.input('Breakpoint condition: ')) end,     desc = "Breakpoint Condition" },
+            { "<leader>dC", function() require("dap").run_to_cursor() end,                                            desc = "Run to Cursor" },
+            { "<leader>dO", function() require("dap").step_over() end,                                                desc = "Step Over" },
+            { "<leader>da", function() require("dap").continue({ before = get_args }) end,                            desc = "Run with Args" },
+            { "<leader>db", function() require("dap").toggle_breakpoint() end,                                        desc = "Toggle Breakpoint" },
+            { "<leader>dc", function() require("dap").continue() end,                                                 desc = "Continue" },
+            { "<leader>dg", function() require("dap").goto_() end,                                                    desc = "Go to line (no execute)" },
+            { "<leader>di", function() require("dap").step_into() end,                                                desc = "Step Into" },
+            { "<leader>dj", function() require("dap").down() end,                                                     desc = "Down" },
+            { "<leader>dk", function() require("dap").up() end,                                                       desc = "Up" },
+            { "<leader>dl", function() require("dap").run_last() end,                                                 desc = "Run Last" },
+            { "<leader>dL", function() require("dap.ext.vscode").load_launchjs(nil, { cppdbg = { 'c', 'cpp' } }) end, desc = "import launch.json" },
+            { "<leader>do", function() require("dap").step_out() end,                                                 desc = "Step Out" },
+            { "<leader>dp", function() require("dap").pause() end,                                                    desc = "Pause" },
+            { "<leader>dr", function() require("dap").repl.toggle() end,                                              desc = "Toggle REPL" },
+            { "<leader>ds", function() require("dap").session() end,                                                  desc = "Session" },
+            { "<leader>dt", function() require("dap").terminate() end,                                                desc = "Terminate" },
+            { "<leader>dw", function() require("dap.ui.widgets").hover() end,                                         desc = "Widgets" },
+        },
+        setup = function()
+            vim.api.nvim_set_hl(0, "DapStoppedLine", { default = true, link = "Visual" })
+            for _, lang in ipairs({ "c", "cpp" }) do
+                local dap = require("dap")
+                dap.configurations[lang] = {
+                    {
+                        type = "cppdbg",
+                        request = "launch",
+                        stopAtEntry = true,
+                        name = "Launch file",
+                        program = function()
+                            return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+                        end,
+                        cwd = "${workspaceFolder}",
+                    },
+                    {
+                        type = "cppdbg",
+                        request = "attach",
+                        name = "Attach to process",
+                        processId = require("dap.utils").pick_process,
+                        cwd = "${workspaceFolder}",
+                    },
+                }
+            end
+        end,
     },
     -- non-lua
     { 'tpope/vim-fugitive',     cmd = { "Git" } },
-    { 'tpope/vim-sleuth' },
+    { 'tpope/vim-sleuth',       event = { 'BufNewFile', 'BufReadPost' } },
     { 'mboughaba/i3config.vim', ft = { 'i3config' } },
     -- status
     {
@@ -152,8 +409,13 @@ require("lazy").setup({
         }
     },
     -- misc
-    { 'norcalli/nvim-colorizer.lua', cmd = 'ColorizerToggle' },
-    { 'folke/which-key.nvim',        dependencies = { 'nvim-tree/nvim-web-devicons' }, opts = {} },
+    {
+        'norcalli/nvim-colorizer.lua',
+        config = true,
+        cmd = 'ColorizerToggle',
+        keys = { '<leader>cc', "<cmd>ColorizerToggle<cr>", desc = "colorizer" },
+    },
+    { 'folke/which-key.nvim', config = true, dependencies = { 'nvim-tree/nvim-web-devicons' } },
 })
 -- unfinished business
 -- basic
@@ -246,7 +508,6 @@ wk.register({
     ['<A-down>'] = { ":wincmd j<cr>", "window down" },
     ['<A-left>'] = { ":wincmd h<cr>", "window left" },
     ['<A-right>'] = { ":wincmd l<cr>", "window right" },
-    ['<A-t>'] = { ":ToggleTerm<cr>", "toggle terminal" },
     ['<A-up>'] = { ":wincmd k<cr>", "window up" },
     ['<AS-down>'] = { ":wincmd -<cr>", "resize window down" },
     ['<AS-left>'] = { ":wincmd <<cr>", "resize window left" },
@@ -257,21 +518,8 @@ wk.register({
     ['<C-s>'] = { ":w<cr>", "save" },
     ['<S-TAB>'] = { ":tabprev<cr>", "previous tab" },
     ['<TAB>'] = { ":tabnext<cr>", "next tab" },
-    ['<leader><space>'] = { ":Telescope<cr>", "telescope" },
-    ['<leader>F'] = { ":Telescope find_files<cr>", "ts: Find files" },
-    ['<leader>W'] = { ":Telescope lsp_dynamic_workspace_symbols<cr>", "LSP: Workspace symbols" },
-    ['<leader>b'] = { ":Telescope buffers<cr>", "ts: buffers" },
-    ['<leader>cc'] = { ":ColorizerToggle<cr>", "colorizer" },
     ['<leader>cd'] = { ":Neogen<cr>", "generate doxygen" },
-    ['<leader>cg'] = { ":Gitsigns setqflist<cr>", "git changes" },
     ['<leader>e'] = { ":Neotree toggle<cr>", "tree" },
-    ['<leader>g'] = { ":Telescope live_grep<cr>", "ts: Live grep" },
-    ['<leader>o'] = { ":Telescope oldfiles<cr>", "ts: oldfiles" },
-    ['<leader>s'] = { ":Telescope lsp_document_symbols<cr>", "LSP: Document Symbols" },
-    ['<leader>t'] = { ":ToggleTerm<cr>", "toggle terminal" },
-    ['<leader>z'] = { ":Telescope zoxide list<cr>", "ts: zoxide list" },
-    ['[c'] = { ":Gitsigns prev_hunk<cr>", "prev hunk" },
-    [']c'] = { ":Gitsigns next_hunk<cr>", "next hunk" },
 }) -- normal mode
 wk.register({
     ['<C-a>'] = { [[<Home>]], "go home" },
@@ -332,122 +580,10 @@ sign({ name = 'DiagnosticSignError', text = '✘' })
 sign({ name = 'DiagnosticSignWarn', text = '▲' })
 sign({ name = 'DiagnosticSignHint', text = '⚑' })
 sign({ name = 'DiagnosticSignInfo', text = '' })
-local on_attach = function(_, bufnr)
-    local nmap = function(keys, func, desc)
-        if desc then
-            desc = 'LSP: ' .. desc
-        end
-        vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-    end
-    nmap('[d', vim.diagnostic.goto_prev, 'Go to previous diagnostic message')
-    nmap(']d', vim.diagnostic.goto_next, 'Go to next diagnostic message')
-    nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
-    nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-    nmap('<leader>H', function()
-        vim.g.virtTextShow = not vim.g.virtTextShow
-        vim.diagnostic.config({ virtual_text = vim.g.virtTextShow })
-    end, 'Toggle [H]ints')
-    nmap('<leader>Q', vim.diagnostic.setqflist, 'diagnostic setqflist all')
-    nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-    nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-    nmap('<leader>f', vim.lsp.buf.format, '[F]ormat buffer')
-    nmap('<leader>h', vim.diagnostic.open_float, 'Show [h]int')
-    nmap('<leader>q', function()
-            vim.fn.setqflist(vim.diagnostic.toqflist(vim.diagnostic.get(0)), 'r')
-            vim.api.nvim_command('botright cwindow')
-        end,
-        'diagnostic setqflist current buffer')
-    nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-    nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-    nmap('<leader>wd', require('telescope.builtin').diagnostics, '[W]orkspace [D]iagnostics')
-    nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
-    nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-    nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-    nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-    nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-    nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
-    nmap('<leader>wl', function()
-        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, '[W]orkspace [L]ist Folders')
-end
-local servers = {
-    clangd = {},
-    -- gopls = {},
-    -- pyright = {},
-    -- rust_analyzer = {},
-    -- tsserver = {},
-    lua_ls = {
-        Lua = {
-            workspace = { checkThirdParty = false },
-            telemetry = { enable = false },
-        },
-    },
-}
-require('neodev').setup()
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-capabilities.offsetEncoding = { "utf-16" }
-require('mason').setup()
-local mason_lspconfig = require 'mason-lspconfig'
-mason_lspconfig.setup {
-    ensure_installed = vim.tbl_keys(servers),
-}
-mason_lspconfig.setup_handlers {
-    function(server_name)
-        require('lspconfig')[server_name].setup {
-            capabilities = capabilities,
-            on_attach = on_attach,
-            settings = servers[server_name],
-        }
-    end,
-}
--- nvim-cmp setup
-local cmp = require 'cmp'
-local luasnip = require 'luasnip'
-luasnip.config.setup {}
-cmp.setup {
-    snippet = {
-        expand = function(args)
-            luasnip.lsp_expand(args.body)
-        end,
-    },
-    mapping = cmp.mapping.preset.insert {
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete {},
-        ['<CR>'] = cmp.mapping.confirm {
-            behavior = cmp.ConfirmBehavior.Replace,
-            select = true,
-        },
-        ['<Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-    },
-    sources = {
-        { name = 'nvim_lsp' },
-        { name = 'luasnip' },
-    },
-}
 -- treesitter setup
 require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'jsonc', 'lua', 'python', 'rust', 'vim' },
+    ensure_installed = { 'c', 'cpp', 'jsonc', 'lua', 'python' },
     auto_install = false,
     highlight = { enable = true },
     indent = { enable = true, disable = { 'python' } },
