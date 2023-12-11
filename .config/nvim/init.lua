@@ -397,7 +397,7 @@ require("lazy").setup({
     -- non-lua
     { 'tpope/vim-fugitive',     cmd = { "Git" } },
     { 'tpope/vim-sleuth',       event = { 'BufNewFile', 'BufReadPost' } },
-    { 'mboughaba/i3config.vim', ft = { 'i3config' } },
+    -- { 'mboughaba/i3config.vim', ft = { 'i3config' } },
     -- status
     {
         'nvim-lualine/lualine.nvim',
