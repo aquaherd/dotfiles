@@ -22,6 +22,10 @@ local function get_args(config)
     end
     return config
 end
+local ft_sonar = { 'python', 'c', 'cpp' }
+local ft_lsp = { 'c', 'cpp', 'lua', 'sh' }
+local ft_ts = { 'c', 'cpp', 'jsonc', 'lua', 'python' }
+
 -- plugins
 require("lazy").setup({
     -- Theme
@@ -35,15 +39,16 @@ require("lazy").setup({
                 transparent_bg = true,
                 lualine_bg_color = "#282a36",
                 overrides = {
-                    MatchParen = { underline = false, fg = "#ff5555", bg = "#abb2bf" }
+                    MatchParen = { underline = false, fg = "#ffcc59", bg = "#2b2a2c" }
                 },
             }
             vim.cmd.colorscheme 'dracula'
         end
-    },
+    }, {},
     -- git
     {
         'lewis6991/gitsigns.nvim',
+        ft = ft_ts,
         dependencies = { 'nvim-lua/plenary.nvim' },
         keys = {
             { '<leader>cg', ":Gitsigns setqflist<cr>", desc = "git changes" },
@@ -105,22 +110,84 @@ require("lazy").setup({
     },
     {
         'numToStr/Comment.nvim',
+        ft = ft_ts,
         config = true,
         keys = { { 'gb', desc = 'Comment toggle blockwise' }, { 'gc', desc = 'Comment toggle linewise' } }
     },
     -- treesitter
     {
         'nvim-treesitter/nvim-treesitter',
+        ft = ft_ts,
         dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
         config = function()
             pcall(require('nvim-treesitter.install').update { with_sync = true })
+            require('nvim-treesitter.configs').setup {
+                -- Add languages to be installed here that you want installed for treesitter
+                ensure_installed = ft_ts,
+                auto_install = false,
+                highlight = { enable = true },
+                indent = { enable = true, disable = { 'python' } },
+                incremental_selection = {
+                    enable = true,
+                    keymaps = {
+                        init_selection = '<c-space>',
+                        node_incremental = '<c-space>',
+                        scope_incremental = '<c-s>',
+                        node_decremental = '<M-space>',
+                    },
+                },
+                textobjects = {
+                    select = {
+                        enable = true,
+                        lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+                        keymaps = {
+                            -- You can use the capture groups defined in textobjects.scm
+                            ['aa'] = '@parameter.outer',
+                            ['ia'] = '@parameter.inner',
+                            ['af'] = '@function.outer',
+                            ['if'] = '@function.inner',
+                            ['ac'] = '@class.outer',
+                            ['ic'] = '@class.inner',
+                        },
+                    },
+                    move = {
+                        enable = true,
+                        set_jumps = true, -- whether to set jumps in the jumplist
+                        goto_next_start = {
+                            [']m'] = '@function.outer',
+                            [']]'] = '@class.outer',
+                        },
+                        goto_next_end = {
+                            [']M'] = '@function.outer',
+                            [']['] = '@class.outer',
+                        },
+                        goto_previous_start = {
+                            ['[m'] = '@function.outer',
+                            ['[['] = '@class.outer',
+                        },
+                        goto_previous_end = {
+                            ['[M'] = '@function.outer',
+                            ['[]'] = '@class.outer',
+                        },
+                    },
+                    swap = {
+                        enable = true,
+                        swap_next = {
+                            ['<leader>p'] = '@parameter.inner',
+                        },
+                        swap_previous = {
+                            ['<leader>P'] = '@parameter.inner',
+                        },
+                    },
+                },
+            }
         end,
     },
     {
         'danymat/neogen',
         dependencies = { 'nvim-treesitter/nvim-treesitter' },
         opts = { snippet_engine = 'luasnip' },
-        ft = 'c',
+        ft = ft_sonar,
         cmd = { "Neogen" }
     },
     -- Side panes
@@ -138,28 +205,33 @@ require("lazy").setup({
         keys = {
             { '<A-t>',     ":ToggleTerm<cr>", desc = "toggle terminal" },
             { '<leader>t', ":ToggleTerm<cr>", desc = "toggle terminal" },
-
         }
     },
     {
         'stevearc/aerial.nvim',
+        ft = ft_ts,
         dependencies = { 'nvim-tree/nvim-web-devicons' },
-        opts = {
-            backends = { "treesitter" },
-            on_attach = function(bufnr)
-                -- Toggle the aerial window with <leader>a
-                vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>a', '<cmd>AerialToggle!<CR>', {})
-                -- Jump forwards/backwards with '{' and '}'
-                vim.api.nvim_buf_set_keymap(bufnr, 'n', '{', '<cmd>AerialPrev<CR>', {})
-                vim.api.nvim_buf_set_keymap(bufnr, 'n', '}', '<cmd>AerialNext<CR>', {})
-                -- Jump up the tree with '[[' or ']]'
-            end
-        }
+        config = function()
+            require('aerial').setup(
+                {
+                    backends = { "treesitter" },
+                    on_attach = function(bufnr)
+                        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>a', '<cmd>AerialToggle!<CR>', {})
+                        vim.api.nvim_buf_set_keymap(bufnr, 'n', '{', '<cmd>AerialPrev<CR>', {})
+                        vim.api.nvim_buf_set_keymap(bufnr, 'n', '}', '<cmd>AerialNext<CR>', {})
+                    end
+                })
+            local lualine_require = require("lualine_require")
+            local modules = lualine_require.lazy_require({ config_module = "lualine.config" })
+            local current_config = modules.config_module.get_config()
+            current_config.sections.lualine_c = { 'hostname', { 'filename', path = 1 }, 'aerial' }
+            require("lualine").setup(current_config)
+        end
     },
     -- lsp
     {
         'neovim/nvim-lspconfig',
-        event = { "BufReadPost", "BufNewFile" },
+        ft = ft_lsp,
         cmd = { "LspInfo", "LspInstall", "LspUninstall" },
         dependencies = {
             { 'williamboman/mason.nvim', cmd = "Mason", config = true },
@@ -206,6 +278,14 @@ require("lazy").setup({
                 nmap('<leader>wl', function()
                     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
                 end, '[W]orkspace [L]ist Folders')
+                local cmp = require('cmp')
+                local sources = cmp.get_config().sources
+                for i = #sources, 1, -1 do
+                    if sources[i].name == 'buffer' then
+                        table.remove(sources, i)
+                    end
+                end
+                cmp.setup.buffer({ sources = sources })
             end
             local servers = {
                 clangd = {},
@@ -237,9 +317,9 @@ require("lazy").setup({
     {
         'hrsh7th/nvim-cmp',
         event = "InsertEnter",
-        dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
-        opts = function()
-            -- nvim-cmp setup
+        dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip',
+            'hrsh7th/cmp-buffer', 'paopaol/cmp-doxygen' },
+        opts = function() -- nvim-cmp setup
             local cmp = require 'cmp'
             local luasnip = require 'luasnip'
             luasnip.config.setup {}
@@ -277,8 +357,7 @@ require("lazy").setup({
                     end, { 'i', 's' }),
                 },
                 sources = {
-                    { name = 'nvim_lsp' },
-                    { name = 'luasnip' },
+                    { name = 'buffer' }, { name = 'luasnip' }, { name = 'nvim_lsp' }, { name = 'doxygen' }
                 },
             }
         end
@@ -292,13 +371,14 @@ require("lazy").setup({
                     vim.fn.stdpath('data') .. "/mason/share/sonarlint-analyzers/sonarcfamily.jar",
                 }
             },
-            filetypes = { 'python', 'c', 'cpp' }
+            filetypes = ft_sonar
         },
-        ft = { 'python', 'c', 'cpp' }
+        ft = ft_sonar
     },
     -- dep
     {
         "mfussenegger/nvim-dap",
+        ft = ft_lsp,
         dependencies = {
             {
                 "rcarriga/nvim-dap-ui",
@@ -307,7 +387,6 @@ require("lazy").setup({
                     { "<leader>du", function() require("dapui").toggle({}) end, desc = "Dap UI" },
                     { "<leader>de", function() require("dapui").eval() end,     desc = "Eval",  mode = { "n", "v" } },
                 },
-                opts = {},
                 config = function(_, opts)
                     require("dap.ext.vscode").load_launchjs(nil, { cppdbg = { 'c', 'cpp' } })
                     local dap = require("dap")
@@ -326,7 +405,7 @@ require("lazy").setup({
             },
             {
                 "theHamsta/nvim-dap-virtual-text",
-                opts = {},
+                config = true
             },
             {
                 "folke/which-key.nvim",
@@ -395,9 +474,8 @@ require("lazy").setup({
         end,
     },
     -- non-lua
-    { 'tpope/vim-fugitive',     cmd = { "Git" } },
-    { 'tpope/vim-sleuth',       event = { 'BufNewFile', 'BufReadPost' } },
-    -- { 'mboughaba/i3config.vim', ft = { 'i3config' } },
+    { 'tpope/vim-fugitive', cmd = { "Git" } },
+    { 'tpope/vim-sleuth',   event = { 'BufNewFile', 'BufReadPost' } },
     -- status
     {
         'nvim-lualine/lualine.nvim',
@@ -405,7 +483,7 @@ require("lazy").setup({
         opts = {
             options = { globalstatus = true, component_separators = '', section_separators = '', theme = 'dracula' },
             extensions = { 'aerial', 'fugitive', 'toggleterm', 'quickfix' },
-            sections = { lualine_c = { 'hostname', { 'filename', path = 1 }, 'aerial' } }
+            sections = { lualine_c = { 'hostname', { 'filename', path = 1 } } }
         }
     },
     -- misc
@@ -493,6 +571,8 @@ local built_ins = {
     "matchit",
     "tar",
     "tarPlugin",
+    "tohtml",
+    "tutor",
     "rrhelper",
     "spellfile_plugin",
     "vimball",
@@ -580,67 +660,6 @@ sign({ name = 'DiagnosticSignError', text = '✘' })
 sign({ name = 'DiagnosticSignWarn', text = '▲' })
 sign({ name = 'DiagnosticSignHint', text = '⚑' })
 sign({ name = 'DiagnosticSignInfo', text = '' })
--- treesitter setup
-require('nvim-treesitter.configs').setup {
-    -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'jsonc', 'lua', 'python' },
-    auto_install = false,
-    highlight = { enable = true },
-    indent = { enable = true, disable = { 'python' } },
-    incremental_selection = {
-        enable = true,
-        keymaps = {
-            init_selection = '<c-space>',
-            node_incremental = '<c-space>',
-            scope_incremental = '<c-s>',
-            node_decremental = '<M-space>',
-        },
-    },
-    textobjects = {
-        select = {
-            enable = true,
-            lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-            keymaps = {
-                -- You can use the capture groups defined in textobjects.scm
-                ['aa'] = '@parameter.outer',
-                ['ia'] = '@parameter.inner',
-                ['af'] = '@function.outer',
-                ['if'] = '@function.inner',
-                ['ac'] = '@class.outer',
-                ['ic'] = '@class.inner',
-            },
-        },
-        move = {
-            enable = true,
-            set_jumps = true, -- whether to set jumps in the jumplist
-            goto_next_start = {
-                [']m'] = '@function.outer',
-                [']]'] = '@class.outer',
-            },
-            goto_next_end = {
-                [']M'] = '@function.outer',
-                [']['] = '@class.outer',
-            },
-            goto_previous_start = {
-                ['[m'] = '@function.outer',
-                ['[['] = '@class.outer',
-            },
-            goto_previous_end = {
-                ['[M'] = '@function.outer',
-                ['[]'] = '@class.outer',
-            },
-        },
-        swap = {
-            enable = true,
-            swap_next = {
-                ['<leader>p'] = '@parameter.inner',
-            },
-            swap_previous = {
-                ['<leader>P'] = '@parameter.inner',
-            },
-        },
-    },
-}
 -- dispatch left of the dial
 vim.api.nvim_set_hl(0, 'NeoTreeNormal', { bg = 'NONE' })
 vim.cmd.aunmenu([[PopUp.How-to\ disable\ mouse]])
