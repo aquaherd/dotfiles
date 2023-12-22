@@ -1,5 +1,4 @@
 #!/bin/sh
-CL=0
 LOC=~/.local/share/hamster/hamster.db
 CPY=~/.local/share/hamster/page.db
 REM=page.db

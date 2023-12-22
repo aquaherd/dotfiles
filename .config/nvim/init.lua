@@ -15,7 +15,7 @@ vim.opt.rtp:prepend(lazypath)
 local ft = {
 	dap = { cppdbg = { 'c', 'cpp' } },
 	fmt = { sh = { "shfmt" } },
-	lsp = { 'c', 'cpp', 'lua', 'sh' },
+	lsp = { 'c', 'cpp', 'lua', 'python', 'sh' },
 	sonar = { 'c', 'cpp', 'python' },
 	ts = { 'c', 'cpp', 'jsonc', 'lua', 'python' },
 }
@@ -39,7 +39,7 @@ require("lazy").setup({
 			}
 			vim.cmd.colorscheme 'dracula'
 		end
-	}, {},
+	},
 	-- git
 	{
 		'lewis6991/gitsigns.nvim',
@@ -525,7 +525,6 @@ require("lazy").setup({
 		'norcalli/nvim-colorizer.lua',
 		config = true,
 		cmd = 'ColorizerToggle',
-		keys = { '<leader>cc', "<cmd>ColorizerToggle<cr>", desc = "colorizer" },
 	},
 	{ 'folke/which-key.nvim', config = true, dependencies = { 'nvim-tree/nvim-web-devicons' } },
 })

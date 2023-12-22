@@ -34,7 +34,7 @@ rows = cur.fetchall()
 
 print (col_names)
 
-print (len(rows))
+print ("rows=", len(rows))
 for row in rows:    
     print (row[2], row[3], row[4], row[5], )
     cur.execute("insert into dst.facts values (null, ?, ?, ?, ?)", (row[2], row[3], row[4], row[5]))
@@ -44,7 +44,7 @@ for row in rows:
         print ("no tag")
     else:
         cur.execute("insert into dst.fact_tags values(?, ?)", (last, row[7]))
-        print ("tagged", row[6])
+        print ("tagged=", row[6])
 print (cur.lastrowid, len(rows), n)
 src.commit()
 cur.close()
