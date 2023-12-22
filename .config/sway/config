@@ -1,9 +1,3 @@
-#!/bin/sh Default config for sway - shebang for micro
-#
-# Copy this to ~/.config/sway/config and edit it to your liking.
-#
-# Read `man 5 sway` for a complete reference.
-
 # Appearance
 
 set $gnome-schema org.gnome.desktop.interface
@@ -11,7 +5,7 @@ set $gnome-schema org.gnome.desktop.interface
 exec_always {
 	# picked up by gtk3
     gsettings set $gnome-schema gtk-theme 'Dracula'
-    gsettings set $gnome-schema icon-theme 'Faba'
+    gsettings set $gnome-schema icon-theme 'Dracula'
     gsettings set $gnome-schema font-name 'Liberation Sans Narow 13'
     gsettings set $gnome-schema cursor-theme 'Adwaita'
     # x11
