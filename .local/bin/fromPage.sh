@@ -5,4 +5,4 @@ REM=page.db
 HOST=pg2
 
 scp $HOST:$REM $CPY
-hamster-sync.py $CPY $LOC
+~/.local/bin/hamster-sync.py $CPY $LOC
