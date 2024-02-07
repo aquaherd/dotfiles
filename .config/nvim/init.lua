@@ -718,6 +718,20 @@ sign({ name = 'DiagnosticSignError', text = '✘' })
 sign({ name = 'DiagnosticSignWarn', text = '▲' })
 sign({ name = 'DiagnosticSignHint', text = '⚑' })
 sign({ name = 'DiagnosticSignInfo', text = '' })
+local _border = "single"
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+	vim.lsp.handlers.hover, {
+		border = _border
+	}
+)
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+	vim.lsp.handlers.signature_help, {
+		border = _border
+	}
+)
+vim.diagnostic.config {
+	float = { border = _border }
+}
 -- dispatch left of the dial
 vim.api.nvim_set_hl(0, 'NeoTreeNormal', { bg = 'NONE' })
 vim.cmd.aunmenu([[PopUp.How-to\ disable\ mouse]])
