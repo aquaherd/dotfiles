@@ -9,6 +9,18 @@ if command -v wsld > /dev/null; then
 			sleep 0.3
 		done	
 		xrdb -merge ~/.Xresources
+		# create XDG
+		if [[ -z "$XDG_RUNTIME_DIR" ]]; then
+			export XDG_RUNTIME_DIR=/run/user/$UID
+			if [[ ! -d "$XDG_RUNTIME_DIR" ]]; then
+				export XDG_RUNTIME_DIR=/run/shm/$UID
+				if [[ ! -d "$XDG_RUNTIME_DIR" ]]; then
+					mkdir -m 0700 "$XDG_RUNTIME_DIR"
+				fi
+			fi
+		else
+			export PROFILE_LOADED=1
+		fi
 		if [ -z "$DBUS_SESSION_ADDRESS" ]; then
 			export DBUS_SESSION_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus
 			if [ ! -S $XDG_RUNTIME_DIR/bus ]; then
