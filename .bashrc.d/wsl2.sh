@@ -27,3 +27,7 @@ if command -v wsld > /dev/null; then
 		dbus-daemon --session --fork --address=$DBUS_SESSION_ADDRESS
 	fi
 fi
+
+if command -v wsl2-ssh-agent > /dev/null; then
+	eval "$(wsl2-ssh-agent)"
+fi
