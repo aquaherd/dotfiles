@@ -69,14 +69,16 @@ require("lazy").setup({
 		{
 			'nvim-telescope/telescope.nvim',
 			dependencies = { 'nvim-lua/plenary.nvim', 'jvgrootveld/telescope-zoxide' },
+			cmd = { 'Telescope' },
 			keys = {
 				{ '<leader><space>', ":Telescope<cr>",                               desc = "telescope" },
-				{ '<leader>G',       ":Telescope live_grep<cr>",                     desc = "ts: Live grep" },
-				{ '<leader>o',       ":Telescope oldfiles<cr>",                      desc = "ts: oldfiles" },
-				{ '<leader>s',       ":Telescope lsp_document_symbols<cr>",          desc = "LSP: Document Symbols" },
 				{ '<leader>F',       ":Telescope find_files<cr>",                    desc = "ts: Find files" },
+				{ '<leader>G',       ":Telescope live_grep<cr>",                     desc = "ts: Live grep" },
 				{ '<leader>W',       ":Telescope lsp_dynamic_workspace_symbols<cr>", desc = "LSP: Workspace symbols" },
 				{ '<leader>b',       ":Telescope buffers<cr>",                       desc = "ts: buffers" },
+				{ '<leader>o',       ":Telescope oldfiles<cr>",                      desc = "ts: oldfiles" },
+				{ '<leader>r',       ":Telescope resume<cr>",                        desc = "ts: resume" },
+				{ '<leader>s',       ":Telescope lsp_document_symbols<cr>",          desc = "LSP: Document Symbols" },
 				{ '<leader>z',       ":Telescope zoxide list<cr>",                   desc = "ts: zoxide list" },
 			},
 			config = function()
