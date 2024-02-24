@@ -77,7 +77,7 @@ require("lazy").setup({
 				{ '<leader>W',       ":Telescope lsp_dynamic_workspace_symbols<cr>", desc = "LSP: Workspace symbols" },
 				{ '<leader>b',       ":Telescope buffers<cr>",                       desc = "ts: buffers" },
 				{ '<leader>o',       ":Telescope oldfiles<cr>",                      desc = "ts: oldfiles" },
-				{ '<leader>r',       ":Telescope resume<cr>",                        desc = "ts: resume" },
+				{ '<leader>R',       ":Telescope resume<cr>",                        desc = "ts: resume" },
 				{ '<leader>s',       ":Telescope lsp_document_symbols<cr>",          desc = "LSP: Document Symbols" },
 				{ '<leader>z',       ":Telescope zoxide list<cr>",                   desc = "ts: zoxide list" },
 			},
@@ -499,7 +499,7 @@ require("lazy").setup({
 				{ "<leader>dt", function() require("dap").terminate() end,        desc = "Terminate" },
 				{ "<leader>dw", function() require("dap.ui.widgets").hover() end, desc = "Widgets" },
 			},
-			setup = function()
+			config = function()
 				vim.api.nvim_set_hl(0, "DapStoppedLine", { default = true, link = "Visual" })
 				for _, lang in ipairs({ "c", "cpp" }) do
 					local dap = require("dap")
