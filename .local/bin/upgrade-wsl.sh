@@ -1,0 +1,1 @@
+/home/z003tnse/OneDrive/wsl/upgrade.sh
