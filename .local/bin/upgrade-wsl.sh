@@ -6,7 +6,7 @@ fi
 for d in $(wsl.exe -l -q|tr -d "\r\000" |sort -f); do
 
 	case $d in
-	jessie|stretch|docker*|podman*)
+	jessie|stretch|buster|docker*|podman*)
 		echo ... Skipping "$d" ...
 		echo
 		continue
@@ -16,6 +16,7 @@ for d in $(wsl.exe -l -q|tr -d "\r\000" |sort -f); do
 		CMD="wsl.exe -d $d --cd /etc grep ^ID= os-release"
 		eval "$($CMD)"
 		echo ... Updating "$d" ID="$ID" ...
+		wsl.exe -d "$d" --cd '~' /bin/bash -ic 'cfg pull --ff'
 		wsl.exe -d "$d" --cd /root -u root sh /home/"$USER"/.local/lib/upgrade-"${ID}".sh
 		echo
 		;;
