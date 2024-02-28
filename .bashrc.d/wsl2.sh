@@ -16,7 +16,7 @@ if command -v wsld > /dev/null; then
 	export DISPLAY=:0
 	if ! pgrep wsld > /dev/null; then
 		echo 'launching wsld...'
-		rm -rf /tmp/.X*
+		sudo rm -rf /tmp/.X*
 		nohup wsld > /dev/null < /dev/null 2>&1 &
 		disown
 		# sleep until $DISPLAY is up
