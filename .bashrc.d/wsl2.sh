@@ -1,4 +1,12 @@
 #!/bin/bash
+# PATH fixups
+case ":$PATH:" in
+	:$HOME/.local/bin:) ;;
+	*) PATH+=:$HOME/.local.bin
+		export PATH
+		;;
+esac
+
 # XDG
 if [[ -z "$XDG_RUNTIME_DIR" ]]; then
 	export XDG_RUNTIME_DIR=/run/user/$UID
@@ -39,3 +47,4 @@ if command -v wsl2-ssh-agent > /dev/null; then
 		eval "$(wsl2-ssh-agent --socket $SSH_AUTH_SOCK)"
 	fi
 fi
+
