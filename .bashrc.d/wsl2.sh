@@ -2,7 +2,7 @@
 # PATH fixups
 case ":$PATH:" in
 	:$HOME/.local/bin:) ;;
-	*) PATH+=:$HOME/.local.bin
+	*) PATH+=:$HOME/.local/bin
 		export PATH
 		;;
 esac
