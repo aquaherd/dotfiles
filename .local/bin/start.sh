@@ -34,7 +34,8 @@ for b in $(sudo usbip list -r localhost 2> /dev/null |grep UART|cut -d':' -f1); 
 		*) continue;;
 	esac
 done
-if test -c /dev/ttyUSB0; then
+if test -c /dev/ttyUSB0 && [ 'root' = "$(stat -c%G /dev/ttyUSB0)" ]; then
+
 	echo 'waiting for UARTs to settle'
 	sleep 5
 	sudo chown -v root:dialout /dev/ttyUSB*
