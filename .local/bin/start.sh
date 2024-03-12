@@ -22,7 +22,7 @@ for d in Firmware Logfiles; do
 		fusermount -u ~/$d
 	fi
 	echo "mounting ${host}:$d to \~/$d ..."
-	sshfs "${host}":$d ~/$d
+	sshfs -o reconnect,ServerAliveInterval=15 "${host}":$d ~/$d
 done
 echo "$host" > "$hostpath"
 for b in $(sudo usbip list -r localhost 2> /dev/null |grep UART|cut -d':' -f1); do
@@ -35,7 +35,6 @@ for b in $(sudo usbip list -r localhost 2> /dev/null |grep UART|cut -d':' -f1); 
 	esac
 done
 if test -c /dev/ttyUSB0 && [ 'root' = "$(stat -c%G /dev/ttyUSB0)" ]; then
-
 	echo 'waiting for UARTs to settle'
 	sleep 5
 	sudo chown -v root:dialout /dev/ttyUSB*
