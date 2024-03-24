@@ -584,8 +584,6 @@ require("lazy").setup({
 					['<C-n>'] = { ":cnext<cr>", "qflist next" },
 					['<C-p>'] = { ":cprev<cr>", "qflist prev" },
 					['<C-s>'] = { ":w<cr>", "save" },
-					['<S-TAB>'] = { ":tabprev<cr>", "previous tab" },
-					['<TAB>'] = { ":tabnext<cr>", "next tab" },
 					['<leader>cd'] = { ":Neogen<cr>", "generate doxygen" },
 					['<leader>e'] = { ":Neotree toggle<cr>", "tree" },
 				}) -- normal mode
