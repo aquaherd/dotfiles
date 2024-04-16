@@ -14,6 +14,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 local ft = {
 	dap = { cppdbg = { 'c', 'cpp' } },
+	doc = { 'markdown', 'asciidoc' },
 	fmt = { sh = { "shfmt" } },
 	lsp = { 'c', 'cpp', 'lua', 'python', 'sh' },
 	sonar = { 'c', 'cpp', 'python' },
@@ -233,7 +234,17 @@ require("lazy").setup({
 				require("lualine").setup(current_config)
 			end
 		},
-		-- lsp
+		{
+			"toppair/peek.nvim",
+			event = { "VeryLazy" },
+			build = "deno task --quiet build:fast",
+			config = function()
+				require("peek").setup()
+				vim.api.nvim_create_user_command("PeekOpen", require("peek").open, {})
+				vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
+			end,
+		        ft = ft.doc,
+		}, -- lsp
 		{
 			'neovim/nvim-lspconfig',
 			ft = ft.lsp,
@@ -584,8 +595,6 @@ require("lazy").setup({
 					['<C-n>'] = { ":cnext<cr>", "qflist next" },
 					['<C-p>'] = { ":cprev<cr>", "qflist prev" },
 					['<C-s>'] = { ":w<cr>", "save" },
-					['<S-TAB>'] = { ":tabprev<cr>", "previous tab" },
-					['<TAB>'] = { ":tabnext<cr>", "next tab" },
 					['<leader>cd'] = { ":Neogen<cr>", "generate doxygen" },
 					['<leader>e'] = { ":Neotree toggle<cr>", "tree" },
 				}) -- normal mode
