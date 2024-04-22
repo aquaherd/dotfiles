@@ -432,6 +432,7 @@ require("lazy").setup({
 							dapui.close({})
 						end
 					end,
+					dependencies = { 'nvim-neotest/nvim-nio' },
 				},
 				{
 					"theHamsta/nvim-dap-virtual-text",

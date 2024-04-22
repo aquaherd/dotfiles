@@ -74,7 +74,7 @@ randr()
     "randr_${DESKTOP_SESSION}" "$*" || randr_default "$*"
     echo "$*" > .cache/xrandr
     if [ "$*" != "$oldrandr" ]; then
-        update_backdrop || ~/.local/bin/update-hsetroot.sh
+        DST=nosuchimage restore_backdrop
     fi
 
 }

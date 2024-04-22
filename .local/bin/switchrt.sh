@@ -7,9 +7,8 @@ fi
 # shellcheck disable=2086
 loc=$(fdfind -Itf runtime.xml ~/Firmware/Integration_Test/RT/|fzf $query)
 src=$(dirname "${loc}" || echo "")
-
-if test -z "$src"; then
-    echo FAIL
+if test -z "$src" || [ "$src" = "." ]; then
+    echo "No change done"
     exit 1
 fi
 rm -rvf ~/Firmware/SiDaNetRuntime/* || echo 'was empty'

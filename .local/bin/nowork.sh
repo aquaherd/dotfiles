@@ -6,6 +6,6 @@
 
 ssh pg2pc198 'echo stop > /usr/local/share/mode.html'
 
-ssh-add -e /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so < /dev/zero
+ssh-add -e /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so 
 
 ssh -O exit pg2pc198 

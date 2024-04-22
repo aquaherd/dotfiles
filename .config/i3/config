@@ -148,11 +148,13 @@ set_from_resource $foreground foreground
 set_from_resource $urgent color1
 set_from_resource $status color3
 
-client.focused          $active $active $background $active $active
+# class                 border      bground     text        indicator   child_border
+client.focused          $active     $active     $background $background $active
 client.focused_inactive $background $background $foreground $background $background
 client.unfocused        $background $background $foreground $background $background
-client.urgent           $urgent $urgent $background $urgent $urgent
+client.urgent           $urgent     $urgent     $background $urgent     $urgent
 client.placeholder      $background $background $foreground $background $background
+client.background       $background
 
 # Launchers TODO: move to sxhkd
 bindsym $mod+Escape exec ~/.local/bin/dmenu-sys.sh

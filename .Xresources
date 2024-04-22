@@ -72,23 +72,20 @@ rofi.show-icons: true
 ! --------------------------------------------------
 ! home:
 #ifdef SRVR_rocky
-	#define PRIMARY DisplayPort-0
-	#define SECONDARY HDMI-A-0
-	#define TEMP /sys/class/hwmon/hwmon2/temp1_input
-	#define LAYOUT dual
+#define TEMP /sys/class/hwmon/hwmon2/temp1_input
+#define LAYOUT dual
 ! work:
 #elif SRVR_pc198 // work
-	#define PRIMARY DP-2
-	#define SECONDARY DP-3
-	#define TEMP /sys/class/hwmon/hwmon0/temp1_input
-	#define LAYOUT dual
+#define TEMP /sys/class/hwmon/hwmon0/temp1_input
+#define LAYOUT dual
 ! fixme:
 #else // dunno
-	#define PRIMARY DisplayPort-0
-	#define SECONDARY DisplayPort-1
-	#define TEMP /sys/class/hwmon/hwmon0/temp1_input
-	#define LAYOUT single
+#define TEMP /sys/class/hwmon/hwmon0/temp1_input
+#define LAYOUT single
+#define PRIMARY DP-0
+#define SECONDARY DP-1
 #endif
+#include ".local/.Xresources"
 Xdisplay.primary: PRIMARY
 Xdisplay.secondary: SECONDARY
 Xdsiplay.serverhost: SERVERHOST
