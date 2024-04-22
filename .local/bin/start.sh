@@ -10,6 +10,7 @@ else
 	host=$1
 fi
 ssh "$host" \
+	-o ServerAliveInterval=15 \
 	-L '127.0.0.1:2323:192.168.184.40:23' \
 	-L '127.0.0.1:3240:localhost:3240' \
 	-L '127.0.0.1:8192:localhost:8192' \
@@ -22,7 +23,7 @@ for d in Firmware Logfiles; do
 		fusermount -u ~/$d
 	fi
 	echo "mounting ${host}:$d to \~/$d ..."
-	sshfs -o reconnect,ServerAliveInterval=15 "${host}":$d ~/$d
+	sshfs -o reconnect "${host}":$d ~/$d
 done
 echo "$host" > "$hostpath"
 for b in $(sudo usbip list -r localhost 2> /dev/null |grep UART|cut -d':' -f1); do
