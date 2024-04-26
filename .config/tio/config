@@ -1,8 +1,15 @@
 
+[u2]
+device = /dev/ttyUSB2
+
 [u1]
 device = /dev/ttyUSB1
-baudrate = 115200
 
 [u0]
 device = /dev/ttyUSB0
-baudrate = 115200
+
+[s1]
+device = /dev/ttyS1
+
+[s0]
+device = /dev/ttyS0
