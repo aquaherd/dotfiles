@@ -20,7 +20,7 @@ else
 	export PROFILE_LOADED=1
 fi
 # X11
-if command -v wsld > /dev/null; then
+if [[ -z "$WAYLAND_DISPLAY" ]] && command -v wsld > /dev/null; then
 	export DISPLAY=:0
 	if ! pgrep wsld > /dev/null; then
 		echo 'launching wsld...'
