@@ -111,11 +111,6 @@ require("lazy").setup({
 				t.load_extension("zoxide")
 			end
 		},
-		{
-			'numToStr/Comment.nvim',
-			ft = ft.ts,
-			config = true,
-		},
 		-- treesitter
 		{
 			'nvim-treesitter/nvim-treesitter',
