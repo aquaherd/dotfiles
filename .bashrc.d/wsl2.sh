@@ -34,6 +34,7 @@ if [[ -z "$WAYLAND_DISPLAY" ]] && command -v wsld > /dev/null; then
 	fi
 	xrdb -merge ~/.Xresources
 	export DBUS_SESSION_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus
+	export NO_AT_BRIDGE=1
 	if ! pgrep dbus > /dev/null; then
 		echo 'launching dbus...'
 		dbus-daemon --session --fork --address=$DBUS_SESSION_ADDRESS
