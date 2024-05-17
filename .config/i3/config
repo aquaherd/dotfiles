@@ -61,7 +61,7 @@ bindsym --whole-window --border $mod+shift+button5 resize grow width 5 px
 bindsym $mod+r split h
 
 # split in vertical orientation
-bindsym $mod+t split v
+bindsym $mod+b split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
@@ -72,14 +72,14 @@ bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
 # toggle tiling / floating
-bindsym $mod+Shift+space floating toggle
+bindsym $mod+o floating toggle
 
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
 
-# minimize / restore floating
-bindsym $mod+Ctrl+space move to scratchpad
-bindsym $mod+Mod1+space scratchpad show
+# iconize / uniconize floating
+bindsym $mod+i move to scratchpad 
+bindsym $mod+u scratchpad show
 
 # focus the parent container
 bindsym $mod+a focus parent
@@ -191,6 +191,12 @@ for_window [class="Gnome-control-center"] floating enable
 for_window [class="Gnome-tweaks"] floating enable
 for_window [class="Hamster"] floating enable
 for_window [class="Pavu.*"] floating enable
+for_window [class="Font"] floating enable
+for_window [class="PuTTY.*"] floating enable
+for_window [class="selfservice"] floating enable
+for_window [class="Wfica"] floating enable
+for_window [title="Citrix.*"] floating enable
+for_window [title="Sign in to security device"] floating enable
 for_window [title="Sign in to security device"] floating enable
 
 ### i3-gaps stuff ###

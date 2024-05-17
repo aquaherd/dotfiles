@@ -238,7 +238,7 @@ require("lazy").setup({
 				vim.api.nvim_create_user_command("PeekOpen", require("peek").open, {})
 				vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
 			end,
-		        ft = ft.doc,
+			ft = ft.doc,
 		}, -- lsp
 		{
 			'neovim/nvim-lspconfig',
@@ -264,8 +264,6 @@ require("lazy").setup({
 						'[W]orkspace [D]iagnostics')
 					nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols,
 						'[W]orkspace [S]ymbols')
-					nmap('[d', vim.diagnostic.goto_prev, 'Go to previous diagnostic message')
-					nmap(']d', vim.diagnostic.goto_next, 'Go to next diagnostic message')
 					nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 					nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
 					nmap('<leader>H', function()
@@ -288,7 +286,6 @@ require("lazy").setup({
 					nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
 					nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder,
 						'[W]orkspace [R]emove Folder')
-					nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
 					nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 					nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
 					nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
@@ -539,7 +536,7 @@ require("lazy").setup({
 			dependencies = { 'nvim-tree/nvim-web-devicons' },
 			event = "VeryLazy",
 			opts = {
-				options = { globalstatus = true, component_separators = '', section_separators = '', theme = 'dracula' },
+				options = { globalstatus = true, component_separators = '', section_separators = '' },
 				extensions = { 'aerial', 'fugitive', 'toggleterm', 'quickfix' },
 				sections = { lualine_c = { 'hostname', { 'filename', path = 1 } } }
 			}
