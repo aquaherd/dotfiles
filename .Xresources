@@ -113,7 +113,7 @@ st.alpha: 0.95
 st.borderpx: 16
 
 dmenu.font: Iosevka NFM:pixelsize=20:style=Medium
-dmenu.alpha: 0.99
+!dmenu.alpha: 0.99
 dmenu.background: #44475a
 dmenu.selbackground: #bd93f9
 

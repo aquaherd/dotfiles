@@ -187,18 +187,17 @@ bindsym $mod+F12 exec --no-startup-id amixer set Master 5%+
 
 # Cause Settings app to float above tiled windows
 floating_maximum_size -1 x -1
-for_window [class="Gnome-control-center"] floating enable
-for_window [class="Gnome-tweaks"] floating enable
-for_window [class="Hamster"] floating enable
-for_window [class="Pavu.*"] floating enable
-for_window [class="Font"] floating enable
-for_window [class="PuTTY.*"] floating enable
-for_window [class="selfservice"] floating enable
-for_window [class="Wfica"] floating enable
-for_window [title="Citrix.*"] floating enable
-for_window [title="Sign in to security device"] floating enable
-for_window [title="Sign in to security device"] floating enable
-
+for_window [class="Gnome-control-center"] move workspace $ws4
+for_window [class="Gnome-tweaks"] move workspace $ws4
+for_window [class="Hamster"] move workspace $ws4
+for_window [class="Pavu.*"] move workspace $ws4
+for_window [class="Font"] move workspace $ws4
+for_window [class="PuTTY.*"] move workspace $ws4
+for_window [class="selfservice"] move workspace $ws4
+for_window [class="Wfica"] move workspace $ws4
+for_window [title="Citrix.*"] move workspace $ws4
+for_window [title="Sign in to security device"] move workspace $ws4
+for_window [workspace=$ws4] floating enable
 ### i3-gaps stuff ###
 
 # Necessary for i3-gaps to work properly (pixel can be any value)
@@ -210,3 +209,26 @@ gaps inner 16
 gaps outer 0
 bindsym $mod+g gaps inner all minus 8
 bindsym $mod+Shift+g gaps inner all plus 8
+
+# rebar
+bar {
+    status_command i3status --config ~/.config/i3/i3status.conf
+    mode hide
+    hidden_state hide
+    modifier $mod
+    position bottom
+    output primary
+    tray_output primary
+    font pango:Iosevka NFM 14
+    strip_workspace_name yes
+    colors {
+    	background $background
+	statusline $status
+	separator $foreground
+        # threesomes      	border....	background	text....
+	focused_workspace	$active		$active		$background
+	active_workspace 	$background	$background	$foreground
+	inactive_workspace 	$background	$background	$foreground
+	urgent_workspace 	$urgent		$urgent		$foreground
+    }
+}
