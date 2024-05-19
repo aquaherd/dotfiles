@@ -87,6 +87,10 @@ bindsym $mod+a focus parent
 # focus the child container
 bindsym $mod+c focus child
 
+bindsym $mod+q bar mode dock
+bindsym $mod+z bar mode hide
+
+
 set $ws1 "1: wrk"
 set $ws2 "2: web"
 set $ws3 "3: com"
