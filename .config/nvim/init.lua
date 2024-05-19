@@ -62,9 +62,15 @@ require("lazy").setup({
 			},
 		},
 		{
-			'dinhhuy258/git.nvim',
-			config = true,
-			ft = ft.ts
+			"NeogitOrg/neogit",
+			ft = ft.lsp,
+			dependencies = {
+				"nvim-lua/plenary.nvim", -- required
+				"sindrets/diffview.nvim", -- optional - Diff integration
+				"nvim-telescope/telescope.nvim", -- optional
+			},
+			keys = { { 'go', ":Neogit kind=auto<cr>", desc = "git open" }, },
+			config = true
 		},
 		--telescope
 		{
@@ -347,6 +353,7 @@ require("lazy").setup({
 					mapping = cmp.mapping.preset.insert {
 						['<C-d>'] = cmp.mapping.scroll_docs(-4),
 						['<C-f>'] = cmp.mapping.scroll_docs(4),
+						['<Esc>'] = cmp.mapping.abort(),
 						['<C-Space>'] = cmp.mapping.complete {},
 						['<CR>'] = cmp.mapping.confirm {
 							behavior = cmp.ConfirmBehavior.Replace,
