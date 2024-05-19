@@ -147,7 +147,8 @@ set_from_resource $background background
 set_from_resource $foreground foreground
 set_from_resource $urgent color1
 set_from_resource $status color3
-
+set $transparent #ffffff00
+set $halftrans   #00000011
 # class                 border      bground     text        indicator   child_border
 client.focused          $active     $active     $background $background $active
 client.focused_inactive $background $background $foreground $background $background
@@ -213,6 +214,8 @@ bindsym $mod+Shift+g gaps inner all plus 8
 # rebar
 bar {
     status_command i3status --config ~/.config/i3/i3status.conf
+    i3bar_command i3bar --transparency
+    padding 2px
     mode hide
     hidden_state hide
     modifier $mod
@@ -222,13 +225,14 @@ bar {
     font pango:Iosevka NFM 14
     strip_workspace_name yes
     colors {
-    	background $background
-	statusline $status
+    	background $transparent 
+	statusline $foreground
 	separator $foreground
         # threesomes      	border....	background	text....
 	focused_workspace	$active		$active		$background
 	active_workspace 	$background	$background	$foreground
-	inactive_workspace 	$background	$background	$foreground
+	inactive_workspace 	$background	$halftrans	$foreground
 	urgent_workspace 	$urgent		$urgent		$foreground
+	binding_mode		$transparent	$transparent	$urgent	
     }
 }
