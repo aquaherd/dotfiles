@@ -64,7 +64,7 @@ bindsym $mod+r split h
 bindsym $mod+b split v
 
 # enter fullscreen mode for the focused container
-bindsym $mod+f fullscreen toggle
+bindsym $mod+Shift+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
@@ -72,7 +72,7 @@ bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
 # toggle tiling / floating
-bindsym $mod+o floating toggle
+bindsym $mod+f floating toggle
 
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
@@ -235,7 +235,7 @@ bar {
         # threesomes      	border....	background	text....
 	focused_workspace	$active		$active		$background
 	active_workspace 	$background	$background	$foreground
-	inactive_workspace 	$background	$halftrans	$foreground
+	inactive_workspace 	$halftrans	$halftrans	$foreground
 	urgent_workspace 	$urgent		$urgent		$foreground
 	binding_mode		$transparent	$transparent	$urgent	
     }
