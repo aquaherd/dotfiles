@@ -1,0 +1,14 @@
+session_name: 'audio'
+windows:
+- focus: 'true'
+  layout: 48fe,252x56,0,0{175x56,0,0,0,76x56,176,0[76x14,176,0,1,76x13,176,15,3,76x27,176,29,2]}
+  options: {}
+  panes:
+  - shell_command:
+    - ncmpcpp
+  - shell_command:
+    - tmux clock-mode
+  - shell_command:
+    - watch -n5 hamster list
+  start_directory: /home/herd
+  window_name: audio
