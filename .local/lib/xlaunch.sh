@@ -5,15 +5,16 @@
 test -f ~/.Xresources && xrdb -merge ~/.Xresources
 xsetroot -cursor_name left_ptr
 if [ -z "$XDG_RUNTIME_DIR" ]; then
-    export XDG_RUNTIME_DIR=/run/user/$(id -u)
-    sudo mkdir -p $XDG_RUNTIME_DIR
-    sudo chown $USER:$USER $XDG_RUNTIME_DIR
-    chmod 0700 $XDG_RUNTIME_DIR
+	XDG_RUNTIME_DIR="/run/user/$(id -u)"
+	export XDG_RUNTIME_DIR
+	sudo mkdir -p "$XDG_RUNTIME_DIR"
+	sudo chown "$USER:$USER" "$XDG_RUNTIME_DIR"
+	chmod 0700 "$XDG_RUNTIME_DIR"
 fi
 if [ -z "$SSH_AUTH_SOCK" ]; then
-    eval $(ssh-agent)
+	eval "$(ssh-agent)"
 fi
 if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
-    exec dbus-run-session $1
+	exec dbus-run-session "$1"
 fi
 exec $1
