@@ -13,7 +13,7 @@ exec_always {
     # gtk2
     xsettingsd -c ~/.config/bspwm/xsettings.conf
     ~/.local/bin/i3-autotiling
-# shulffle backdrop
+    # shuffle backdrop
     ~/.config/sway/bgrot.sh
 }
 
@@ -299,7 +299,7 @@ default_border pixel 3
 smart_gaps on
 
 # Smart Borders
-#smart_borders on
+smart_borders on
 
 # Set inner/outer gaps
 gaps inner 14

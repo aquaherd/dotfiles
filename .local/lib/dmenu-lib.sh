@@ -88,6 +88,16 @@ restore_backdrop_x11()
 		hsetroot -root -cover "$DST" > /dev/null 2>&1 || hsetroot -cover "$DST" > /dev/null 2>&1
 	fi 
 }
+restore_backdrop_sway()
+{
+	if [  ! -f "$DST" ]; then
+		echo "$DST not found. Shuffle."
+	        ~/.config/sway/bgrot.sh	
+	else
+		swaymsg output '*' bg "$DST" fill
+	fi 
+
+}
 restore_backdrop()
 {
 	fix_desktop
