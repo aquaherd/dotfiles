@@ -13,6 +13,8 @@ exec_always {
     # gtk2
     xsettingsd -c ~/.config/bspwm/xsettings.conf
     ~/.local/bin/i3-autotiling
+# shulffle backdrop
+    ~/.config/sway/bgrot.sh
 }
 
 # autostart
@@ -61,9 +63,6 @@ output DP-2 disable
 output DP-3 disable
 
 include ~/.config/$HOSTNAME.conf
-
-# Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg ~/Pictures/Backdrops/dracula/debian.png fill
 
 ### Idle configuration
 set $swaylock ~/.config/sway/swaylock-fancy.sh

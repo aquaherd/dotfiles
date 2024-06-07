@@ -102,7 +102,7 @@ ask()
 	fix_desktop
 	case $DESKTOP_SESSION in
 		sway)
-			wofi -i -dmenu -p "$1"
+			wofi -idp "$1"
 			;;
 		hikari|wayfire)
 			# dont know how to determine current monitor in hikari
@@ -110,7 +110,7 @@ ask()
 			;;
 		gnome)
 			if [ -n "$WAYLAND_DISPLAY" ]; then
-				wofi -p "$1" -S dmenu
+				wofi -idp "$1"
 			else
 				dmenu -i -p "$1"
 			fi
@@ -119,7 +119,7 @@ ask()
 			fzf
 			;;
 		wslg)
-			wofi -p "$1" -S dmenu 
+			wofi -idp "$1"
 			;;
 		*)
 			dmenu -b -i -p "$1"
