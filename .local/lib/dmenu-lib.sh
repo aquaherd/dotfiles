@@ -1,4 +1,4 @@
-# this is a posix shell fragment for inclusion not executioe
+# this is a posix shell fragment for inclusion only
 
 fix_desktop() # in case you start without display manager
 {
@@ -53,93 +53,76 @@ randr_sway()
 randr_default()
 {
 	case $1 in
-		single)
-			xrandr \
-				--output "$PRIMARY" --primary --auto \
-				--output "$SECONDARY" --off
-							;;
-						dual)
-							xrandr \
-								--output "$PRIMARY" --primary --auto \
-								--output "$SECONDARY" --auto --left-of "$PRIMARY"
-															;;
-													esac
-												}
+		single) xrandr --output "$PRIMARY" --primary --auto --output "$SECONDARY" --off ;;
+		dual) xrandr --output "$PRIMARY" --primary --auto --output "$SECONDARY" --auto --left-of "$PRIMARY" ;;
+	esac
+}
 
-												randr()
-												{
-													fix_desktop
-													read -r oldrandr < ~/.cache/xrandr
-													echo "randr: $PRIMARY $SECONDARY randr_${DESKTOP_SESSION}  $*"
-													"randr_${DESKTOP_SESSION}" "$*" || randr_default "$*"
-													echo "$*" > .cache/xrandr
-													if [ "$*" != "$oldrandr" ]; then
-														DST=nosuchimage restore_backdrop
-													fi
+randr()
+{
+	fix_desktop
+	read -r oldrandr < ~/.cache/xrandr
+	echo "randr: $PRIMARY $SECONDARY randr_${DESKTOP_SESSION}  $*"
+	"randr_${DESKTOP_SESSION}" "$*" || randr_default "$*"
+	echo "$*" > .cache/xrandr
+	if [ "$*" != "$oldrandr" ]; then
+		DST=nosuchimage restore_backdrop
+	fi
 
-												}
+}
 
-												randr_restore()
-												{
-													r="single"
-													read -r r < ~/.cache/xrandr || true
-													randr "$r"
-												}
+randr_restore()
+{
+	r="single"
+	read -r r < ~/.cache/xrandr || true
+	randr "$r"
+}
 
-												DST=/usr/local/share/backgrounds/$(id -un)
-												restore_backdrop_x11()
-												{
-													if [  ! -f "$DST" ]; then
-														echo "$DST not found. Shuffle."
-														update-hsetroot.sh
-													else
-														hsetroot -root -cover "$DST" > /dev/null 2>&1 || hsetroot -cover "$DST" > /dev/null 2>&1
-													fi 
-												}
-												restore_backdrop()
-												{
-													fix_desktop
-													case $DESKTOP_SESSION in
-														i3|2bwm|progman) restore_backdrop_x11;return 0;;
-														*) return 1;;
-													esac
-												}
+DST=/usr/local/share/backgrounds/$(id -un)
+restore_backdrop_x11()
+{
+	if [  ! -f "$DST" ]; then
+		echo "$DST not found. Shuffle."
+		update-hsetroot.sh
+	else
+		hsetroot -root -cover "$DST" > /dev/null 2>&1 || hsetroot -cover "$DST" > /dev/null 2>&1
+	fi 
+}
+restore_backdrop()
+{
+	fix_desktop
+	case $DESKTOP_SESSION in
+		i3|2bwm|progman) restore_backdrop_x11;return 0;;
+		*) return 1;;
+	esac
+}
 
-												ask()
-												{
-													fix_desktop
-													case $DESKTOP_SESSION in
-														sway)
-															m=0
-															# dmenu-wl does not use current focused monitor as dmenu-x11 does
-															for p in $(swaymsg -t get_outputs | jq -r '.[] ' | jq -r '.focused'); do
-																if $p; then
-																	break
-																fi
-																m=$((1+m))
-															done
-															# dmenu-wl -i -p "$1" -fn 'Iosevka 15' -nb '#44475a' -sb '#bd93f9' -h 30 -m $m -b
-															rofi -i -m "XWAYLAND$m" -dmenu -p "$1"
-															;;
-														hikari|wayfire)
-															# dont know how to determine current monitor in hikari
-															dmenu-wl -i -p "$1" -fn 'Iosevka 15' -nb '#44475a' -sb '#bd93f9' -h 30 -b
-															;;
-														gnome)
-															if [ -n "$WAYLAND_DISPLAY" ]; then
-																wofi -p "$1" -S dmenu
-															else
-																dmenu -i -p "$1"
-															fi
-															;;
-														none)
-															fzf
-															;;
-														wslg)
-															wofi -p "$1" -S dmenu 
-															;;
-														*)
-															dmenu -b -i -p "$1"
-															;;
-													esac
-												}
+ask()
+{
+	fix_desktop
+	case $DESKTOP_SESSION in
+		sway)
+			wofi -i -dmenu -p "$1"
+			;;
+		hikari|wayfire)
+			# dont know how to determine current monitor in hikari
+			dmenu-wl -i -p "$1" -fn 'Iosevka 15' -nb '#44475a' -sb '#bd93f9' -h 30 -b
+			;;
+		gnome)
+			if [ -n "$WAYLAND_DISPLAY" ]; then
+				wofi -p "$1" -S dmenu
+			else
+				dmenu -i -p "$1"
+			fi
+			;;
+		none)
+			fzf
+			;;
+		wslg)
+			wofi -p "$1" -S dmenu 
+			;;
+		*)
+			dmenu -b -i -p "$1"
+			;;
+	esac
+}

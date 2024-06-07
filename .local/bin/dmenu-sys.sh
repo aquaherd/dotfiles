@@ -183,6 +183,11 @@ lock_i3()
     done
 }
 
+lock_sway()
+{
+	swaylock -f -c 000000 -lki ~/.cache/swaybg
+}
+
 lock()
 {
     "lock_$DESKTOP_SESSION" || dm-tool lock
