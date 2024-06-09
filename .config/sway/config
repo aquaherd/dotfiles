@@ -13,8 +13,8 @@ exec_always {
     # gtk2
     xsettingsd -c ~/.config/bspwm/xsettings.conf
     ~/.local/bin/i3-autotiling
-    # shuffle backdrop
-    ~/.config/sway/bgrot.sh
+    # restore backdrop
+    ~/.local/bin/update-hsetroot.sh -r
 }
 
 # autostart

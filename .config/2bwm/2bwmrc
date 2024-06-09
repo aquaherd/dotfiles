@@ -14,7 +14,7 @@ xsettingsd&
 update-appcache.sh&
 xsetroot -cursor_name left_ptr
 dunst&
-update-hsetroot.sh&
+update-hsetroot.sh -r&
 stalonetray&
 sxhkd -c ~/.config/2bwm/sxhkd.conf &
 st&

@@ -21,7 +21,7 @@ set $browser firefox
 #autostart
 exec --no-startup-id xfconf-query -c xfce4-session -p /general/SessionName -s i3
 exec --no-startup-id xfce4-session
-exec --no-startup-id ~/.local/bin/update-hsetroot.sh
+exec --no-startup-id ~/.local/bin/update-hsetroot.sh -r
 exec --no-startup-id xsetroot -cursor_name left_ptr
 exec_always --no-startup-id ~/.local/bin/i3-autotiling
 exec --no-startup-id picom
@@ -197,7 +197,7 @@ client.placeholder      $background $background $foreground $background $backgro
 bindsym $mod+Escape exec ~/.local/bin/dmenu-sys.sh
 bindsym $mod+d exec --no-startup-id ~/.local/bin/dmenu-run.sh
 bindsym $mod+Shift+n exec $filemgr
-bindsym $mod+Shift+v exec --no-startup-id ~/.local/bin/update-hsetroot.sh
+bindsym $mod+Shift+v exec --no-startup-id ~/.local/bin/update-hsetroot.sh -s
 bindsym $mod+Shift+t exec --no-startup-id ~/.local/bin/dmenu-hamster.sh ask
 bindsym $mod+Shift+m exec --no-startup-id ~/.local/bin/dmenu-mpd.sh -a
 bindsym $mod+Return exec $term

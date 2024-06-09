@@ -53,8 +53,8 @@ randr_sway()
 randr_default()
 {
 	case $1 in
-		single) xrandr --output "$PRIMARY" --primary --auto --output "$SECONDARY" --off ;;
-		dual) xrandr --output "$PRIMARY" --primary --auto --output "$SECONDARY" --auto --left-of "$PRIMARY" ;;
+		single) xrandr --output "$SECONDARY" --off ;;
+		dual) xrandr --output "$SECONDARY" --auto --left-of "$PRIMARY" ;;
 	esac
 }
 
@@ -79,32 +79,15 @@ randr_restore()
 }
 
 DST=/usr/local/share/backgrounds/$(id -un)
-restore_backdrop_x11()
-{
-	if [  ! -f "$DST" ]; then
-		echo "$DST not found. Shuffle."
-		update-hsetroot.sh
-	else
-		hsetroot -root -cover "$DST" > /dev/null 2>&1 || hsetroot -cover "$DST" > /dev/null 2>&1
-	fi 
-}
-restore_backdrop_sway()
-{
-	if [  ! -f "$DST" ]; then
-		echo "$DST not found. Shuffle."
-	        ~/.config/sway/bgrot.sh	
-	else
-		swaymsg output '*' bg "$DST" fill
-	fi 
-
-}
 restore_backdrop()
 {
 	fix_desktop
-	case $DESKTOP_SESSION in
-		i3|2bwm|progman) restore_backdrop_x11;return 0;;
-		*) return 1;;
-	esac
+	if [  ! -f "$DST" ]; then
+		echo "$DST not found. Shuffle."
+		update-hsetroot.sh -s
+	else
+		update-hsetroot.sh -r
+	fi 
 }
 
 ask()
