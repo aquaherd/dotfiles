@@ -98,7 +98,7 @@ bindsym {
 	$mod+Print exec grim -t jpeg -g "$(slurp)" ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).jpg
 
 	# Rotate bg
-	$mod+Shift+v exec ~/.config/sway/bgrot.sh
+	$mod+Shift+v exec ~/.local/bin/update-hsetroot.sh -s
 
 	# poor mans alt+tab
 	$mod+Tab exec $alttab
