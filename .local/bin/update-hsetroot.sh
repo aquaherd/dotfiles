@@ -1,11 +1,28 @@
 #!/bin/sh
 SAV=~/.cache/update-hsetroot-backdrop
 USR="/usr/local/share/backgrounds/$(id -un)" 
+
+swaysplit()
+{
+	cp -f $SAV $SAV.left
+	cp -f $SAV $SAV.right
+	read -r width height
+	half=$((width/2))
+	mogrify -crop "${half}x${height}+0+0" $SAV.left
+	mogrify -crop "${half}x${height}+${half}+0" $SAV.right
+}
+
 apply()
 {
 	f=$(readlink "$1")
 	echo "applying mode $m $f"
-	if [ -n "$SWAYSOCK" ];then
+	if [ -n "$SWAYSOCK" ]; then
+		if [ "$m" = "dual" ]; then
+			identify "$SAV" | cut -d' ' -f3 | tr 'x' ' ' | swaysplit
+			swaymsg output \$primary bg "$1.right" fill
+			swaymsg output \$secondary bg "$1.left" fill
+			exit 0
+		fi
 		swaymsg output '*' bg "$1" fill
 		exit 0
 	fi
