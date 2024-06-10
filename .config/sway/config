@@ -2,27 +2,7 @@
 
 set $gnome-schema org.gnome.desktop.interface
 
-exec_always {
-	# picked up by gtk3
-    gsettings set $gnome-schema gtk-theme 'Dracula'
-    gsettings set $gnome-schema icon-theme 'Dracula'
-    gsettings set $gnome-schema font-name 'Liberation Sans Narow 13'
-    gsettings set $gnome-schema cursor-theme 'Adwaita'
-    # x11
-    xrdb .Xresources
-    # gtk2
-    xsettingsd -c ~/.config/bspwm/xsettings.conf
-    ~/.local/bin/i3-autotiling
-    # restore backdrop
-    ~/.local/bin/update-hsetroot.sh -r
-}
-
-# autostart
-exec mako
-exec mpd
-exec mpDris2
-exec gammastep-indicator
-exec foot --server
+exec_always ~/.config/sway/autostart.sh
 
 ### Variables
 #
@@ -34,20 +14,19 @@ set $down j
 set $up k
 set $right l
 # Preferred applications
-set {
-    # terminal
-    $term footclient
+# terminal
+set $term footclient
 
-    #web browser
-    $browser firefox-wayland
-    #MOZ_ENABLE_WAYLAND=1 firefox --new-window
+#web browser
+set $browser firefox-wayland
+#MOZ_ENABLE_WAYLAND=1 firefox --new-window
+set $filemgr thunar
+# application launchers
+# Note: it's recommended that you pass the final command to sway
+#set $menu dmenu_path | bemenu | xargs swaymsg exec --
+set $menu wofi --show=drun | xargs swaymsg exec --
+set $alttab ~/.config/sway/alttab.sh
 
-    # application launchers
-    # Note: it's recommended that you pass the final command to sway
-    #set $menu dmenu_path | bemenu | xargs swaymsg exec --
-    $menu wofi --show=drun | xargs swaymsg exec --
-    $alttab ~/.config/sway/alttab.sh
-}
 ### Output configuration
 # is in $HOSTNAME.conf
 include ~/.config/sway/local.conf
@@ -83,33 +62,18 @@ exec swayidle -w \
 # Basics:
 #
 # programs
-bindsym {
-	$mod+Return exec $term
-	$mod+Mod1+f exec $browser
-	$mod+Mod1+t exec thunar
-	$mod+Mod1+c exec code
-	$mod+Mod1+g exec geany
-	$mod+Mod1+h exec ~/.local/bin/dmenu-hamster.sh ask
-	$mod+Mod1+m exec ~/.local/bin/dmenu-mpd.sh -a
-	# Take a screenshot with all output and save it into screenshots
-	Print exec grim -t jpeg ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).jpg
-
-	# Take a Screenshot with the region select
-	$mod+Print exec grim -t jpeg -g "$(slurp)" ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).jpg
-
-	# Rotate bg
-	$mod+Shift+v exec ~/.local/bin/update-hsetroot.sh -s
-
-	# poor mans alt+tab
-	$mod+Tab exec $alttab
-}
-
-# kill focused window
-bindsym $mod+Shift+q kill
-
-# start your launcher
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+Return exec $browser
 bindsym $mod+Shift+d exec $menu
+bindsym $mod+Shift+m exec ~/.local/bin/dmenu-mpd.sh -a
+bindsym $mod+Shift+n exec $filemgr
+bindsym $mod+Shift+q kill
+bindsym $mod+Shift+s exec grim -t jpeg -g "$(slurp)" ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).jpg
+bindsym $mod+Shift+t exec ~/.local/bin/dmenu-hamster.sh ask
+bindsym $mod+Shift+v exec ~/.local/bin/update-hsetroot.sh -s
+bindsym $mod+Tab exec $alttab
 bindsym $mod+d exec ~/.local/bin/dmenu-run.sh
+bindsym $mod+p exec grim -t jpeg ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).jpg
 
 # Drag floating windows by holding down $mod and left mouse button.
 # Resize them with right mouse button + $mod.
@@ -122,10 +86,10 @@ floating_modifier $mod normal
 bindsym $mod+Shift+c reload
 
 # exit sway (logs you out of your Wayland session)
-bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+bindsym $mod+Shift+e exit
 #
 # Moving around:
-#
+focus_wrapping no
 # Move your focus around
 bindsym $mod+$left focus left
 bindsym $mod+$down focus down
@@ -201,8 +165,8 @@ bindsym $mod+Shift+8 move container to workspace $ws8
 # You can "split" the current object of your focus with
 # $mod+b or $mod+v, for horizontal and vertical splits
 # respectively.
-bindsym $mod+Ctrl+Right splith
-bindsym $mod+Ctrl+Down splitv
+bindsym $mod+r splith
+bindsym $mod+b splitv
 
 # Switch the current container between different layout styles
 bindsym $mod+s layout stacking
@@ -210,10 +174,10 @@ bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
 # Make the current focus fullscreen
-bindsym $mod+f fullscreen
+bindsym $mod+Shift+f fullscreen
 
 # Toggle the current focus between tiling and floating mode
-bindsym $mod+Shift+space floating toggle
+bindsym $mod+f floating toggle
 
 # Swap focus between the tiling area and the floating area
 bindsym $mod+space focus mode_toggle
@@ -222,16 +186,9 @@ bindsym $mod+space focus mode_toggle
 bindsym $mod+a focus parent
 #
 # Scratchpad:
-#
-# Sway has a "scratchpad", which is a bag of holding for windows.
-# You can send windows there and get them back later.
-
-# Move the currently focused window to the scratchpad
-bindsym $mod+Shift+minus move scratchpad
-
-# Show the next scratchpad window or hide the focused scratchpad window.
-# If there are multiple scratchpad windows, this command cycles through them.
-bindsym $mod+minus scratchpad show
+bindsym $mod+i move scratchpad
+bindsym $mod+u scratchpad show
+bindsym $mod+z sticky toggle
 
 # Multimedia:
 #
@@ -241,38 +198,12 @@ bindsym XF86AudioPlay exec mpc toggle
 bindsym Mod1+q exec playerctl previous
 bindsym Mod1+w exec playerctl play-pause
 bindsym Mod1+e exec playerctl next
-bindsym $mod+i exec killall -USR1 waybar
 #bindsym $mod+i bar mode toggle
 #bindsym XF86AudioRaiseVolume exec
 #XF86AudioLowerVolume
 #XF86AudioMute
 #XF86MonBrightnessUp
 #XF86MonBrightnessDown
-
-#
-# Resizing containers:
-#
-mode "resize" {
-    # left will shrink the containers width
-    # right will grow the containers width
-    # up will shrink the containers height
-    # down will grow the containers height
-    bindsym $left resize shrink width 10px
-    bindsym $down resize grow height 10px
-    bindsym $up resize shrink height 10px
-    bindsym $right resize grow width 10px
-
-    # dito, with arrow keys
-    bindsym Left resize shrink width 10px
-    bindsym Down resize grow height 10px
-    bindsym Up resize shrink height 10px
-    bindsym Right resize grow width 10px
-
-    # return to default mode
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
-bindsym $mod+r mode "resize"
 
 bindsym $mod+Escape exec ~/.local/bin/dmenu-sys.sh
 
@@ -290,47 +221,10 @@ smart_gaps on
 smart_borders on
 
 # Set inner/outer gaps
-gaps inner 14
+gaps inner 16
 gaps outer 0
-
-# Gaps mode
-set $mode_gaps Gaps: (o) outer, (i) inner
-set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
-set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
-bindsym $mod+Shift+g mode "$mode_gaps"
-
-mode "$mode_gaps" {
-    bindsym o      mode "$mode_gaps_outer"
-    bindsym i      mode "$mode_gaps_inner"
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
-
-mode "$mode_gaps_inner" {
-    bindsym plus  gaps inner current plus 5
-    bindsym minus gaps inner current minus 5
-    bindsym 0     gaps inner current set 0
-
-    bindsym Shift+plus  gaps inner all plus 5
-    bindsym Shift+minus gaps inner all minus 5
-    bindsym Shift+0     gaps inner all set 0
-
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
-
-mode "$mode_gaps_outer" {
-    bindsym plus  gaps outer current plus 5
-    bindsym minus gaps outer current minus 5
-    bindsym 0     gaps outer current set 0
-
-    bindsym Shift+plus  gaps outer all plus 5
-    bindsym Shift+minus gaps outer all minus 5
-    bindsym Shift+0     gaps outer all set 0
-
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
+bindsym $mod+g gaps inner all minus 8
+bindsym $mod+Shift+g gaps inner all plus 8
 
 # Dracula colors
 set $active 	#bd93f9
@@ -352,9 +246,10 @@ client.background       $background
 #
 # Status Bar:
 #
-# Read `man 5 sway-bar` for more information about this section.
+# Read `man 5 swaybar` for more information about this section.
 bar {
     status_command i3status --config ~/.config/i3/i3status.conf
+    # padding 2px
     mode hide
     hidden_state hide
     modifier $mod

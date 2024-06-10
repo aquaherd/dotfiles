@@ -127,6 +127,7 @@ closeall_gnome()
 closeall()
 {
     fix_desktop
+    closeall_common
     "closeall_${DESKTOP_SESSION}" "$*" || true
 }
 

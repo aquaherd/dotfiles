@@ -80,6 +80,7 @@ bindsym $mod+space focus mode_toggle
 # iconize / uniconize floating
 bindsym $mod+i move to scratchpad 
 bindsym $mod+u scratchpad show
+bindsym $mod+z sticky toggle
 
 # focus the parent container
 bindsym $mod+a focus parent

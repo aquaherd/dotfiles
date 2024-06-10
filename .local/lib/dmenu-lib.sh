@@ -34,7 +34,58 @@ fix_desktop() # in case you start without display manager
 			export PRIMARY SECONDARY
 		fi
 	fi
+}
 
+CACHE="$XDG_RUNTIME_DIR/$DESKTOP_SESSION/cache"
+autostart_common()
+{
+
+	mkdir -p "$CACHE"
+	exec > "$CACHE"/autostart.log
+	exec 2>&1
+	randr_restore
+	restore_backdrop
+	if ! pidof runsvdir && [ -d "$HOME/.local/service" ]; then
+		# Start local services if runsv
+		start runsvdir ~/.local/service
+	fi
+}
+
+start()
+{
+	exec >> "$CACHE"/autostart.log
+	exec 2>&1
+	if [ -f "$CACHE/$1.pid" ]; then
+		echo "start: $* already running"
+		return
+	fi
+	echo "start: $*"
+	"$@" &
+	pid=$!
+	disown $pid
+	echo $pid > "$CACHE/$1.pid"
+}
+
+start_oneshot()
+{
+	exec >> "$CACHE"/autostart.log
+	exec 2>&1
+	echo "start: $*"
+	"$@" 
+}
+
+gset()
+{
+	start_oneshot gsettings set org.gnome.desktop.interface "$1" "$2"
+}
+
+closeall_common()
+{
+	for d in "$CACHE"/*.pid; do 
+		read -r pid < "$d"
+		kill "$pid" || echo "$d was not running."
+		rm -f "$d"
+	done
 }
 
 randr_bspwm()

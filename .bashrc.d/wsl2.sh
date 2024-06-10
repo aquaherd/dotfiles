@@ -1,7 +1,13 @@
 #!/bin/bash
+# Sanity checks
+
+if [[ -n "$debian_chroot" ]] || [[ -z "$WSLENV" ]]; then
+	return
+fi
+echo "wsl..."
 # PATH fixups
 case ":$PATH:" in
-	:$HOME/.local/bin:) ;;
+	":$HOME/.local/bin:") ;;
 	*) PATH+=:$HOME/.local/bin
 		export PATH
 		;;
@@ -37,7 +43,7 @@ if [[ -z "$WAYLAND_DISPLAY" ]] && command -v wsld > /dev/null; then
 	export NO_AT_BRIDGE=1
 	if ! pgrep dbus > /dev/null; then
 		echo 'launching dbus...'
-		dbus-daemon --session --fork --address=$DBUS_SESSION_ADDRESS
+		dbus-daemon --session --fork --address="$DBUS_SESSION_ADDRESS"
 	fi
 fi
 # SSH
@@ -45,7 +51,7 @@ if command -v wsl2-ssh-agent > /dev/null; then
 	export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.sock 
 	if ! pgrep wsl2-ssh-agent > /dev/null; then
 		echo 'launching ssh-agent...'
-		eval "$(wsl2-ssh-agent --socket $SSH_AUTH_SOCK)"
+		eval "$(wsl2-ssh-agent --socket "$SSH_AUTH_SOCK")"
 	fi
 fi
 

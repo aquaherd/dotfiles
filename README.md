@@ -7,28 +7,29 @@ Possibly not worth much, however an attempt at modularity and portability is mad
 ## awesome
 * not tried yet
 
+## bspwm
+* unused desktop, highly customized
+* modular, scripted
+
 ## dwm
 * at stock
 
 ## i3
-* Previous desktop
-* low effort
+* workhorse
+* high effort
 
 ## i3+xfce
 * medium effort
 
-## bspwm
-* Current desktop, highly customized
-* modular, scripted
+## neovim
+* daily driver
+* tracking stable, single line config with LSP for c/c++
+
+## progman
+* no patches yet
 
 ## spectrwm
 * not tried yet
 
 ## sway
-* Under research
-* does not work good on debian, ubuntu
-* works on on void and alpine but not yet harmonized
-
-## neovim
-* Under research
-* 0.5 and later, some effort
+* Under sync with i3
