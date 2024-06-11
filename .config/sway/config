@@ -2,6 +2,7 @@
 
 set $gnome-schema org.gnome.desktop.interface
 
+exec dbus-update-activation-environment DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
 exec_always ~/.config/sway/autostart.sh
 
 ### Variables
