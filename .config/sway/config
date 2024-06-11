@@ -112,6 +112,19 @@ bindsym $mod+Shift+Left move left
 bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
+# resize focused window
+bindsym $mod+Ctrl+Left resize shrink width 10 px
+bindsym $mod+Ctrl+Up resize grow height 10 px
+bindsym $mod+Ctrl+Down resize shrink height 10 px
+bindsym $mod+Ctrl+Right resize grow width 10 px
+bindsym $mod+Ctrl+h resize shrink width 10 px
+bindsym $mod+Ctrl+k resize grow height 10 px
+bindsym $mod+Ctrl+j resize shrink height 10 px
+bindsym $mod+Ctrl+l resize grow width 10 px
+bindsym --whole-window --border $mod+button4 resize shrink height 5 px
+bindsym --whole-window --border $mod+button5 resize grow height 5 px
+bindsym --whole-window --border $mod+shift+button4 resize shrink width 5 px
+bindsym --whole-window --border $mod+shift+button5 resize grow width 5 px
 #
 # Workspaces:
 #
