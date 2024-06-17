@@ -246,6 +246,7 @@ require("lazy").setup({
 			end,
 			ft = ft.doc,
 		}, -- lsp
+		{ 'folke/lazydev.nvim', ft = 'lua' },
 		{
 			'neovim/nvim-lspconfig',
 			ft = ft.lsp,
@@ -254,7 +255,6 @@ require("lazy").setup({
 				{ 'williamboman/mason.nvim', cmd = "Mason", config = true },
 				'williamboman/mason-lspconfig.nvim',
 				{ 'j-hui/fidget.nvim',       config = true, tag = 'legacy' },
-				{ 'folke/neodev.nvim',       config = true }
 			},
 			config = function()
 				local on_attach = function(_, bufnr)
@@ -379,7 +379,11 @@ require("lazy").setup({
 						end, { 'i', 's' }),
 					},
 					sources = {
-						{ name = 'buffer' }, { name = 'luasnip' }, { name = 'nvim_lsp' }, { name = 'doxygen' }
+						{ name = 'buffer' },
+						{ name = 'luasnip' },
+						{ name = 'nvim_lsp' },
+						{ name = 'copilot' },
+						{ name = 'doxygen' },
 					},
 				}
 			end
@@ -549,6 +553,23 @@ require("lazy").setup({
 			}
 		},
 		-- misc
+		{
+			"zbirenbaum/copilot.lua",
+			cmd = "Copilot",
+			config = function()
+				require("copilot").setup({
+					suggestion = { enabled = false },
+					panel = { enabled = false },
+				})
+			end,
+			event = "InsertEnter",
+		},
+		{
+			"zbirenbaum/copilot-cmp",
+			config = function()
+				require("copilot_cmp").setup()
+			end,
+		},
 		{
 			'norcalli/nvim-colorizer.lua',
 			config = true,

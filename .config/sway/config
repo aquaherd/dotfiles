@@ -101,6 +101,8 @@ bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
+bindsym $mod+period focus next sibling
+bindsym $mod+comma focus prev sibling
 
 # _move_ the focused window with the same, but add Shift
 bindsym $mod+Shift+$left move left
@@ -185,7 +187,7 @@ bindsym $mod+b splitv
 # Switch the current container between different layout styles
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+bindsym $mod+e layout toggle all
 
 # Make the current focus fullscreen
 bindsym $mod+Shift+f fullscreen
@@ -198,6 +200,7 @@ bindsym $mod+space focus mode_toggle
 
 # move focus to the parent container
 bindsym $mod+a focus parent
+bindsym $mod+y focus child
 #
 # Scratchpad:
 bindsym $mod+i move scratchpad
@@ -221,24 +224,15 @@ bindsym Mod1+e exec playerctl next
 
 bindsym $mod+Escape exec ~/.local/bin/dmenu-sys.sh
 
-### i3-gaps stuff ###
-
+### gaps stuff ###
 default_border pixel 3
-
-# Necessary for i3-gaps to work properly (pixel can be any value)
-#for_window [class="^.*"] border pixel 0
-
-# Smart Gaps
 smart_gaps on
-
-# Smart Borders
-smart_borders on
-
-# Set inner/outer gaps
 gaps inner 16
 gaps outer 0
 bindsym $mod+g gaps inner all minus 8
 bindsym $mod+Shift+g gaps inner all plus 8
+bindsym $mod+Shift+b border toggle
+title_align center
 
 # Dracula colors
 set $active 	#bd93f9
@@ -293,5 +287,6 @@ input * {
 include /etc/sway/config.d/*
 
 # Floating rules
-for_window [class="XEyes"] floating enable
+for_window [title=".*"] title_format "%title (%app_id/%class)"
+for_window [class="XEyes"] floating enable, sticky enable
 

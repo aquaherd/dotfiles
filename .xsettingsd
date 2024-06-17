@@ -11,7 +11,7 @@ Gtk/IconSizes ""
 Gtk/KeyThemeName ""
 Gtk/MenuBarAccel "F10"
 Gtk/MenuImages 1
-Gtk/MonospaceFontName "Iosevka Term 13"
+Gtk/MonospaceFontName "Iosevka Nerd Font Mono 13"
 Gtk/TitlebarMiddleClick "lower"
 Gtk/ToolbarIconSize 3
 Gtk/ToolbarStyle "icons"
