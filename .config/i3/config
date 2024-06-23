@@ -89,7 +89,7 @@ bindsym $mod+a focus parent
 bindsym $mod+c focus child
 
 bindsym $mod+q bar mode dock
-bindsym $mod+z bar mode hide
+# bindsym $mod+z bar mode hide
 
 
 set $ws1 "1: wrk"

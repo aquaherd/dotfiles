@@ -19,8 +19,8 @@ set $right l
 set $term footclient
 
 #web browser
-set $browser firefox-wayland
-#MOZ_ENABLE_WAYLAND=1 firefox --new-window
+# set $browser firefox-wayland
+set $browser MOZ_ENABLE_WAYLAND=1 firefox --new-window
 set $filemgr thunar
 # application launchers
 # Note: it's recommended that you pass the final command to sway
@@ -289,4 +289,4 @@ include /etc/sway/config.d/*
 # Floating rules
 for_window [title=".*"] title_format "%title (%app_id/%class)"
 for_window [class="XEyes"] floating enable, sticky enable
-
+for_window [title=".*"] inhibit_idle fullscreen
