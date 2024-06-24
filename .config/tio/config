@@ -1,3 +1,8 @@
+[a0]
+device = /dev/ttyACM0
+
+[a1]
+device = /dev/ttyACM1
 
 [u2]
 device = /dev/ttyUSB2
