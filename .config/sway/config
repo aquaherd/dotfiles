@@ -69,12 +69,12 @@ bindsym $mod+Shift+d exec $menu
 bindsym $mod+Shift+m exec ~/.local/bin/dmenu-mpd.sh -a
 bindsym $mod+Shift+n exec $filemgr
 bindsym $mod+Shift+q kill
-bindsym $mod+Shift+s exec grim -t jpeg -g "$(slurp)" ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).jpg
+bindsym $mod+Shift+s exec grim -t png -g "$(slurp)" ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).png
 bindsym $mod+Shift+t exec ~/.local/bin/dmenu-hamster.sh ask
 bindsym $mod+Shift+v exec ~/.local/bin/update-hsetroot.sh -s
 bindsym $mod+Tab exec $alttab
 bindsym $mod+d exec ~/.local/bin/dmenu-run.sh
-bindsym $mod+p exec grim -t jpeg ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).jpg
+bindsym $mod+p exec grim -t jpeg ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%m-%s).png
 
 # Drag floating windows by holding down $mod and left mouse button.
 # Resize them with right mouse button + $mod.
