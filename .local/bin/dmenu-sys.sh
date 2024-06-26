@@ -186,7 +186,7 @@ lock_i3()
 
 lock_sway()
 {
-	swaylock -f -c 000000 -lki ~/.cache/swaybg
+	~/.config/sway/swaylock-fancy.sh
 }
 
 lock()
