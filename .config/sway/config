@@ -33,7 +33,7 @@ set $alttab ~/.config/sway/alttab.sh
 include ~/.config/sway/local.conf
 
 ### Idle configuration
-set $swaylock ~/.config/sway/swaylock-fancy.sh $primary $secondary
+set $swaylock '~/.config/sway/swaylock-fancy.sh $primary $secondary'
 exec swayidle -w \
     timeout 300 $swaylock \
     timeout 600 'swaymsg "output * dpms off"' \
