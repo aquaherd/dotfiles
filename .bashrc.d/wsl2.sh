@@ -1,18 +1,15 @@
 #!/bin/bash
 # Sanity checks
-
-if [[ -n "$debian_chroot" ]] || [[ -z "$WSLENV" ]]; then
+if ! grep -q microsoft /proc/version; then
 	return
 fi
 echo "wsl..."
 # PATH fixups
-case ":$PATH:" in
-	":$HOME/.local/bin:") ;;
-	*) PATH+=:$HOME/.local/bin
-		export PATH
-		;;
-esac
-
+LOCAL_BIN=$HOME/.local/bin
+if ! [[ $PATH =~ $LOCAL_BIN ]]; then
+	PATH=$LOCAL_BIN:$PATH
+	export PATH
+fi
 # XDG
 if [[ -z "$XDG_RUNTIME_DIR" ]]; then
 	export XDG_RUNTIME_DIR=/run/user/$UID
