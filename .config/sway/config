@@ -288,5 +288,7 @@ include /etc/sway/config.d/*
 
 # Floating rules
 for_window [title=".*"] title_format "%title (%app_id/%class)"
+for_window [app_id=".*Hamster.*"] floating enable, sticky enable
 for_window [class="XEyes"] floating enable, sticky enable
 for_window [title=".*"] inhibit_idle fullscreen
+for_window [workspace=$ws4] floating enable
