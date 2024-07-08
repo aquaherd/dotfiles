@@ -51,15 +51,7 @@ require("lazy").setup({
 				{ '[c',         ":Gitsigns prev_hunk<cr>", desc = "prev hunk" },
 				{ ']c',         ":Gitsigns next_hunk<cr>", desc = "next hunk" },
 			},
-			opts = {
-				signs = {
-					add = { text = "+", numhl = "GitSignsAddNr" },
-					change = { text = "~", numhl = "GitSignsChangeNr" },
-					delete = { text = "-", numhl = "GitSignsDeleteNr" },
-					topdelete = { text = "_", numhl = "GitSignsDeleteNr" },
-					changedelete = { text = "~", numhl = "GitSignsChangeNr" },
-				}
-			},
+			config = true
 		},
 		{
 			"NeogitOrg/neogit",
