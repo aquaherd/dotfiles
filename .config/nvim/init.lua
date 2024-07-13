@@ -70,15 +70,45 @@ require("lazy").setup({
 			dependencies = { 'nvim-lua/plenary.nvim', 'jvgrootveld/telescope-zoxide' },
 			cmd = { 'Telescope' },
 			keys = {
-				{ '<leader><space>', ":Telescope<cr>",                               desc = "telescope" },
-				{ '<leader>F',       ":Telescope find_files<cr>",                    desc = "ts: Find files" },
-				{ '<leader>G',       ":Telescope live_grep<cr>",                     desc = "ts: Live grep" },
-				{ '<leader>W',       ":Telescope lsp_dynamic_workspace_symbols<cr>", desc = "LSP: Workspace symbols" },
-				{ '<leader>b',       ":Telescope buffers<cr>",                       desc = "ts: buffers" },
-				{ '<leader>o',       ":Telescope oldfiles<cr>",                      desc = "ts: oldfiles" },
-				{ '<leader>R',       ":Telescope resume<cr>",                        desc = "ts: resume" },
-				{ '<leader>s',       ":Telescope lsp_document_symbols<cr>",          desc = "LSP: Document Symbols" },
-				{ '<leader>z',       ":Telescope zoxide list<cr>",                   desc = "ts: zoxide list" },
+				{ '<leader><space>', ":Telescope<cr>",         desc = "telescope" },
+				{
+					'<leader>F',
+					":Telescope find_files<cr>",
+					desc =
+					"ts: Find files"
+				},
+				{
+					'<leader>G',
+					":Telescope live_grep<cr>",
+					desc =
+					"ts: Live grep"
+				},
+				{
+					'<leader>W',
+					":Telescope lsp_dynamic_workspace_symbols<cr>",
+					desc =
+					"LSP: Workspace symbols"
+				},
+				{ '<leader>b',       ":Telescope buffers<cr>", desc = "ts: buffers" },
+				{
+					'<leader>o',
+					":Telescope oldfiles<cr>",
+					desc =
+					"ts: oldfiles"
+				},
+				{ '<leader>R', ":Telescope resume<cr>", desc = "ts: resume" },
+				{
+					'<leader>s',
+					":Telescope lsp_document_symbols<cr>",
+					desc =
+					"LSP: Document Symbols"
+				},
+				{
+					'<leader>z',
+					":Telescope zoxide list<cr>",
+					desc =
+					"ts: zoxide list"
+				},
 			},
 			config = function()
 				local l = require("telescope.actions.layout")
@@ -93,7 +123,8 @@ require("lazy").setup({
 								["<M-p>"] = l.toggle_preview
 							},
 						},
-						file_ignore_patterns = { "%.jpg", "%.jpeg", "%.png", "%.otf", "%.ttf", ".git" },
+						file_ignore_patterns = { "%.jpg", "%.jpeg", "%.png", "%.otf", "%.ttf",
+							".git" },
 						prompt_prefix = "   ",
 						selection_caret = "  ",
 						entry_prefix = "  ",
@@ -409,8 +440,19 @@ require("lazy").setup({
 					"rcarriga/nvim-dap-ui",
 					-- stylua: ignore
 					keys = {
-						{ "<leader>du", function() require("dapui").toggle({}) end, desc = "Dap UI" },
-						{ "<leader>de", function() require("dapui").eval() end,     desc = "Eval",  mode = { "n", "v" } },
+						{
+							"<leader>du",
+							function() require("dapui").toggle({}) end,
+							desc =
+							"Dap UI"
+						},
+						{
+							"<leader>de",
+							function() require("dapui").eval() end,
+							desc = "Eval",
+							mode = {
+								"n", "v" }
+						},
 					},
 					config = function(_, opts)
 						require("dap.ext.vscode").load_launchjs(nil, ft.dap)
@@ -484,13 +526,23 @@ require("lazy").setup({
 					end,
 					desc = "Run with Args"
 				},
-				{ "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
-				{ "<leader>dc", function() require("dap").continue() end,          desc = "Continue" },
-				{ "<leader>dg", function() require("dap").goto_() end,             desc = "Go to line (no execute)" },
-				{ "<leader>di", function() require("dap").step_into() end,         desc = "Step Into" },
-				{ "<leader>dj", function() require("dap").down() end,              desc = "Down" },
-				{ "<leader>dk", function() require("dap").up() end,                desc = "Up" },
-				{ "<leader>dl", function() require("dap").run_last() end,          desc = "Run Last" },
+				{
+					"<leader>db",
+					function() require("dap").toggle_breakpoint() end,
+					desc =
+					"Toggle Breakpoint"
+				},
+				{ "<leader>dc", function() require("dap").continue() end,  desc = "Continue" },
+				{
+					"<leader>dg",
+					function() require("dap").goto_() end,
+					desc =
+					"Go to line (no execute)"
+				},
+				{ "<leader>di", function() require("dap").step_into() end, desc = "Step Into" },
+				{ "<leader>dj", function() require("dap").down() end,      desc = "Down" },
+				{ "<leader>dk", function() require("dap").up() end,        desc = "Up" },
+				{ "<leader>dl", function() require("dap").run_last() end,  desc = "Run Last" },
 				{
 					"<leader>dL",
 					function()
@@ -593,41 +645,46 @@ require("lazy").setup({
 							g.neovide_scale_factor = g.neovide_scale_factor -
 							    0.1
 						end, "neovide: zoom --" },
-						['zr'] = { function() g.neovide_scale_factor = 1 end, "neovide: zoom reset" },
+						['zr'] = { function() g.neovide_scale_factor = 1 end,
+							"neovide: zoom reset" },
 					})
 				end
-				wk.register({
-					['<A-down>'] = { ":wincmd j<cr>", "window down" },
-					['<A-left>'] = { ":wincmd h<cr>", "window left" },
-					['<A-right>'] = { ":wincmd l<cr>", "window right" },
-					['<A-up>'] = { ":wincmd k<cr>", "window up" },
-					['<AS-down>'] = { ":wincmd -<cr>", "resize window down" },
-					['<AS-left>'] = { ":wincmd <<cr>", "resize window left" },
-					['<AS-right>'] = { ":wincmd ><cr>", "resize window right" },
-					['<AS-up>'] = { ":wincmd +<cr>", "resize window up" },
-					['<C-n>'] = { ":cnext<cr>", "qflist next" },
-					['<C-p>'] = { ":cprev<cr>", "qflist prev" },
-					['<C-s>'] = { ":w<cr>", "save" },
-					['<leader>cd'] = { ":Neogen<cr>", "generate doxygen" },
-					['<leader>e'] = { ":Neotree toggle<cr>", "tree" },
-				}) -- normal mode
-				wk.register({
-					['<C-a>'] = { [[<Home>]], "go home" },
-					['<C-e>'] = { [[<End>]], "go end" },
-					['<C-b>'] = { [[<left>]], "left" },
-					['<C-f>'] = { [[<right>]], "right" },
-				}, { mode = "i" }) -- insert mode
-				wk.register({
-					['<C-h>'] = { [[<C-\><C-n><C-W>h]], "window left" },
-					['<C-j>'] = { [[<C-\><C-n><C-W>j]], "window down" },
-					['<A-down>'] = { [[<C-\><C-n><C-W>j]], "window down" },
-					['<C-k>'] = { [[<C-\><C-n><C-W>k]], "window up" },
-					['<A-up>'] = { [[<C-\><C-n><C-W>k]], "window up" },
-					['<C-l>'] = { [[<C-\><C-n><C-W>l]], "window right" },
-					-- Normal Map
-					['<Esc>'] = { [[<C-\><C-n>]], "normal mode" },
-					['<A-t>'] = { [[<C-\><C-n><Cmd>ToggleTerm<CR>]], "toggle terminal" },
-				}, { mode = "t" }) -- terminal mode
+				wk.add({
+					{
+						mode = { "n" }, --normal mode
+						{ "<A-down>",   ":wincmd j<cr>",       desc = "window down" },
+						{ "<A-left>",   ":wincmd h<cr>",       desc = "window left" },
+						{ "<A-right>",  ":wincmd l<cr>",       desc = "window right" },
+						{ "<A-up>",     ":wincmd k<cr>",       desc = "window up" },
+						{ "<AS-down>",  ":wincmd -<cr>",       desc = "resize window down" },
+						{ "<AS-left>",  ":wincmd <<cr>",       desc = "resize window left" },
+						{ "<AS-right>", ":wincmd ><cr>",       desc = "resize window right" },
+						{ "<AS-up>",    ":wincmd +<cr>",       desc = "resize window up" },
+						{ "<C-n>",      ":cnext<cr>",          desc = "qflist next" },
+						{ "<C-p>",      ":cprev<cr>",          desc = "qflist prev" },
+						{ "<C-s>",      ":w<cr>",              desc = "save" },
+						{ "<leader>cd", ":Neogen<cr>",         desc = "generate doxygen" },
+						{ "<leader>e",  ":Neotree toggle<cr>", desc = "tree" },
+					},
+					{
+						mode = { "i" }, --insert mode
+						{ "<C-a>", "<Home>",  desc = "go home" },
+						{ "<C-b>", "<left>",  desc = "left" },
+						{ "<C-e>", "<End>",   desc = "go end" },
+						{ "<C-f>", "<right>", desc = "right" },
+					},
+					{
+						mode = { "t" }, --terminal mode
+						{ "<A-down>", "<C-\\><C-n><C-W>j",              desc = "window down" },
+						{ "<A-t>",    "<C-\\><C-n><Cmd>ToggleTerm<CR>", desc = "toggle terminal" },
+						{ "<A-up>",   "<C-\\><C-n><C-W>k",              desc = "window up" },
+						{ "<C-h>",    "<C-\\><C-n><C-W>h",              desc = "window left" },
+						{ "<C-j>",    "<C-\\><C-n><C-W>j",              desc = "window down" },
+						{ "<C-k>",    "<C-\\><C-n><C-W>k",              desc = "window up" },
+						{ "<C-l>",    "<C-\\><C-n><C-W>l",              desc = "window right" },
+						{ "<Esc>",    "<C-\\><C-n>",                    desc = "normal mode" },
+					}
+				})
 			end
 		},
 	},
