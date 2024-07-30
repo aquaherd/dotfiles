@@ -216,9 +216,9 @@ bindsym Mod1+q exec playerctl previous
 bindsym Mod1+w exec playerctl play-pause
 bindsym Mod1+e exec playerctl next
 #bindsym $mod+i bar mode toggle
-#bindsym XF86AudioRaiseVolume exec
-#XF86AudioLowerVolume
-#XF86AudioMute
+bindsym XF86AudioRaiseVolume exec pamixer -i 5
+bindsym XF86AudioLowerVolume exec pamixer -d 5
+bindsym XF86AudioMute exec pamixer -t
 #XF86MonBrightnessUp
 #XF86MonBrightnessDown
 
