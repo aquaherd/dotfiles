@@ -17,7 +17,6 @@ local ft = {
 	doc = { 'markdown', 'asciidoc' },
 	fmt = { sh = { "shfmt" } },
 	lsp = { 'c', 'cpp', 'lua', 'python', 'sh' },
-	sonar = { 'c', 'cpp', 'python' },
 	ts = { 'c', 'cpp', 'jsonc', 'lua', 'python' },
 }
 -- plugins
@@ -214,7 +213,7 @@ require("lazy").setup({
 			'danymat/neogen',
 			dependencies = { 'nvim-treesitter/nvim-treesitter' },
 			opts = { snippet_engine = 'luasnip' },
-			ft = ft.sonar,
+			ft = ft.lsp,
 			cmd = { "Neogen" }
 		},
 		-- Side panes
@@ -410,21 +409,6 @@ require("lazy").setup({
 					},
 				}
 			end
-		},
-		{
-			'https://gitlab.com/schrieveslaach/sonarlint.nvim',
-			opts = {
-				server = {
-					cmd = { 'sonarlint-language-server', '-stdio', '-analyzers',
-						vim.fn.stdpath('data') ..
-						"/mason/share/sonarlint-analyzers/sonarpython.jar",
-						vim.fn.stdpath('data') ..
-						"/mason/share/sonarlint-analyzers/sonarcfamily.jar",
-					}
-				},
-				filetypes = ft.sonar
-			},
-			ft = ft.sonar
 		},
 		{
 			'stevearc/conform.nvim',
