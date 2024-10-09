@@ -404,7 +404,6 @@ require("lazy").setup({
 						{ name = 'buffer' },
 						{ name = 'luasnip' },
 						{ name = 'nvim_lsp' },
-						{ name = 'copilot' },
 						{ name = 'doxygen' },
 					},
 				}
@@ -581,23 +580,6 @@ require("lazy").setup({
 			}
 		},
 		-- misc
-		{
-			"zbirenbaum/copilot.lua",
-			cmd = "Copilot",
-			config = function()
-				require("copilot").setup({
-					suggestion = { enabled = false },
-					panel = { enabled = false },
-				})
-			end,
-			event = "InsertEnter",
-		},
-		{
-			"zbirenbaum/copilot-cmp",
-			config = function()
-				require("copilot_cmp").setup()
-			end,
-		},
 		{
 			'norcalli/nvim-colorizer.lua',
 			config = true,
