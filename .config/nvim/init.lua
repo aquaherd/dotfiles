@@ -734,6 +734,9 @@ o.smartcase = true
 opt.whichwrap:append "<>[]hl"
 -- remove intro
 opt.shortmess:append "sI"
+g.loaded_perl_provider = 0
+g.loaded_python3_provider = 0
+g.loaded_ruby_provider = 0
 -- neovide
 opt.guifont = { 'Iosevka Nerd Font Mono', ':h12' }
 if g.neovide then
