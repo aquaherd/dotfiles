@@ -15,7 +15,7 @@ gset font-name 'Liberation Sans Narow 13'
 gset cursor-theme 'Adwaita'
 
 # start i3-autotiling
-start foot --server
+LANG=C.UTF-8 start foot --server
 start gammastep-indicator
 start mako 
 
