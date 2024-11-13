@@ -12,11 +12,20 @@ swaysplit()
 	mogrify -crop "${half}x${height}+${half}+0" $SAV.right
 }
 
+isSway()
+{
+	if [ "$DESKTOP_SESSION" = "sway" ] || [ "$XDG_SESSION_DESKTOP" = "sway" ]; then
+		return 0
+	fi
+	return 1
+}
+
+
 apply()
 {
 	f=$(readlink "$1")
 	echo "applying mode $m $f"
-	if [ "$DESKTOP_SESSION" = "sway" ]; then
+	if isSway; then
 		if [ "$m" = "dual" ]; then
 			identify "$SAV" | cut -d' ' -f3 | tr 'x' ' ' | swaysplit
 			swaymsg output \$primary bg "$1.right" fill
@@ -48,7 +57,7 @@ usage()
 mode()
 {
 	m=dual
-	if [ "$DESKTOP_SESSION" = "sway" ]; then
+	if isSway; then
 		if [ 1 -eq "$(swaymsg -t get_outputs | jq -r 'map(select(.active==true).name)|length')" ]; then
 			m=single
 		fi
