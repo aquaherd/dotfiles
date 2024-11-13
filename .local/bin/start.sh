@@ -5,7 +5,7 @@ if test -f "$hostpath"; then
 fi
 all='win105 win106 win107 win108 win109 win126 win131 win200 win246 win247 win248 win249'
 if [ $# -eq 0 ]; then
-	host=$(echo "$all" |tr " " "\n"| fzf) || exit 1
+	host=$(echo "$all" | tr " " "\n" | fzf) || exit 1
 else
 	host=$1
 fi
@@ -21,24 +21,25 @@ ssh "$host" \
 	echo OK
 
 for d in Firmware Logfiles; do
-	if mountpoint -q ~/$d > /dev/null; then
+	if mountpoint -q ~/$d >/dev/null; then
 		echo "unmounting \~/$d ..."
 		fusermount -u ~/$d
 	fi
 	echo "mounting ${host}:$d to \~/$d ..."
 	sshfs -o reconnect "${host}":$d ~/$d
 done
-echo "$host" > "$hostpath"
-for b in $(sudo usbip list -r localhost 2> /dev/null |grep UART|cut -d':' -f1); do
+echo "$host" >"$hostpath"
+for b in $(sudo usbip list -r localhost 2>/dev/null | grep UART | cut -d':' -f1); do
 	case $b in
-		*-*)
-			echo "attaching UART $b"
-			sudo usbip attach -r localhost -b "$b"
-			;;
-		*) continue;;
+	*-*)
+		echo "attaching UART $b"
+		sudo usbip attach -r localhost -b "$b"
+		;;
+	*) continue ;;
 	esac
 done
-if test -c /dev/ttyUSB0 && [ 'root' = "$(stat -c%G /dev/ttyUSB0)" ]; then
+if grep -q microsoft /proc/version; then
+	sudo modprobe usbserial || exit 1
 	echo 'waiting for UARTs to settle'
 	sleep 5
 	sudo chown -v root:dialout /dev/ttyUSB*
