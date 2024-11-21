@@ -18,9 +18,8 @@ local ft = {
 	fmt = { sh = { "shfmt" } },
 	lsp = { 'c', 'cpp', 'lua', 'python', 'sh' },
 	sonar = { 'c', 'cpp', 'python' },
-	ts = { 'c', 'cpp', 'jsonc', 'lua', 'python' },
+	ts = { 'bash', 'c', 'cpp', 'jsonc', 'lua', 'python' },
 }
-local latest = vim.fn.has('nvim-0.10') == 1
 -- plugins
 require("lazy").setup({
 		-- Theme
@@ -45,7 +44,7 @@ require("lazy").setup({
 		-- git
 		{
 			'lewis6991/gitsigns.nvim',
-			ft = ft.ts,
+			ft = ft.lsp,
 			dependencies = { 'nvim-lua/plenary.nvim' },
 			keys = {
 				{ '<leader>cg', ":Gitsigns setqflist<cr>", desc = "git changes" },
@@ -56,7 +55,6 @@ require("lazy").setup({
 		},
 		{
 			"NeogitOrg/neogit",
-			tag = latest and 'v1.0.0' or 'v0.0.1',
 			ft = ft.lsp,
 			dependencies = {
 				"nvim-lua/plenary.nvim", -- required
@@ -324,11 +322,6 @@ require("lazy").setup({
 					nmap('<leader>wl', function()
 						print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
 					end, '[W]orkspace [L]ist Folders')
-					if not latest then
-						nmap('[d', vim.diagnostic.goto_prev, 'Go to previous diagnostic message')
-						nmap(']d', vim.diagnostic.goto_next, 'Go to next diagnostic message')
-						nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-					end
 					local cmp = require('cmp')
 					local sources = cmp.get_config().sources
 					for i = #sources, 1, -1 do
@@ -434,7 +427,6 @@ require("lazy").setup({
 		},
 		{
 			'stevearc/conform.nvim',
-			branch = latest and "master" or "nvim-0.9",
 			ft = vim.tbl_keys(ft.fmt),
 			opts = { formatters_by_ft = { ft.fmt } }
 		},
