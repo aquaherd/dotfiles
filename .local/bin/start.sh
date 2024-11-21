@@ -29,7 +29,7 @@ for d in Firmware Logfiles; do
 	sshfs -o reconnect "${host}":$d ~/$d
 done
 echo "$host" >"$hostpath"
-for b in $(sudo usbip list -r localhost 2>/dev/null | grep UART | cut -d':' -f1); do
+for b in $(sudo usbip list -r localhost 2>/dev/null | cut -d':' -f1); do
 	case $b in
 	*-*)
 		echo "attaching UART $b"
