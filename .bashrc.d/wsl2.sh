@@ -51,4 +51,8 @@ if [[ -z "$WAYLAND_DISPLAY" ]] && command -v wsld > /dev/null; then
 		echo 'launching dbus...'
 		dbus-daemon --session --fork --address="$DBUS_SESSION_ADDRESS"
 	fi
+	if ! dump_xsettings > /dev/null 2>&1; then
+		echo 'launching xsettingsd...'
+		nohup xsettingsd > /dev/null 2>&1 &
+	fi
 fi
