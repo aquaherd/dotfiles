@@ -40,10 +40,10 @@ for b in $(sudo usbip list -r localhost 2>/dev/null | cut -d':' -f1); do
 	esac
 done
 if grep -q microsoft /proc/version; then
-	sudo modprobe usbserial || exit 1
+	sudo modprobe ftdi_sio || exit 1
 	echo 'waiting for UARTs to settle'
 	sleep 5
-	sudo chown -v root:dialout /dev/ttyUSB*
-	sudo chmod -v g+rw /dev/ttyUSB*
+	sudo chown -v root:dialout /dev/tty[AU]*
+	sudo chmod -v g+rw /dev/tty[AU]*
 fi
 echo OK
