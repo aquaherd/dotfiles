@@ -53,6 +53,7 @@ if [[ -z "$WAYLAND_DISPLAY" ]] && command -v wsld > /dev/null; then
 	fi
 	if ! dump_xsettings > /dev/null 2>&1; then
 		echo 'launching xsettingsd...'
-		nohup xsettingsd > /dev/null 2>&1 &
+		xsettingsd > /dev/null 2>&1 &
+		disown
 	fi
 fi
