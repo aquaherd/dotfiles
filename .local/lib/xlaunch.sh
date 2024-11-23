@@ -1,4 +1,5 @@
 #!/bin/sh
+
 # run minimum needful things before starting the WM
 # see ~/.local/bin/startX
 
@@ -12,7 +13,7 @@ if [ -z "$XDG_RUNTIME_DIR" ]; then
 	chmod 0700 "$XDG_RUNTIME_DIR"
 fi
 if [ -z "$SSH_AUTH_SOCK" ]; then
-	eval "$(ssh-agent)"
+	eval "$(ssh-agent -a "$XDG_RUNTIME_DIR"/ssh-agent.sock)"
 fi
 if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
 	exec dbus-run-session "$1"

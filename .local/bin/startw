@@ -1,12 +1,14 @@
 #!/bin/sh
 if [ $# -ne 1 ]; then
     echo "Usage: startw WAYLAND_SESSION"
-    for s in $(cat /usr/share/wayland-sessions/*|grep ^Exec|cut -d'=' -f2); do
-        echo "- $(basename $s)"
+    for d in /usr/share/wayland-sessions/*.desktop; do 
+	    n=$(basename -s .desktop "$d")
+	    echo "- $n"
     done
     exit 1
 fi
-export XDG_RUNTIME_DIR=/run/user/$(id -u)
+XDG_RUNTIME_DIR=/run/user/"$(id -u)"
+export XDG_RUNTIME_DIR
 export MOZ_ENABLE_WAYLAND=1
 export MOZ_DISABLE_RDD_SANDBOX=1
 export MOZ_WEBRENDER=1
@@ -15,12 +17,15 @@ export QT_QPA_PLATFORM=wayland-egl
 export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 export QT_AUTO_SCREEN_SCALE_FACTOR=1
 export XDG_SESSION_TYPE=wayland
-export XDG_SESSION_DESKTOP=$1
-export XDG_CURRENT_DESKTOP=$1
+export XDG_SESSION_DESKTOP="$1"
+export XDG_CURRENT_DESKTOP="$1"
 #export LIBSEAT_BACKEND=logind
-export DESKTOP_SESSION=$1
+export DESKTOP_SESSION="$1"
 #export HOSTNAME=$(hostname)
-sudo mkdir -p $XDG_RUNTIME_DIR
-sudo chown $USER:$USER $XDG_RUNTIME_DIR
-chmod 0700 $XDG_RUNTIME_DIR
-exec dbus-run-session $1
+sudo mkdir -p "$XDG_RUNTIME_DIR"
+sudo chown "$USER:$USER" "$XDG_RUNTIME_DIR"
+chmod 0700 "$XDG_RUNTIME_DIR"
+if [ -z "$SSH_AUTH_SOCK" ]; then
+	eval "$(ssh-agent -a "$XDG_RUNTIME_DIR"/ssh-agent.sock)"
+fi
+exec dbus-run-session "$1"
