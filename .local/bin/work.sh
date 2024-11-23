@@ -7,15 +7,22 @@
 ssh pg2pc198 'echo start > /usr/local/share/mode.html'
 
 if ssh-add -l | grep -q Auth; then
-    echo 'keys ok'
+	echo 'keys ok'
 else
-    ssh-add -s /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so < /dev/zero
+	for d in /usr/lib /usr/lib/$(uname -m)-linux-gnu; do
+		s="$d/opensc-pkcs11.so"
+		echo "trying $s"
+		if test -f "$s"; then
+			ssh-add -s "$s" </dev/zero
+			break
+		fi
+	done
 fi
 
 if sess | grep -q zsc; then
-    echo OK
+	echo OK
 else
-    while ! ssh zsc echo OK; do
-	sleep 1m
-    done
+	while ! ssh zsc echo OK; do
+		sleep 1m
+	done
 fi
