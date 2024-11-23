@@ -1,0 +1,3 @@
+host = irc.oftc.net
+join = #alpine-devel
+nick = aquaherd
