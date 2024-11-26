@@ -22,3 +22,8 @@ start mako
 # X11
 start xsettingsd
 start_oneshot xrdb -merge ~/.Xresources
+
+# alpine linux specials
+if [ -x /usr/libexec/pipewire-launcher ]; then
+	/usr/libexec/pipewire-launcher
+fi

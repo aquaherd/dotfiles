@@ -14,7 +14,7 @@ swaysplit()
 
 isSway()
 {
-	if [ "$DESKTOP_SESSION" = "sway" ] || [ "$XDG_SESSION_DESKTOP" = "sway" ]; then
+	if [ -n "$SWAYSOCK" ]; then
 		return 0
 	fi
 	return 1

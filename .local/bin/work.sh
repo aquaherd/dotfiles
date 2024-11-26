@@ -13,7 +13,7 @@ else
 		s="$d/opensc-pkcs11.so"
 		echo "trying $s"
 		if test -f "$s"; then
-			ssh-add -s "$s" </dev/zero
+			ssh-add -s "$s" 
 			break
 		fi
 	done
