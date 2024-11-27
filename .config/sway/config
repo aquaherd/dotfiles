@@ -242,7 +242,7 @@ set $foreground #F8F8F2
 set $urgent 	#FF5555
 set $status 	#F1FA8C
 set $transparent #ffffff00
-set $halftrans   #00000011
+set $halftrans   #00000044
 
 # class                 border      bground     text        indicator   child_border
 client.focused          $active     $active     $background $background $active
