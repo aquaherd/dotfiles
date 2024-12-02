@@ -1,3 +1,6 @@
+if grep -q microsoft /proc/version; then
+	return
+fi
 if [ "$SSH_AUTH_SOCK" = "" ]; then
 	export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.sock"
 fi
