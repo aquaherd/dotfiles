@@ -6,7 +6,7 @@ Gtk/CursorThemeName "Adwaita"
 Gtk/CursorThemeSize 20
 Gtk/DecorationLayout "menu:minimize,maximize,close"
 Gtk/DialogsUseHeader 1
-Gtk/FontName "Liberation Sans Narrow 13"
+Gtk/FontName "DejaVu Sans Condensed 13"
 Gtk/IconSizes ""
 Gtk/KeyThemeName ""
 Gtk/MenuBarAccel "F10"
