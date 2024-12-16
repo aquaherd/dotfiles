@@ -26,12 +26,12 @@ require("lazy").setup({
 		{
 			'Mofiqul/dracula.nvim',
 			lazy = false,
-			priority = 1000,
+			priority = 1000, 
 			config = function()
 				---@diagnostic disable-next-line: missing-fields
 				require('dracula').setup {
 					italic_comment = true,
-					transparent_bg = true,
+					transparent_bg = not g.neovide,
 					lualine_bg_color = "#282a36",
 					overrides = {
 						---@diagnostic disable-next-line: missing-fields
@@ -608,28 +608,18 @@ require("lazy").setup({
 			config = function()
 				local wk = require("which-key")
 				if g.neovide then
-					wk.register({
-						['<C-ScrollWheelUp>'] = { function()
-							g.neovide_scale_factor = g.neovide_scale_factor +
-							    0.1
-						end,
-							"neovide: zoom ++" },
-						['zp'] = { function()
-							g.neovide_scale_factor = g.neovide_scale_factor +
-							    0.1
-						end, "neovide: zoom ++" },
-						['<C-ScrollWheelDown>'] = { function()
-							g.neovide_scale_factor = g.neovide_scale_factor -
-							    0.1
-						end,
-							"neovide: zoom --" },
-						['zm'] = { function()
-							g.neovide_scale_factor = g.neovide_scale_factor -
-							    0.1
-						end, "neovide: zoom --" },
-						['zr'] = { function() g.neovide_scale_factor = 1 end,
-							"neovide: zoom reset" },
-					})
+					local zm = function() g.neovide_scale_factor = g.neovide_scale_factor - 0.1 end
+					local zp = function() g.neovide_scale_factor = g.neovide_scale_factor + 0.1 end
+					local zr = function() g.neovide_scale_factor = 1 end
+					local fs = function() g.neovide_fullscreen = not g.neovide_fullscreen end
+					wk.add({
+							{ "<C-ScrollWheelDown>", zm, desc = "neovide: zoom --" },
+							{ "<C-ScrollWheelUp>", zp, desc = "neovide: zoom ++" },
+							{ "zm", zm, desc = "neovide: zoom --" },
+							{ "zp", zp, desc = "neovide: zoom ++" },
+							{ "zr", zr, desc = "neovide: zoom reset" },
+							{ "<F11>", fs, desc = "neovide: toggle fullscreen" },
+						})
 				end
 				wk.add({
 					{
@@ -740,7 +730,7 @@ if g.neovide then
 	g.neovide_remember_window_size = true
 	g.neovide_scale_factor = 1.0
 	g.neovide_theme = 'auto'
-	g.neovide_transparency = 0.70
+	g.neovide_transparency = 0.95
 end
 -- Auto commands
 local user_group = vim.api.nvim_create_augroup('UserCommands', { clear = true })
