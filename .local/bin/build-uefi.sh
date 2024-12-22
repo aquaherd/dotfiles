@@ -27,7 +27,7 @@ TARGET=/boot/efi/EFI/Linux/$ID.efi
 DISK=/dev/$(lsblk -no pkname /dev/disk/by-label/EF00)
 PART=$(stat -c '%T' "$(realpath /dev/disk/by-label/EF00)")
 if [ ! -e "$VMLINUZ" ] || [ ! -e "$INITRD" ]; then
-	echo "Setup invalid"
+	echo "Setup invalid $VMLINUZ / $INITRD"
 	exit 1
 fi
 
