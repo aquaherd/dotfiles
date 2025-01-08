@@ -27,3 +27,8 @@ start_oneshot xrdb -merge ~/.Xresources
 if [ -x /usr/libexec/pipewire-launcher ]; then
 	/usr/libexec/pipewire-launcher
 fi
+
+# policy kit, if exists
+if [ -x /usr/local/libexec/xfce-polkit ]; then
+	/usr/local/libexec/xfce-polkit &
+fi
