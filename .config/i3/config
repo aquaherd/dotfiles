@@ -225,8 +225,8 @@ bar {
     hidden_state hide
     modifier $mod
     position bottom
-    output primary
-    tray_output primary
+    output $primary
+    tray_output $primary
     font pango:Iosevka NFM 14
     strip_workspace_name yes
     colors {
