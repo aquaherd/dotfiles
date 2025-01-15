@@ -10,7 +10,7 @@ start_oneshot xrdb -merge ~/.Xresources
 start dunst
 start i3-autotiling 
 start redshift
-start xsettingsd
+start xsettingsd -c ~/.xsettingsd-i3
 
 BARRIERRC=~/.config/barrier/${HOSTNAME}.conf
 if test -f "$BARRIERRC"; then

@@ -36,10 +36,18 @@ fix_desktop() # in case you start without display manager
 	fi
 }
 
-CACHE="$XDG_RUNTIME_DIR/$DESKTOP_SESSION/cache"
+get_session()
+{
+	if [ -z "$DESKTOP_SESSION" ]; then
+		fix_desktop
+	fi
+	echo "$DESKTOP_SESSION"
+}
+
+CACHE="$XDG_RUNTIME_DIR/$(get_session)/cache"
 autostart_common()
 {
-
+	fix_desktop
 	mkdir -p "$CACHE"
 	exec > "$CACHE"/autostart.log
 	exec 2>&1

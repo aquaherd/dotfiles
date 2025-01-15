@@ -70,22 +70,19 @@ rofi.show-icons: true
 ! --------------------------------------------------
 ! Displays
 ! --------------------------------------------------
-! home:
-#ifdef SRVR_rocky
-#define TEMP /sys/class/hwmon/hwmon2/temp1_input
-#define LAYOUT dual
-! work:
-#elif SRVR_pc198 // work
-#define TEMP /sys/class/hwmon/hwmon0/temp1_input
-#define LAYOUT dual
-! fixme:
-#else // dunno
-#define TEMP /sys/class/hwmon/hwmon0/temp1_input
-#define LAYOUT single
+#include ".local/.Xresources"
+#ifndef PRIMARY
 #define PRIMARY DP-0
+#endif
+#ifndef SECONDARY
 #define SECONDARY DP-1
 #endif
-#include ".local/.Xresources"
+#ifndef LAYOUT
+#define LAYOUT single
+#endif
+#ifndef TEMP
+#define TEMP /sys/class/hwmon/hwmon0/temp1_input
+#endif
 Xdisplay.primary: PRIMARY
 Xdisplay.secondary: SECONDARY
 Xdsiplay.serverhost: SERVERHOST
