@@ -22,7 +22,10 @@ fix_desktop() # in case you start without display manager
 		fi
 	fi
 
-	if [ -z "$WAYLAND_DISPLAY" ]; then
+	if [ -n "$WAYLAND_DISPLAY" ]; then
+		return
+		# to do here
+	else
 		#x11
 		if [ -z "$PRIMARY" ]; then
 			if [ "$(xrdb -q|wc -l)" -eq 0 ]; then
@@ -51,11 +54,12 @@ autostart_common()
 	mkdir -p "$CACHE"
 	exec > "$CACHE"/autostart.log
 	exec 2>&1
+	env|sort
 	randr_restore
 	restore_backdrop
 	if ! pidof runsvdir && [ -d "$HOME/.local/service" ]; then
 		# Start local services if runsv
-		start runsvdir ~/.local/service
+		start runsvdir "$HOME/.local/service"
 	fi
 }
 
@@ -109,6 +113,11 @@ randr_sway()
 	esac 
 }
 
+randr_labwc()
+{
+	kanshictl restore
+}
+
 randr_default()
 {
 	case $1 in
@@ -153,14 +162,7 @@ ask()
 {
 	fix_desktop
 	case $DESKTOP_SESSION in
-		sway)
-			wofi -idp "$1"
-			;;
-		hikari|wayfire)
-			# dont know how to determine current monitor in hikari
-			dmenu-wl -i -p "$1" -fn 'Iosevka 15' -nb '#44475a' -sb '#bd93f9' -h 30 -b
-			;;
-		gnome)
+		*)
 			if [ -n "$WAYLAND_DISPLAY" ]; then
 				wofi -idp "$1"
 			else
@@ -169,12 +171,6 @@ ask()
 			;;
 		none)
 			fzf
-			;;
-		wslg)
-			wofi -idp "$1"
-			;;
-		*)
-			dmenu -b -i -p "$1"
 			;;
 	esac
 }

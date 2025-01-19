@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+<!--
+This file contains all supported config elements & attributes with
+default values.
+-->
+
+<labwc_config>
+	<placement>
+		<policy>cascade</policy>
+		<cascadeOffset x="40" y="30" />
+	</placement>
+	<theme>
+		<name>Dracula</name>
+		<dropShadows>yes</dropShadows>
+		<keepBorder>yes</keepBorder>
+	</theme>
+	<focus>
+		<followMouse>yes</followMouse>
+		<followMouseRequiresMovement>yes</followMouseRequiresMovement>
+		<raiseOnFocus>no</raiseOnFocus>
+	</focus>
+	<snapping>
+		<!-- Set range to 0 to disable window snapping completely -->
+		<range>1</range>
+		<overlay enabled="yes">
+			<delay inner="500" outer="500" />
+		</overlay>
+		<topMaximize>yes</topMaximize>
+		<notifyClient>always</notifyClient>
+	</snapping>
+	<keyboard>
+		<keybind key="A-Down"> <action name="MoveToEdge" direction="down" /> </keybind>
+		<keybind key="A-F4"> <action name="Close" /> </keybind>
+		<keybind key="A-Left"> <action name="MoveToEdge" direction="left" /> </keybind>
+		<keybind key="A-Right"> <action name="MoveToEdge" direction="right" /> </keybind>
+		<keybind key="A-Space"> <action name="ShowMenu" menu="client-menu" atCursor="no" /> </keybind>
+		<keybind key="A-Up"> <action name="MoveToEdge" direction="up" /> </keybind>
+		<keybind key="W-Down"> <action name="SnapToEdge" direction="down" /> </keybind>
+		<keybind key="W-Escape"><action name="Execute" command="dmenu-sys.sh" /></keybind>
+		<keybind key="W-Left"> <action name="SnapToEdge" direction="left" /> </keybind>
+		<keybind key="W-Return"><action name="Execute" command="footclient" /></keybind>
+		<keybind key="W-Right"> <action name="SnapToEdge" direction="right" /> </keybind>
+		<keybind key="W-Space"> <action name="ShowMenu" menu="client-list-combined-menu" /> <position> <x>center</x> <y>center</y> </position> </keybind>
+		<keybind key="W-Up"> <action name="SnapToEdge" direction="up" /> </keybind>
+		<keybind key="W-a"> <action name="ToggleMaximize" /> </keybind>
+		<keybind key="W-b"> <action name="ToggleFullscreen" /> </keybind>
+		<keybind key="W-d"><action name="Execute" command="dmenu-run.sh" /></keybind>
+		<keybind key="W-i"> <action name="ZoomIn" /> </keybind>
+		<keybind key="W-m"> <action name="ToggleMagnify" /> </keybind>
+		<keybind key="W-o"> <action name="ZoomOut" /> </keybind>
+		<keybind key="W-r"><action name="Execute" command="wofi --show=drun" /></keybind>
+		<keybind key="XF86_AudioLowerVolume"> <action name="Execute" command="amixer sset Master 5%-" /> </keybind>
+		<keybind key="XF86_AudioMute"> <action name="Execute" command="amixer sset Master toggle" /> </keybind>
+		<keybind key="XF86_AudioRaiseVolume"> <action name="Execute" command="amixer sset Master 5%+" /> </keybind>
+	</keyboard>
+</labwc_config>
