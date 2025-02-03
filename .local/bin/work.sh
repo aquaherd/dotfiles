@@ -19,10 +19,16 @@ else
 	done
 fi
 
+# if sess | grep -q zsc; then
+# 	echo OK
+# else
+# 	while ! ssh zsc echo OK; do
+# 		sleep 1m
+# 	done
+# fi
+
 if sess | grep -q zsc; then
 	echo OK
 else
-	while ! ssh zsc echo OK; do
-		sleep 1m
-	done
+	sshuttle -r zsc 10.0.0.0/8 --dns -HN --daemon --pidfile="$XDG_RUNTIME_DIR"/sshuttle.pid
 fi

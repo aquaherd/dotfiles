@@ -6,6 +6,10 @@
 
 ssh pg2pc198 'echo stop > /usr/local/share/mode.html'
 
-ssh-add -e /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so &> /dev/null  || ssh-add -e /usr/lib/opensc-pkcs11.so &> /dev/null
-
+ssh-add -e /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so || ssh-add -e /usr/lib/opensc-pkcs11.so 
+pf="$XDG_RUNTIME_DIR"/sshuttle.pid
+if [ -f "$pf" ]; then
+ 	read -r pid < "$pf"
+	kill "$pid"
+fi
 ssh -O exit pg2pc198 
