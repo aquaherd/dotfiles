@@ -13,7 +13,7 @@ if [ ! -d /sys/firmware/efi ]; then
     exit 0
 fi
 
-CMDLINE="root=LABEL=$ID rw rootfstype=ext4 quiet"
+CMDLINE="root=LABEL=$ID rw rootfstype=ext4 vsyscall=emulate quiet"
 VMLINUZ="$MTP/vmlinuz"
 INITRD="$MTP/initrd.img"
 STUB="$HOME/.local/lib/linuxx64.efi.stub"
