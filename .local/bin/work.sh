@@ -30,5 +30,6 @@ fi
 if sess | grep -q zsc; then
 	echo OK
 else
-	sshuttle -r zsc 10.0.0.0/8 --dns -HN --daemon --pidfile="$XDG_RUNTIME_DIR"/sshuttle.pid
+	# sshuttle -r zsc 10.0.0.0/8 --dns -HN --daemon --pidfile="$XDG_RUNTIME_DIR"/sshuttle.pid
+	sshuttle -r zsc 10.0.0.0/8 -HN --daemon --pidfile="$XDG_RUNTIME_DIR"/sshuttle.pid
 fi
