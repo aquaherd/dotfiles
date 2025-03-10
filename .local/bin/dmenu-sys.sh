@@ -158,7 +158,7 @@ reload_bspwm()
 	polybar-msg cmd restart
 	#pkill -USR1 -F ~/.cache/bspwm/sxhkd.pid
 	#did not work since pid is prefork
-	pkill -USR1 sxhkd
+	pkill -USR1 sxhkdDP-3
 
 	killall -sSIGHUP xsettingsd
 
@@ -194,7 +194,7 @@ lock_i3()
 
 lock_sway()
 {
-	~/.config/sway/swaylock-fancy.sh
+	~/.config/sway/swaylock-fancy.sh "$PRIMARY"
 }
 
 lock()

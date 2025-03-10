@@ -162,15 +162,15 @@ ask()
 {
 	fix_desktop
 	case $DESKTOP_SESSION in
+		none)
+			fzf
+			;;
 		*)
 			if [ -n "$WAYLAND_DISPLAY" ]; then
-				wofi -idp "$1"
+				fuzzel -idp "$1"
 			else
 				dmenu -i -p "$1"
 			fi
-			;;
-		none)
-			fzf
 			;;
 	esac
 }

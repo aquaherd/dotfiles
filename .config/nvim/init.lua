@@ -758,6 +758,7 @@ vim.filetype.add({
 		json = "jsonc",
 	},
 	pattern = {
+		[ "eswbuild" ] = "sh",
 		[".clang.*"] = "yaml",
 	}
 })

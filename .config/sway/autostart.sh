@@ -20,8 +20,10 @@ start gammastep-indicator
 start mako 
 
 # X11
-start xsettingsd
-start_oneshot xrdb -merge ~/.Xresources
+if [ -n "$DSIPLAY" ]; then
+	start xsettingsd
+	start_oneshot xrdb -merge ~/.Xresources
+fi
 
 # alpine linux specials
 if [ -x /usr/libexec/pipewire-launcher ]; then
