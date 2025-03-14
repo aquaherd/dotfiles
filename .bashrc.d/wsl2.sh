@@ -31,7 +31,10 @@ if command -v wsl2-ssh-agent > /dev/null; then
 	fi
 fi
 
-# X11
+# X11 & wayland
+if [ -f ~/.bashrc.d/nodesktop ]; then
+	return
+fi
 if [[ -z "$WAYLAND_DISPLAY" ]] && command -v wsld > /dev/null; then
 	export DISPLAY=:0
 	if ! pgrep wsld > /dev/null; then
