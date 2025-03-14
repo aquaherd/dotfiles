@@ -1,7 +1,7 @@
 #!/bin/bash
 # fancify later
 
-echo $PRIMARY $SECONDARY $MODE
+echo $PRIMARY $SECONDARY $MODE -- $1
 FONT="$(convert -list font | awk "{ a[NR] = \$2 } /family: $(fc-match sans -f "%{family}\n")/ { print a[NR-1]; exit }")"
 EFFECT=(-filter Gaussian -resize 20% -define filter:sigma=1.5 -resize 500.5%)
 IMAGE=~/.cache/swaylock-fancy

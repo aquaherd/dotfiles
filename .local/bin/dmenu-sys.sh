@@ -15,30 +15,30 @@ closeall_bspwm()
 	# save session
 	bspc wm -d >.cache/bspwm/state.json
 
-    # graceful kill
-    for d in $(bspc query -N);do 
-	    bspc node "$d" -c
-    done
-    while [ "$(bspc query -N|wc -l)" -gt 0 ]; do
-	    sleep 1
-    done
+	# graceful kill
+	for d in $(bspc query -N);do 
+		bspc node "$d" -c
+	done
+	while [ "$(bspc query -N|wc -l)" -gt 0 ]; do
+		sleep 1
+	done
 
-    # from bspwmrc
-    for f in ~/.cache/bspwm/*.pid; do
-	    cmd=$(basename -s .pid "$f")
-	    read -r pid < "$f"
-	    kill "$pid" || pkill "$cmd" || pkill "$cmd" -9 || true
-	    rm "$f"
-	    echo "*** $pid:$cmd Ended ***"
-    done
+	# from bspwmrc
+	for f in ~/.cache/bspwm	/*.pid; do
+		cmd=$(basename -s .pid "$f")
+		read -r pid < "$f"
+		kill "$pid" || pkill "$cmd" || pkill "$cmd" -9 || true
+		rm "$f"
+		echo "*** $pid:$cmd Ended ***"
+	done
 
-    # let go of panel last
-    polybar-msg cmd quit
+	# let go of panel last
+	polybar-msg cmd quit
 
-    # let go of session
-    case $1 in
-	    quit) bspc quit;;
-    esac
+	# let go of session
+	case $1 in
+		quit) bspc quit;;
+	esac
 }
 
 closeall_2bwm()
@@ -71,10 +71,10 @@ closeall_i3()
 		rm "$pid"
 	done
 
-    # let go of session
-    case $1 in
+	# let go of session
+	case $1 in
 	    quit) i3-msg exit;;
-    esac
+	esac
 }
 
 closeall_i3xfce()
@@ -162,8 +162,8 @@ reload_bspwm()
 
 	killall -sSIGHUP xsettingsd
 
-    #bspc wm reload
-    #to do
+	#bspc wm reload
+	#to do
 }
 
 reload_sway()
@@ -199,6 +199,7 @@ lock_sway()
 
 lock()
 {
+	fix_desktop
 	"lock_$DESKTOP_SESSION" || dm-tool lock
 }
 
@@ -206,12 +207,12 @@ lock()
 res=$(ask_sys)
 read -r r < /proc/1/comm
 case $r in
-	systemd)    ctl=systemctl;; # insane
-	*)          if type loginctl>/dev/null 2>&1; then
+	systemd) ctl=systemctl;; # insane
+	*) if type loginctl>/dev/null 2>&1; then
 		ctl=loginctl  # sane
 	else
 		ctl=sudo      # seatd
-		fi;;
+	fi;;
 esac
 
 echo "dmenu-sys.sh: ${res}@${ctl}"
