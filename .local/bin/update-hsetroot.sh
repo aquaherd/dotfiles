@@ -52,9 +52,9 @@ usage()
 
 mode()
 {
-	m=dual
-	if [ 1 -eq "$(xrandr --listactivemonitors | grep Monitors | cut -d' ' -f2 || echo 1)" ]; then
-		m=single
+	m=single
+	if [ -f ~/.cache/xrandr ]; then
+		read -r m < ~/.cache/xrandr
 	fi
 	echo $m
 }
