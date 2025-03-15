@@ -12,30 +12,26 @@ swaysplit()
 	mogrify -crop "${half}x${height}+${half}+0" $SAV.right
 }
 
-isSway()
-{
-	if [ -n "$SWAYSOCK" ]; then
-		return 0
-	fi
-	return 1
-}
-
-
 apply()
 {
 	f=$(readlink "$1")
-	echo "applying mode $m $f"
-	if isSway; then
-		if [ "$m" = "dual" ]; then
-			identify "$SAV" | cut -d' ' -f3 | tr 'x' ' ' | swaysplit
-			swaymsg output \$primary bg "$1.right" fill
-			swaymsg output \$secondary bg "$1.left" fill
-			exit 0
-		fi
-		swaymsg output '*' bg "$1" fill
-		exit 0
-	fi
-	hsetroot -root -cover "$1" > /dev/null 2>&1 || hsetroot -cover "$1" > /dev/null 2>&1
+	echo "applying mode $m $f $XDG_SESSION_DESKTOP"
+	case "$XDG_SESSION_TYPE" in
+		wayland)
+			case "$XDG_SESSION_DESKTOP" in
+				sway)
+					if [ "$m" = "dual" ]; then
+						identify "$SAV" | cut -d' ' -f3 | tr 'x' ' ' | swaysplit
+						swaymsg output \$primary bg "$1.right" fill
+						swaymsg output \$secondary bg "$1.left" fill
+						exit 0
+					fi
+					swaymsg output '*' bg "$1" fill
+					;;
+				*) swww img "$1";;
+			esac;;
+		x11) hsetroot -root -cover "$1" > /dev/null 2>&1 || hsetroot -cover "$1" > /dev/null 2>&1;;
+	esac
 	exit 0
 }
 
@@ -57,11 +53,7 @@ usage()
 mode()
 {
 	m=dual
-	if isSway; then
-		if [ 1 -eq "$(swaymsg -t get_outputs | jq -r 'map(select(.active==true).name)|length')" ]; then
-			m=single
-		fi
-	elif [ 1 -eq "$(xrandr --listactivemonitors | grep Monitors | cut -d' ' -f2)" ]; then
+	if [ 1 -eq "$(xrandr --listactivemonitors | grep Monitors | cut -d' ' -f2 || echo 1)" ]; then
 		m=single
 	fi
 	echo $m
