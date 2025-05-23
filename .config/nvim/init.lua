@@ -26,7 +26,7 @@ require("lazy").setup({
 		{
 			'Mofiqul/dracula.nvim',
 			lazy = false,
-			priority = 1000, 
+			priority = 1000,
 			config = function()
 				---@diagnostic disable-next-line: missing-fields
 				require('dracula').setup {
@@ -280,57 +280,6 @@ require("lazy").setup({
 				{ 'j-hui/fidget.nvim',       config = true, tag = 'legacy' },
 			},
 			config = function()
-				local on_attach = function(_, bufnr)
-					local nmap = function(keys, func, desc)
-						if desc then
-							desc = 'LSP: ' .. desc
-						end
-						vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-					end
-					nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols,
-						'[D]ocument [S]ymbols')
-					nmap('<leader>wd', require('telescope.builtin').diagnostics,
-						'[W]orkspace [D]iagnostics')
-					nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols,
-						'[W]orkspace [S]ymbols')
-					nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
-					nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-					nmap('<leader>H', function()
-						vim.g.virtTextShow = not vim.g.virtTextShow
-						vim.diagnostic.config({ virtual_text = vim.g.virtTextShow })
-					end, 'Toggle [H]ints')
-					nmap('<leader>Q', vim.diagnostic.setqflist, 'diagnostic setqflist all')
-					nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-					nmap('<leader>f', function()
-						require 'conform'.format({ lsp_fallback = true })
-					end, '[F]ormat buffer')
-					nmap('<leader>h', vim.diagnostic.open_float, 'Show [h]int')
-					nmap('<leader>q', function()
-							vim.fn.setqflist(vim.diagnostic.toqflist(vim.diagnostic.get(0)),
-								'r')
-							vim.api.nvim_command('botright cwindow')
-						end,
-						'diagnostic setqflist current buffer')
-					nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-					nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-					nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder,
-						'[W]orkspace [R]emove Folder')
-					nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-					nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-					nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-					nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
-					nmap('<leader>wl', function()
-						print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-					end, '[W]orkspace [L]ist Folders')
-					local cmp = require('cmp')
-					local sources = cmp.get_config().sources
-					for i = #sources, 1, -1 do
-						if sources[i].name == 'buffer' then
-							table.remove(sources, i)
-						end
-					end
-					cmp.setup.buffer({ sources = sources })
-				end
 				local servers = {
 					clangd = {},
 					lua_ls = {
@@ -343,19 +292,7 @@ require("lazy").setup({
 				local capabilities = vim.lsp.protocol.make_client_capabilities()
 				capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 				capabilities.offsetEncoding = { "utf-16" }
-				local mason_lspconfig = require 'mason-lspconfig'
-				mason_lspconfig.setup {
-					ensure_installed = vim.tbl_keys(servers),
-				}
-				mason_lspconfig.setup_handlers {
-					function(server_name)
-						require('lspconfig')[server_name].setup {
-							capabilities = capabilities,
-							on_attach = on_attach,
-							settings = servers[server_name],
-						}
-					end,
-				}
+				require('mason-lspconfig').setup { ensure_installed = vim.tbl_keys(servers), }
 			end
 		},
 		{
@@ -613,13 +550,13 @@ require("lazy").setup({
 					local zr = function() g.neovide_scale_factor = 1 end
 					local fs = function() g.neovide_fullscreen = not g.neovide_fullscreen end
 					wk.add({
-							{ "<C-ScrollWheelDown>", zm, desc = "neovide: zoom --" },
-							{ "<C-ScrollWheelUp>", zp, desc = "neovide: zoom ++" },
-							{ "zm", zm, desc = "neovide: zoom --" },
-							{ "zp", zp, desc = "neovide: zoom ++" },
-							{ "zr", zr, desc = "neovide: zoom reset" },
-							{ "<F11>", fs, desc = "neovide: toggle fullscreen" },
-						})
+						{ "<C-ScrollWheelDown>", zm, desc = "neovide: zoom --" },
+						{ "<C-ScrollWheelUp>",   zp, desc = "neovide: zoom ++" },
+						{ "zm",                  zm, desc = "neovide: zoom --" },
+						{ "zp",                  zp, desc = "neovide: zoom ++" },
+						{ "zr",                  zr, desc = "neovide: zoom reset" },
+						{ "<F11>",               fs, desc = "neovide: toggle fullscreen" },
+					})
 				end
 				wk.add({
 					{
@@ -751,6 +688,30 @@ vim.api.nvim_create_autocmd('VimLeave', {
 	group = user_group,
 	command = 'set guicursor= | call chansend(v:stderr, "\x1b[ q")'
 })
+vim.api.nvim_create_autocmd('LspAttach', {
+	group = user_group,
+	callback = function(args)
+		local nset = function(keys, func, desc)
+			vim.keymap.set('n', keys, func, { buffer = args.buf, silent = true, desc = desc })
+		end
+		nset('gD', vim.lsp.buf.declaration, 'LSP: goto declaration')
+		nset('gd', vim.lsp.buf.definition, 'LSP: goto definition')
+		nset('grQ', vim.diagnostic.setqflist, 'diagnostic setqflist')
+		nset('grf', function() require 'conform'.format({ lsp_fallback = true }); end, 'Format (buffer)')
+		nset('grh', vim.diagnostic.open_float, 'diagnostic float')
+		nset('grq', function() vim.fn.setqflist(vim.diagnostic.toqflist(vim.diagnostic.get(0)), 'r'); vim.api.nvim_command('botright cwindow'); end, 'diagnostic setqflist current buffer')
+		nset('gH', function() vim.diagnostic.config({ virtual_text = not vim.diagnostic.config().virtual_text, virtual_lines = not vim.diagnostic.config().virtual_lines, }); end, 'toggle hints')
+		local cmp = require('cmp')
+		local sources = cmp.get_config().sources
+		for i = #sources, 1, -1 do
+			if sources[i].name == 'buffer' then
+				table.remove(sources, i)
+			end
+		end
+		cmp.setup.buffer({ sources = sources })
+	end,
+})
+
 -- custom filetypes
 vim.filetype.add({
 	extension = {
@@ -758,7 +719,7 @@ vim.filetype.add({
 		json = "jsonc",
 	},
 	pattern = {
-		[ "eswbuild" ] = "sh",
+		["eswbuild"] = "sh",
 		[".clang.*"] = "yaml",
 	}
 })
