@@ -14,10 +14,8 @@ end
 vim.opt.rtp:prepend(lazypath)
 local ft = {
 	dap = { cppdbg = { 'c', 'cpp' } },
-	doc = { 'markdown', 'asciidoc' },
 	fmt = { sh = { "shfmt" } },
 	lsp = { 'c', 'cpp', 'lua', 'python', 'sh' },
-	sonar = { 'c', 'cpp', 'python' },
 	ts = { 'bash', 'c', 'cpp', 'jsonc', 'lua', 'python' },
 }
 -- plugins
@@ -44,8 +42,8 @@ require("lazy").setup({
 		-- git
 		{
 			'lewis6991/gitsigns.nvim',
-			ft = ft.lsp,
 			dependencies = { 'nvim-lua/plenary.nvim' },
+			event = { "VimEnter" },
 			keys = {
 				{ '<leader>cg', ":Gitsigns setqflist<cr>", desc = "git changes" },
 				{ '[c',         ":Gitsigns prev_hunk<cr>", desc = "prev hunk" },
@@ -68,7 +66,7 @@ require("lazy").setup({
 		{
 			'nvim-telescope/telescope.nvim',
 			dependencies = { 'nvim-lua/plenary.nvim', 'jvgrootveld/telescope-zoxide' },
-			cmd = { 'Telescope' },
+			event = { "VimEnter" },
 			keys = {
 				{ '<leader><space>', ":Telescope<cr>",         desc = "telescope" },
 				{
@@ -143,7 +141,6 @@ require("lazy").setup({
 		-- treesitter
 		{
 			'nvim-treesitter/nvim-treesitter',
-			ft = ft.ts,
 			dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
 			config = function()
 				pcall(require('nvim-treesitter.install').update { with_sync = true })
@@ -258,22 +255,9 @@ require("lazy").setup({
 				require("lualine").setup(current_config)
 			end
 		},
-		{
-			"toppair/peek.nvim",
-			event = { "VeryLazy" },
-			build = "deno task --quiet build:fast",
-			config = function()
-				require("peek").setup()
-				vim.api.nvim_create_user_command("PeekOpen", require("peek").open, {})
-				vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
-			end,
-			ft = ft.doc,
-		}, -- lsp
-		{ 'folke/lazydev.nvim', ft = 'lua' },
+		-- lsp
 		{
 			'neovim/nvim-lspconfig',
-			ft = ft.lsp,
-			cmd = { "LspInfo", "LspInstall", "LspUninstall" },
 			dependencies = {
 				{ 'williamboman/mason.nvim', cmd = "Mason", config = true },
 				'williamboman/mason-lspconfig.nvim',
@@ -346,21 +330,6 @@ require("lazy").setup({
 					},
 				}
 			end
-		},
-		{
-			'https://gitlab.com/schrieveslaach/sonarlint.nvim',
-			opts = {
-				server = {
-					cmd = { 'sonarlint-language-server', '-stdio', '-analyzers',
-						vim.fn.stdpath('data') ..
-						"/mason/share/sonarlint-analyzers/sonarpython.jar",
-						vim.fn.stdpath('data') ..
-						"/mason/share/sonarlint-analyzers/sonarcfamily.jar",
-					}
-				},
-				filetypes = ft.sonar
-			},
-			ft = ft.sonar
 		},
 		{
 			'stevearc/conform.nvim',
@@ -699,8 +668,19 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		nset('grQ', vim.diagnostic.setqflist, 'diagnostic setqflist')
 		nset('grf', function() require 'conform'.format({ lsp_fallback = true }); end, 'Format (buffer)')
 		nset('grh', vim.diagnostic.open_float, 'diagnostic float')
-		nset('grq', function() vim.fn.setqflist(vim.diagnostic.toqflist(vim.diagnostic.get(0)), 'r'); vim.api.nvim_command('botright cwindow'); end, 'diagnostic setqflist current buffer')
-		nset('gH', function() vim.diagnostic.config({ virtual_text = not vim.diagnostic.config().virtual_text, virtual_lines = not vim.diagnostic.config().virtual_lines, }); end, 'toggle hints')
+		nset('grq',
+			function()
+				vim.fn.setqflist(vim.diagnostic.toqflist(vim.diagnostic.get(0)), 'r'); vim.api
+				    .nvim_command('botright cwindow');
+			end, 'diagnostic setqflist current buffer')
+		nset('gH',
+			function()
+				vim.diagnostic.config({
+					virtual_text = not vim.diagnostic.config().virtual_text,
+					virtual_lines = not
+					    vim.diagnostic.config().virtual_lines,
+				});
+			end, 'toggle hints')
 		local cmp = require('cmp')
 		local sources = cmp.get_config().sources
 		for i = #sources, 1, -1 do
@@ -724,18 +704,6 @@ vim.filetype.add({
 	}
 })
 -- lsp & cmp setup
-local sign = function(opts)
-	-- See :help sign_define()
-	vim.fn.sign_define(opts.name, {
-		texthl = opts.name,
-		text = opts.text,
-		numhl = ''
-	})
-end
-sign({ name = 'DiagnosticSignError', text = '✘' })
-sign({ name = 'DiagnosticSignWarn', text = '▲' })
-sign({ name = 'DiagnosticSignHint', text = '⚑' })
-sign({ name = 'DiagnosticSignInfo', text = '' })
 local _border = "single"
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
 	vim.lsp.handlers.hover, {
@@ -747,9 +715,6 @@ vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
 		border = _border
 	}
 )
-vim.diagnostic.config {
-	float = { border = _border }
-}
 -- dispatch left of the dial
 vim.api.nvim_set_hl(0, 'NeoTreeNormal', { bg = 'NONE' })
 vim.cmd.aunmenu([[PopUp.How-to\ disable\ mouse]])
@@ -757,8 +722,15 @@ vim.cmd.amenu([[PopUp.:Inspect <Cmd>Inspect<CR>]])
 vim.cmd.amenu([[PopUp.:Telescope <Cmd>Telescope<CR>]])
 vim.diagnostic.config({
 	virtual_text = true,
-	virtual_lines = { only_current_line = true },
-	signs = true,
+	virtual_lines = false,
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = '✘ ',
+			[vim.diagnostic.severity.WARN] = '▲ ',
+			[vim.diagnostic.severity.INFO] = '󰋽 ',
+			[vim.diagnostic.severity.HINT] = '󰌶 ',
+		},
+	},
 	float = {
 		border = "single",
 		source = "if_many"
