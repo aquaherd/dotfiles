@@ -30,17 +30,10 @@ for d in Firmware Logfiles; do
 	sshfs -o reconnect "${host}":$d ~/$d
 done
 echo "$host" >"$hostpath"
-for b in $(sudo usbip list -r localhost 2>/dev/null | cut -d':' -f1); do
-	case $b in
-	*-*)
-		echo "attaching UART $b"
-		sudo usbip attach -r localhost -b "$b"
-		;;
-	*) continue ;;
-	esac
-done
+reusb.sh
 if grep -q microsoft /proc/version; then
 	sudo modprobe vhci_hcd ftdi_sio || exit 1
+
 	echo 'waiting for UARTs to settle'
 	sleep 5
 	sudo chown -v root:dialout /dev/tty[AU]*
