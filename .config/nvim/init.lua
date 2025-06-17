@@ -626,7 +626,6 @@ g.loaded_perl_provider = 0
 g.loaded_python3_provider = 0
 g.loaded_ruby_provider = 0
 -- neovide
-opt.guifont = { 'Iosevka Nerd Font Mono', ':h12' }
 if g.neovide then
 	g.neovide_cursor_animation_length = 0.01
 	g.neovide_padding_bottom = 18
@@ -636,7 +635,7 @@ if g.neovide then
 	g.neovide_remember_window_size = true
 	g.neovide_scale_factor = 1.0
 	g.neovide_theme = 'auto'
-	g.neovide_transparency = 0.95
+	g.neovide_opacity = 0.95
 end
 -- Auto commands
 local user_group = vim.api.nvim_create_augroup('UserCommands', { clear = true })
