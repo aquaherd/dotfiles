@@ -30,19 +30,12 @@ local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 -- Safely execute immediately
 now(function()
 	vim.o.termguicolors = true
-	-- vim.cmd('colorscheme randomhue')
-	add({ source = 'Mofiqul/dracula.nvim' })
-	require('dracula').setup {
-		italic_comment = true,
-		transparent_bg = true,
-		lualine_bg_color = "#282a36",
-		overrides = {
-			---@diagnostic disable-next-line: missing-fields
-			MatchParen = { underline = false, fg = "#ffcc59", bg = "#2b2a2c" }
-		},
+	add({ source = 'navarasu/onedark.nvim' })
+	require('onedark').setup {
+		style = 'darker',
+		transparent = true
 	}
-
-	vim.cmd.colorscheme('dracula')
+	vim.cmd('colorscheme onedark')
 end)
 now(function()
 	require('mini.notify').setup()
@@ -194,6 +187,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		nmpb('grq', setqf, 'diagnostic setqflist current buffer')
 		nmpb('grf', function() require 'conform'.format({ lsp_fallback = true }); end, 'Format (buffer)')
 		nmpb('grh', vim.diagnostic.open_float, 'diagnostic float')
+		nmpb('grs', C("Pick lsp scope='document_symbol'"), 'Pick document_symbol')
 		nmpb('\\H', toggle_hints, 'toggle hints')
 	end,
 })
