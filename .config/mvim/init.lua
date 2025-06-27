@@ -30,12 +30,7 @@ local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 -- Safely execute immediately
 now(function()
 	vim.o.termguicolors = true
-	add({ source = 'navarasu/onedark.nvim' })
-	require('onedark').setup {
-		style = 'darker',
-		transparent = true
-	}
-	vim.cmd('colorscheme onedark')
+	vim.cmd('colorscheme draculish')
 end)
 now(function()
 	require('mini.notify').setup()
@@ -93,7 +88,7 @@ later(function() require('mini.ai').setup() end)
 later(function() require('mini.comment').setup() end)
 later(function() require('mini.diff').setup() end)
 later(function() require('mini.extra').setup() end)
-later(function() require('mini.git').setup({}) end)
+later(function() require('mini.git').setup() end)
 later(function() require('mini.pick').setup() end)
 later(function() require('mini.surround').setup() end)
 
@@ -120,12 +115,12 @@ later(function()
 				enable = true,
 				set_jumps = true,
 				goto_next_start = {
-					[']m'] = '@function.outer',
-					[']]'] = '@class.outer',
+					['}'] = '@function.outer',
+					[']c'] = '@class.outer',
 				},
 				goto_next_end = {
-					[']M'] = '@function.outer',
-					[']['] = '@class.outer',
+					['{'] = '@function.outer',
+					['[c'] = '@class.outer',
 				},
 
 			}
@@ -152,7 +147,10 @@ end)
 
 -- LSP
 vim.lsp.enable({ 'clangd', 'bashls', 'lua_ls' })
-
+vim.diagnostic.config({
+	virtual_text = true,
+	virtual_lines = false
+})
 -- keymaps
 local C = function(cmd) return "<Cmd>" .. cmd .. "<CR>" end
 local nmp = function(key, cmd, desc) vim.keymap.set('n', key, cmd, { desc = desc }) end
@@ -160,10 +158,12 @@ nmp('<C-N>', C('cnext'), 'qflist next')
 nmp('<C-P>', C("cprev"), 'qflist prev')
 nmp('<ESC>', C("nohlsearch"), 'Clear search highlight')
 nmp('<leader>?', C("Pick keymaps"), '? keymaps')
+nmp('<leader>/', C("Pick grep_live"), 'grep live')
 nmp('<leader>f', C("Pick files"), 'Pick Files')
 nmp('<leader>gf', C("Pick git_files"), 'Pick Git Files')
 nmp('<leader>gh', C("Pick git_hunks"), 'Pick Git Hunks')
 nmp('<leader>o', C("Pick oldfiles"), 'Pick Oldfiles')
+nmp('<leader>r', C("Pick resume"), 'Pick resume')
 
 -- autocommands
 local user_group = vim.api.nvim_create_augroup('UserCommands', { clear = true })
@@ -173,26 +173,37 @@ local setqf = function()
 	vim.api.nvim_command('botright cwindow');
 end
 local toggle_hints = function()
-	vim.diagnostic.config({
-		virtual_text = not vim.diagnostic.config().virtual_text,
-		virtual_lines = not
-		    vim.diagnostic.config().virtual_lines,
-	});
+	vim.diagnostic.config({ virtual_lines = not vim.diagnostic.config().virtual_lines });
 end
 vim.api.nvim_create_autocmd('LspAttach', {
 	group = user_group,
 	callback = function(args)
 		local nmpb = function(key, cmd, desc) vim.keymap.set('n', key, cmd, { desc = desc, buffer = args.buf }) end
+		nmpb('\\H', toggle_hints, 'toggle hints')
+		nmpb('gD', vim.lsp.buf.declaration, 'go to declaration')
+		nmpb('gW', C("Pick lsp scope='workspace_symbol'"), 'Pick workspace_symbol')
+		nmpb('gd', vim.lsp.buf.definition, 'go to definition')
 		nmpb('grQ', vim.diagnostic.setqflist, 'diagnostic setqflist')
-		nmpb('grq', setqf, 'diagnostic setqflist current buffer')
 		nmpb('grf', function() require 'conform'.format({ lsp_fallback = true }); end, 'Format (buffer)')
 		nmpb('grh', vim.diagnostic.open_float, 'diagnostic float')
+		nmpb('grq', setqf, 'diagnostic setqflist current buffer')
 		nmpb('grs', C("Pick lsp scope='document_symbol'"), 'Pick document_symbol')
-		nmpb('\\H', toggle_hints, 'toggle hints')
 	end,
 })
 -- fix cursor
 vim.api.nvim_create_autocmd('VimLeave', {
+	command = 'set guicursor= | call chansend(v:stderr, "\x1b[ q")',
+	group = user_group
+})
+-- faster closes
+vim.api.nvim_create_autocmd('FileType', {
+	command = 'nnoremap <buffer> q <cmd>quit<cr>',
 	group = user_group,
-	command = 'set guicursor= | call chansend(v:stderr, "\x1b[ q")'
+	pattern = { 'help', 'man', 'qf' }
+})
+-- fix header files
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+	callback = function() vim.bo.filetype = "c" end,
+	group = user_group,
+	pattern = "*.h"
 })
