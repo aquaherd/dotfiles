@@ -88,6 +88,7 @@ later(function() require('mini.ai').setup() end)
 later(function() require('mini.comment').setup() end)
 later(function() require('mini.diff').setup() end)
 later(function() require('mini.extra').setup() end)
+later(function() require('mini.files').setup({ windows = { preview = true } }) end)
 later(function() require('mini.git').setup() end)
 later(function() require('mini.pick').setup() end)
 later(function() require('mini.surround').setup() end)
@@ -98,6 +99,7 @@ later(function()
 		hooks = { post_checkout = function() vim.cmd('TSUpdate') end },
 	})
 	-- Possible to immediately execute code which depends on the added plugin
+	---@diagnostic disable-next-line: missing-fields
 	require('nvim-treesitter.configs').setup({
 		ensure_installed = { 'lua', 'vimdoc' },
 		highlight = { enable = true },
@@ -159,10 +161,14 @@ nmp('<C-P>', C("cprev"), 'qflist prev')
 nmp('<ESC>', C("nohlsearch"), 'Clear search highlight')
 nmp('<leader>?', C("Pick keymaps"), '? keymaps')
 nmp('<leader>/', C("Pick grep_live"), 'grep live')
+nmp('<leader>b', C("Pick buffers"), 'Pick buffer')
+nmp('<leader>e', C("lua MiniFiles.open()"), 'Explore')
 nmp('<leader>f', C("Pick files"), 'Pick Files')
 nmp('<leader>gf', C("Pick git_files"), 'Pick Git Files')
 nmp('<leader>gh', C("Pick git_hunks"), 'Pick Git Hunks')
+nmp('<leader>h', C("Pick history"), 'Pick history')
 nmp('<leader>o', C("Pick oldfiles"), 'Pick Oldfiles')
+nmp('<leader>n', C("lua MiniNotify.show_history()"), 'Show notifications')
 nmp('<leader>r', C("Pick resume"), 'Pick resume')
 
 -- autocommands
