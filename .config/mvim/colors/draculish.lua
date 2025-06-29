@@ -10,6 +10,7 @@ local p = hues.make_palette(opts)
 local hi = function(name, data)
 	vim.api.nvim_set_hl(0, name, data)
 end
+hi("Normal", { blend = 0, fg = "#c0c8cb" })
 hi("Comment", { fg = p.green, bg = nil, italic = true })
 hi("DiagnosticUnderlineWarn", { undercurl = true })
 hi("Keyword", { fg = p.blue, bg = nil, bold = true })
