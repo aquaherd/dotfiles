@@ -11,11 +11,9 @@ local hi = function(name, data)
 	vim.api.nvim_set_hl(0, name, data)
 end
 hi("Comment", { fg = p.green, bg = nil, italic = true })
+hi("DiagnosticUnderlineWarn", { undercurl = true })
 hi("Keyword", { fg = p.blue, bg = nil, bold = true })
+hi("Operator", { fg = p.cyan, bg = nil })
 hi("Statement", { fg = p.blue, bg = nil, bold = true })
 hi("Variable", { fg = p.cyan, bg = nil })
-hi("DiagnosticUnderlineWarn", { undercurl = true })
 vim.g.colors_name = "draculish"
--- if bla then
--- 	blubb()
--- end
