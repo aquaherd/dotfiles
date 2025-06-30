@@ -1,0 +1,9 @@
+#!/bin/bash
+# WEEK=2 timew report week
+WEEK_OFFSET="${WEEK:-0}"
+
+# Calculate start and end dates of the desired week
+START=$(date -d "monday -${WEEK_OFFSET} week" +%F)
+END=$(date -d "${START} +7 days" +%F)
+echo "$START to $END"
+exec timew week from "$START" to "$END"
