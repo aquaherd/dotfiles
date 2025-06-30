@@ -120,7 +120,7 @@ later(function()
 					['}'] = '@function.outer',
 					[']c'] = '@class.outer',
 				},
-				goto_next_end = {
+				goto_previous_start = {
 					['{'] = '@function.outer',
 					['[c'] = '@class.outer',
 				},
@@ -187,13 +187,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		local nmpb = function(key, cmd, desc) vim.keymap.set('n', key, cmd, { desc = desc, buffer = args.buf }) end
 		nmpb('\\H', toggle_hints, 'toggle hints')
 		nmpb('gD', vim.lsp.buf.declaration, 'go to declaration')
-		nmpb('gW', C("Pick lsp scope='workspace_symbol'"), 'Pick workspace_symbol')
+		nmpb('<leader>a', C("Pick lsp scope='document_symbol'"), 'Symbols')
+		nmpb('<leader>w', C("Pick lsp scope='workspace_symbol'"), 'Workspace')
 		nmpb('gd', vim.lsp.buf.definition, 'go to definition')
 		nmpb('grQ', vim.diagnostic.setqflist, 'diagnostic setqflist')
 		nmpb('grf', function() require 'conform'.format({ lsp_fallback = true }); end, 'Format (buffer)')
 		nmpb('grh', vim.diagnostic.open_float, 'diagnostic float')
 		nmpb('grq', setqf, 'diagnostic setqflist current buffer')
-		nmpb('grs', C("Pick lsp scope='document_symbol'"), 'Pick document_symbol')
 	end,
 })
 -- fix cursor

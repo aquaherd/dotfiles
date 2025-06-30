@@ -38,3 +38,4 @@ uda.adourl.label=url
 report.work.description=List of work items
 report.work.columns=id,project,adoid,description.desc,urgency
 report.work.filter=status:pending and !(adoid: )
+news.version=2.6.0
