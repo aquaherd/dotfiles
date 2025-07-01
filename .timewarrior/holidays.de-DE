@@ -1,0 +1,27 @@
+# Holiday data provided by holidata.net
+#   Generated 2025-06-30T15:25:23
+
+define holidays:
+  de-DE:
+    2025_01_01 = Neujahr
+    2025_01_06 = Heilige drei Könige
+    2025_03_08 = Internationaler Frauentag
+    2025_04_18 = Karfreitag
+    2025_04_20 = Ostern
+    2025_04_21 = Ostermontag
+    2025_05_01 = Erster Maifeiertag
+    2025_05_29 = Christi Himmelfahrt
+    2025_06_08 = Pfingstsonntag
+    2025_06_09 = Pfingstmontag
+    2025_06_19 = Fronleichnam
+    2025_08_15 = Mariä Himmelfahrt
+    2025_09_20 = Weltkindertag
+    2025_10_03 = Tag der Deutschen Einheit
+    2025_10_31 = Reformationstag
+    2025_11_01 = Allerheiligen
+    2025_11_19 = Buß- und Bettag
+    2025_12_24 = Heilig Abend
+    2025_12_25 = Weihnachtstag
+    2025_12_26 = Zweiter Weihnachtstag
+    2025_12_31 = Silvester
+
