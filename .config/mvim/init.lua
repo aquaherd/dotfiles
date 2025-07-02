@@ -25,7 +25,7 @@ require('mini.deps').setup({ path = { package = path_package } })
 
 -- Use 'mini.deps'. `now()` and `later()` are helpers for a safe two-stage
 -- startup and are optional.
-local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
+local now, later = MiniDeps.now, MiniDeps.later
 
 -- Safely execute immediately
 now(function()
@@ -95,7 +95,10 @@ later(function() require('mini.diff').setup({
 later(function() require('mini.extra').setup() end)
 later(function() require('mini.files').setup({ windows = { preview = true } }) end)
 later(function() require('mini.git').setup() end)
-later(function() require('mini.pick').setup() vim.ui.select = MiniPick.ui_select end)
+later(function() require('mini.pick').setup()
+	vim.ui.select = MiniPick.ui_select
+	require('GitWorktrees')
+end)
 later(function() require('mini.surround').setup() end)
 
 -- LSP
@@ -141,6 +144,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		nmpb('gD', vim.lsp.buf.declaration, 'go to declaration')
 		nmpb('<leader>a', C("Pick lsp scope='document_symbol'"), 'Symbols')
 		nmpb('<leader>w', C("Pick lsp scope='workspace_symbol'"), 'Workspace')
+		nmpb('<leader>W', C("Pick git_worktrees"), 'Worktrees')
 		nmpb('gd', vim.lsp.buf.definition, 'go to definition')
 		nmpb('grQ', vim.diagnostic.setqflist, 'diagnostic setqflist')
 		nmpb('grf', function() require 'conform'.format({ lsp_fallback = true }); end, 'Format (buffer)')
@@ -170,3 +174,4 @@ vim.api.nvim_create_autocmd("FileType", {                                       
 	pcall(vim.treesitter.start)
 end
 })
+-- Somethings
