@@ -86,66 +86,17 @@ now(function() require('mini.statusline').setup() end)
 -- Safely execute later
 later(function() require('mini.ai').setup() end)
 later(function() require('mini.comment').setup() end)
-later(function() require('mini.diff').setup() end)
+later(function() require('mini.diff').setup({
+	view = {
+		style = 'sign',
+		signs = { add = '+', change = '~', delete = '-' },
+	},
+}) end)
 later(function() require('mini.extra').setup() end)
 later(function() require('mini.files').setup({ windows = { preview = true } }) end)
 later(function() require('mini.git').setup() end)
-later(function() require('mini.pick').setup() end)
+later(function() require('mini.pick').setup() vim.ui.select = MiniPick.ui_select end)
 later(function() require('mini.surround').setup() end)
-
-later(function()
-	add({
-		source = 'nvim-treesitter/nvim-treesitter',
-		hooks = { post_checkout = function() vim.cmd('TSUpdate') end },
-	})
-	-- Possible to immediately execute code which depends on the added plugin
-	---@diagnostic disable-next-line: missing-fields
-	require('nvim-treesitter.configs').setup({
-		ensure_installed = { 'lua', 'vimdoc' },
-		highlight = { enable = true },
-		incremental_selection = {
-			enable = true,
-			keymaps = {
-				init_selection = '<c-space>',
-				node_incremental = '<c-space>',
-				scope_incremental = '<c-s>',
-				node_decremental = '<M-space>',
-			},
-		},
-		textobjects = {
-			move = {
-				enable = true,
-				set_jumps = true,
-				goto_next_start = {
-					['}'] = '@function.outer',
-					[']c'] = '@class.outer',
-				},
-				goto_previous_start = {
-					['{'] = '@function.outer',
-					['[c'] = '@class.outer',
-				},
-
-			}
-		}
-	})
-	add({
-		source = 'nvim-treesitter/nvim-treesitter-textobjects',
-		depends = { 'nvim-treesitter/nvim-treesitter' }
-	})
-
-	-- Git management
-	add({
-		source = 'lewis6991/gitsigns.nvim',
-		depends = { 'nvim-lua/plenary.nvim' },
-	})
-end)
-
-later(function()
-	add({
-		source = 'stevearc/conform.nvim'
-	})
-	require('conform').setup({ formatters_by_ft = { sh = { "shfmt" } } })
-end)
 
 -- LSP
 vim.lsp.enable({ 'clangd', 'bashls', 'lua_ls' })
@@ -185,6 +136,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 	group = user_group,
 	callback = function(args)
 		local nmpb = function(key, cmd, desc) vim.keymap.set('n', key, cmd, { desc = desc, buffer = args.buf }) end
+		nmpb('\\O', C("lua MiniDiff.toggle_overlay()"), 'toggle diff overlay')
 		nmpb('\\H', toggle_hints, 'toggle hints')
 		nmpb('gD', vim.lsp.buf.declaration, 'go to declaration')
 		nmpb('<leader>a', C("Pick lsp scope='document_symbol'"), 'Symbols')
@@ -212,4 +164,9 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 	callback = function() vim.bo.filetype = "c" end,
 	group = user_group,
 	pattern = "*.h"
+})
+-- start treesitter
+vim.api.nvim_create_autocmd("FileType", {                                                                                       callback = function()
+	pcall(vim.treesitter.start)
+end
 })

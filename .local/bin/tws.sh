@@ -1,2 +1,2 @@
 #!/bin/sh
-unison ~/.timewarrior/data ssh://pg2/.timewarrior/data
+unison -auto -times ~/.timewarrior/data ssh://pg2/.timewarrior/data
