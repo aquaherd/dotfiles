@@ -83,12 +83,17 @@ now(function()
 	})
 end)
 now(function() require('mini.icons').setup() end)
-now(function() require('mini.statusline').setup({
+now(function()
+	local status = require('mini.statusline')
+	status.section_hostname = function(args)
+		return MiniStatusline.is_truncated(args.trunc_width) and '' or vim.fn.hostname() or "localhost"
+	end
+	status.setup({
 	content = {
 		active = function()
 			local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 120 })
-			local hostname      = vim.fn.hostname() or "?"
-			local git           = MiniStatusline.section_git({ trunc_width = 40 })
+			local hostname      = MiniStatusline.section_hostname({ trunc_width = 75 })
+			local git           = MiniStatusline.section_git({ trunc_width = 120 })
 			local diff          = MiniStatusline.section_diff({ trunc_width = 75 })
 			local diagnostics   = MiniStatusline.section_diagnostics({ trunc_width = 75 })
 			local lsp           = MiniStatusline.section_lsp({ trunc_width = 75 })
@@ -211,7 +216,12 @@ later(function()
 	vim.api.nvim_create_autocmd('FileType', {
 		command = 'nnoremap <buffer> q <cmd>quit<cr>',
 		group = user_group,
-		pattern = { 'help', 'man', 'qf' }
+		pattern = { 'help', 'man', 'qf'}
+	})
+	vim.api.nvim_create_autocmd('FileType', {
+		command = 'nnoremap <buffer> q <cmd>bdelete<cr>',
+		group = user_group,
+		pattern = { 'mininotify-history' }
 	})
 	-- fix header files
 	vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
@@ -221,7 +231,11 @@ later(function()
 	})
 	-- start treesitter
 	vim.api.nvim_create_autocmd("FileType", {                                                                                       callback = function()
-		pcall(vim.treesitter.start)
+		local ok, _ = pcall(vim.treesitter.start)
+		if ok then
+			vim.cmd('setlocal foldenable foldmethod=expr foldlevel=999')
+			vim.cmd('setlocal foldexpr=v:lua.vim.treesitter.foldexpr()')
+		end
 	end
 })
 end)
@@ -231,19 +245,18 @@ later(function()
 	local function paste() return {
 		vim.split(vim.fn.getreg(''), '\n'),
 		vim.fn.getregtype(''),
-	}
-end
-if vim.env.SSH_TTY then
-	vim.g.clipboard = {
-		name = 'OSC 52',
-		copy = {
-			['+'] = require('vim.ui.clipboard.osc52').copy '+',
-			['*'] = require('vim.ui.clipboard.osc52').copy '*',
-		},
-		paste = {
-			['+'] = paste,
-			['*'] = paste,
-		},
-	}
-end
+	} end
+	if vim.env.SSH_TTY then
+		vim.g.clipboard = {
+			name = 'OSC 52',
+			copy = {
+				['+'] = require('vim.ui.clipboard.osc52').copy '+',
+				['*'] = require('vim.ui.clipboard.osc52').copy '*',
+			},
+			paste = {
+				['+'] = paste,
+				['*'] = paste,
+			},
+		}
+	end
 end)
