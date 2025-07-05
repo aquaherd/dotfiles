@@ -15,3 +15,21 @@ colors()
 		fi
 	done
 }
+
+
+sc() {
+	for d in /usr/lib /usr/lib/$(uname -m)-linux-gnu; do
+		s="$d/opensc-pkcs11.so"
+		if test -f "$s"; then
+			case "$1" in
+				start) ssh-add -s "$s";;
+				stop)  ssh-add -e "$s";;
+				*) echo "use sc [start|stop]"; return 1;;
+			esac
+			return
+		fi
+	done
+}
+
+alias sc-start='sc start'
+alias sc-stop='sc stop'
