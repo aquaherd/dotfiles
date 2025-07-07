@@ -1,0 +1,10 @@
+[Unit]
+Description=No zscaler for linux
+
+[Service]
+#ExecStart=/usr/bin/autossh -vnN pg2
+ExecStart=/home/z003tnse/.local/bin/nozsc.sh
+WorkingDirectory=/home/z003tnse
+
+[Install]
+WantedBy=default.target
