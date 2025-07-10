@@ -202,7 +202,7 @@ later(function()
 			nmpb('<leader>W', C("Pick git_worktrees"), 'Worktrees')
 			nmpb('gd', vim.lsp.buf.definition, 'go to definition')
 			nmpb('grQ', vim.diagnostic.setqflist, 'diagnostic setqflist')
-			nmpb('grf', function() require 'conform'.format({ lsp_fallback = true }); end, 'Format (buffer)')
+			nmpb('grf', vim.lsp.buf.format, 'Format (buffer)')
 			nmpb('grh', vim.diagnostic.open_float, 'diagnostic float')
 			nmpb('grq', setqf, 'diagnostic setqflist current buffer')
 		end,
