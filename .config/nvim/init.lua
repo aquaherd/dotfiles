@@ -67,7 +67,10 @@ require("lazy").setup({
 	--telescope
 	{
 		'nvim-telescope/telescope.nvim',
-		dependencies = { 'nvim-lua/plenary.nvim', 'jvgrootveld/telescope-zoxide' },
+		dependencies = { 'nvim-lua/plenary.nvim',
+			'jvgrootveld/telescope-zoxide',
+			'nvim-telescope/telescope-ui-select.nvim'
+		},
 		event = { "VimEnter" },
 		keys = {
 			{ '<leader><space>', ":Telescope<cr>", desc = "telescope" },
@@ -96,8 +99,12 @@ require("lazy").setup({
 					layout_strategy = "flex",
 					layout_config = { horizontal = { preview_width = 0.6, }, },
 				},
-				extensions = { zoxide = {} },
+				extensions = {
+					zoxide = {},
+					["ui-select"] = { require("telescope.themes").get_dropdown { }}
+				},
 			}
+			t.load_extension("ui-select")
 			t.load_extension("zoxide")
 		end
 	},
