@@ -1,11 +1,13 @@
 #!/bin/sh
 if [ $# -ne 1 ]; then
-    echo "Usage: startw WAYLAND_SESSION"
-    for d in /usr/share/wayland-sessions/*.desktop; do 
-	    n=$(basename -s .desktop "$d")
-	    echo "- $n"
-    done
-    exit 1
+	echo "Usage: startw WAYLAND_SESSION"
+	for d in /usr/share/wayland-sessions/*.desktop /usr/local/share/wayland-sessions/*.desktop; do 
+		if [ -f "$d" ]; then
+			n=$(basename -s .desktop "$d")
+			echo "- $n"
+		fi
+	done | sort
+	exit 1
 fi
 XDG_RUNTIME_DIR=/run/user/"$(id -u)"
 export XDG_RUNTIME_DIR
