@@ -19,6 +19,7 @@ else
 	done
 fi
 
+ssh-add -d - < ~/.ssh/encr.txt
 # if sess | grep -q zsc; then
 # 	echo OK
 # else
