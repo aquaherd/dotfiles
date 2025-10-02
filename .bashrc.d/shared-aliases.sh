@@ -35,6 +35,21 @@ sc() {
 alias sc-start='sc start'
 alias sc-stop='sc stop'
 
+wait_host()
+{
+        until ping -c1 "$1" >/dev/null 2>&1; do :; done
+}
+
+case $HOSTNAME in
+	SHS*)
+		alias wake106='ssh pihole wakeonlan 4c:52:62:0d:10:d7 && wait_host 192.168.188.106';;
+	pc???)
+		alias wake107='wakeonlan 4c:52:62:0d:0f:ea && wait_host 192.168.23.107'
+		alias wake130='wakeonlan d4:f5:27:e5:7b:00 && wait_host 192.168.23.130'
+		alias wake131='wakeonlan d4:f5:27:e5:b0:08 && wait_host 192.168.23.131'
+		;;
+esac
+
 # fzf needed from here
 if ! command -v fzf >/dev/null; then
 	return
