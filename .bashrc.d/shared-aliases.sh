@@ -42,7 +42,9 @@ wait_host()
 
 case $HOSTNAME in
 	SHS*)
-		alias wake106='ssh pihole wakeonlan 4c:52:62:0d:10:d7 && wait_host 192.168.188.106';;
+		alias wake106='ssh pihole wakeonlan 4c:52:62:0d:10:d7 && wait_host 192.168.188.106'
+		alias wakeOMV='ssh pihole wakeonlan 70:85:C2:33:CF:95 && wait_host 192.168.188.42'
+		;;
 	pc???)
 		alias wake107='wakeonlan 4c:52:62:0d:0f:ea && wait_host 192.168.23.107'
 		alias wake130='wakeonlan d4:f5:27:e5:7b:00 && wait_host 192.168.23.130'
