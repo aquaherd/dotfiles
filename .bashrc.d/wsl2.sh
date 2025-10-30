@@ -1,5 +1,9 @@
 #!/bin/bash
 # Sanity checks
+if [[ -n "$container" ]]; then
+	return
+fi
+
 if [[ -n "$DEV_CONTAINER_NAME" ]]; then
 	return
 fi
