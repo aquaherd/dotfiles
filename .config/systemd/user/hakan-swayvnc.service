@@ -1,0 +1,23 @@
+[Unit]
+Description=Sway Headless Session
+After=network.target
+
+[Service]
+Type=simple
+Environment=WLR_BACKENDS=headless
+Environment=WLR_LIBINPUT_NO_DEVICES=1
+Environment=WLR_RENDERER=pixman
+Environment=XDG_CURRENT_DESKTOP=sway
+Environment=WSL2_GUI_APPS_ENABLED=0
+Environment=XDG_SESSION_TYPE=wayland
+Environment=XDG_SESSION_DESKTOP=sway
+ExecStart=/usr/bin/sway
+Restart=always
+RestartSec=5s
+StartLimitInterval=5min
+StartLimitBurst=5
+SuccessExitStatus=143
+RestartForceExitStatus=133
+
+[Install]
+WantedBy=default.target
