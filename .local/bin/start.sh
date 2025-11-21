@@ -21,11 +21,8 @@ ssh "$host" \
 	-L '127.0.0.1:8192:localhost:8192' \
 	echo OK
 
+pkill -f 'sshfs -o reconnect win'
 for d in Firmware Logfiles; do
-	if mountpoint -q ~/$d >/dev/null; then
-		echo "unmounting \~/$d ..."
-		fusermount -u ~/$d
-	fi
 	echo "mounting ${host}:$d to \~/$d ..."
 	sshfs -o reconnect "${host}":$d ~/$d
 done
