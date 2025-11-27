@@ -467,6 +467,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 						vim.diagnostic.config().virtual_lines,
 				});
 			end, 'toggle hints')
+		nset('gS', function() vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end, 'toggle diagnostic')
 		local cmp = require('cmp')
 		local sources = cmp.get_config().sources
 		for i = #sources, 1, -1 do
