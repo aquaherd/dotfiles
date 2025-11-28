@@ -27,13 +27,4 @@ for d in Firmware Logfiles; do
 	sshfs -o reconnect "${host}":$d ~/$d
 done
 echo "$host" >"$hostpath"
-reusb.sh
-if grep -q microsoft /proc/version; then
-	sudo modprobe vhci_hcd ftdi_sio || exit 1
-
-	echo 'waiting for UARTs to settle'
-	sleep 5
-	sudo chown -v root:dialout /dev/tty[AU]*
-	sudo chmod -v g+rw /dev/tty[AU]*
-fi
 echo OK
