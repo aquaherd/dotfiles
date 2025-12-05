@@ -71,6 +71,6 @@ if [[ -z "$WAYLAND_DISPLAY" ]] && command -v wsld > /dev/null; then
 		disown
 	fi
 fi
-if [ -n "$DISPLAY" ]; then
+if [ -n "$DISPLAY" ] && command -v xrdb > /dev/null; then
 	xrdb -query | grep -q . || xrdb -merge ~/.Xresources
 fi
