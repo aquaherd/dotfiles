@@ -55,7 +55,10 @@ if [[ -z "$WAYLAND_DISPLAY" ]] && command -v wsld > /dev/null; then
 			sleep 0.3
 		done	
 	fi
-	xrdb -merge ~/.Xresources
+	if command -v xrdb > /dev/null; then
+		xrdb -merge ~/.Xresources
+	fi
+
 	export DBUS_SESSION_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus
 	export NO_AT_BRIDGE=1
 	if ! pgrep dbus > /dev/null; then
