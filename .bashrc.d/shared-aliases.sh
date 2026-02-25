@@ -71,3 +71,7 @@ cdgw() {
 		cd "$dir" || echo 'hoppala!'
 	fi
 }
+
+if test -d .cargo/bin; then
+	PATH="$HOME/.cargo/bin:$PATH"
+fi
