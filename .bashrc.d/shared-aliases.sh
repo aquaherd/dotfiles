@@ -1,6 +1,7 @@
 #!/bin/bash
 alias cdgr='cd $(git rev-parse --show-toplevel||echo .)'
 alias cfg='git --git-dir=$HOME/.cfg --work-tree=$HOME '
+alias tws='git --git-dir=$HOME/.tws --work-tree=$HOME/.timewarrior '
 alias curr='cat "$XDG_RUNTIME_DIR/host" 2> /dev/null || echo none'
 alias quit='ssh -O exit '
 alias drop='ssh-add -d - < ~/.ssh/encr.txt'
