@@ -22,25 +22,6 @@ local ft = {
 }
 -- plugins
 require("lazy").setup({
-	-- Theme
-	{
-		'Mofiqul/dracula.nvim',
-		lazy = false,
-		priority = 1000,
-		config = function()
-			---@diagnostic disable-next-line: missing-fields
-			require('dracula').setup {
-				italic_comment = true,
-				transparent_bg = not g.neovide,
-				lualine_bg_color = "#282a36",
-				overrides = {
-					---@diagnostic disable-next-line: missing-fields
-					MatchParen = { underline = false, fg = "#ffcc59", bg = "#2b2a2c" }
-				},
-			}
-			vim.cmd.colorscheme 'dracula'
-		end
-	},
 	-- git
 	{
 		'lewis6991/gitsigns.nvim',
