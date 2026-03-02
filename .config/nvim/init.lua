@@ -270,6 +270,7 @@ require("lazy").setup({
 		}
 	},
 	-- misc
+	{ 'aquaherd/timewarrior.nvim' },
 	{
 		'norcalli/nvim-colorizer.lua',
 		config = true,
