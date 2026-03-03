@@ -205,7 +205,7 @@ require("lazy").setup({
 		'hrsh7th/nvim-cmp',
 		event = "InsertEnter",
 		dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip',
-			'hrsh7th/cmp-buffer', 'paopaol/cmp-doxygen' },
+			'hrsh7th/cmp-buffer', 'paopaol/cmp-doxygen', 'hrsh7th/cmp-omni', 'aquaherd/timewarrior.nvim' },
 		opts = function() -- nvim-cmp setup
 			local cmp = require 'cmp'
 			local luasnip = require 'luasnip'
@@ -251,6 +251,12 @@ require("lazy").setup({
 					{ name = 'doxygen' },
 				},
 			}
+			cmp.setup.filetype("timewarrior", {
+				sources = cmp.config.sources({
+					{ name = "omni" },
+					{ name = "buffer" },
+				}),
+			})
 		end
 	},
 	{
@@ -261,16 +267,18 @@ require("lazy").setup({
 	-- status
 	{
 		'nvim-lualine/lualine.nvim',
-		dependencies = { 'nvim-tree/nvim-web-devicons' },
+		dependencies = { 'nvim-tree/nvim-web-devicons', 'aquaherd/timewarrior.nvim' },
 		event = "VeryLazy",
 		opts = {
 			options = { globalstatus = true, component_separators = '', section_separators = '' },
 			extensions = { 'aerial', 'fugitive', 'toggleterm', 'quickfix' },
-			sections = { lualine_c = { 'hostname', { 'filename', path = 1 } } }
+			sections = { 
+				lualine_c = { 'hostname', { 'filename', path = 1 } },
+				lualine_x = { 'timewarrior' } 
+			}
 		}
 	},
 	-- misc
-	{ 'aquaherd/timewarrior.nvim' },
 	{
 		'norcalli/nvim-colorizer.lua',
 		config = true,
