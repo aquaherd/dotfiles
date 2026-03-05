@@ -11,7 +11,7 @@ fi
 if ! grep -q microsoft /proc/version; then
 	return
 fi
-echo "wsl..."
+# echo "wsl..."
 # PATH fixups
 LOCAL_BIN=$HOME/.local/bin
 if ! [[ $PATH =~ $LOCAL_BIN ]]; then
@@ -31,13 +31,13 @@ else
 	export PROFILE_LOADED=1
 fi
 # SSH
-if command -v wsl2-ssh-agent > /dev/null; then
-	export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.sock 
-	if ! pgrep wsl2-ssh-agent > /dev/null; then
-		echo 'launching ssh-agent...'
-		eval "$(wsl2-ssh-agent --socket "$SSH_AUTH_SOCK")"
-	fi
-fi
+keys=$(find ~/WinHome/.ssh/ -newer ~/.ssh/ -name 'id_*')
+for key in $keys; do
+	case  "$key" in
+		*.pub) install -m 0640 "$key" ~/.ssh/;;
+		*) install -m 0600 "$key" ~/.ssh/;;
+	esac
+done
 
 # X11 & wayland
 if [ -f ~/.bashrc.d/nodesktop ]; then
