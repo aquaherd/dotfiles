@@ -91,75 +91,27 @@ require("lazy").setup({
 	},
 	-- treesitter
 	{
-		'nvim-treesitter/nvim-treesitter',
-		dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
+		"nvim-treesitter/nvim-treesitter",
+		branch = "main",
+		lazy = false,
+		build = ":TSUpdate",
 		config = function()
-			pcall(require('nvim-treesitter.install').update { with_sync = true })
-			---@diagnostic disable-next-line: missing-fields
-			require('nvim-treesitter.configs').setup {
-				-- Add languages to be installed here that you want installed for treesitter
-				ensure_installed = ft.ts,
-				auto_install = false,
-				highlight = { enable = true },
-				indent = { enable = true, disable = { 'python' } },
-				incremental_selection = {
-					enable = true,
-					keymaps = {
-						init_selection = '<c-space>',
-						node_incremental = '<c-space>',
-						scope_incremental = '<c-s>',
-						node_decremental = '<M-space>',
-					},
-				},
-				textobjects = {
-					select = {
-						enable = true,
-						lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-						keymaps = {
-							-- You can use the capture groups defined in textobjects.scm
-							['aa'] = '@parameter.outer',
-							['ia'] = '@parameter.inner',
-							['af'] = '@function.outer',
-							['if'] = '@function.inner',
-							['ac'] = '@class.outer',
-							['ic'] = '@class.inner',
-						},
-					},
-					move = {
-						enable = true,
-						set_jumps = true, -- whether to set jumps in the jumplist
-						goto_next_start = {
-							[']m'] = '@function.outer',
-							[']]'] = '@class.outer',
-						},
-						goto_next_end = {
-							[']M'] = '@function.outer',
-							[']['] = '@class.outer',
-						},
-						goto_previous_start = {
-							['[m'] = '@function.outer',
-							['[['] = '@class.outer',
-						},
-						goto_previous_end = {
-							['[M'] = '@function.outer',
-							['[]'] = '@class.outer',
-						},
-					},
-					swap = {
-						enable = true,
-						swap_next = { ['<leader>p'] = '@parameter.inner', },
-						swap_previous = { ['<leader>P'] = '@parameter.inner', },
-					},
-				},
-			}
+			require("nvim-treesitter").setup({})
+			-- Start highlighting explicitly
+			vim.api.nvim_create_autocmd("FileType", {
+				group = vim.api.nvim_create_augroup("ts-auto-start", {}),
+				callback = function(ctx) pcall(vim.treesitter.start, ctx.buf) end,
+			})
+			-- Indent / fold (optional)
+			vim.api.nvim_create_autocmd("FileType", {
+				group = vim.api.nvim_create_augroup("ts-indent", {}),
+				callback = function()
+					vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end,
+			})
+			vim.wo.foldmethod = "expr"
+			vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 		end,
-	},
-	{
-		'danymat/neogen',
-		dependencies = { 'nvim-treesitter/nvim-treesitter' },
-		opts = { snippet_engine = 'luasnip' },
-		ft = ft.lsp,
-		cmd = { "Neogen" }
 	},
 	-- Side panes
 	{
@@ -205,7 +157,7 @@ require("lazy").setup({
 		'hrsh7th/nvim-cmp',
 		event = "InsertEnter",
 		dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip',
-			'hrsh7th/cmp-buffer', 'paopaol/cmp-doxygen', 'hrsh7th/cmp-omni', 'aquaherd/timewarrior.nvim' },
+			'hrsh7th/cmp-buffer', 'hrsh7th/cmp-omni', 'aquaherd/timewarrior.nvim' },
 		opts = function() -- nvim-cmp setup
 			local cmp = require 'cmp'
 			local luasnip = require 'luasnip'
@@ -248,7 +200,6 @@ require("lazy").setup({
 					{ name = 'buffer' },
 					{ name = 'luasnip' },
 					{ name = 'nvim_lsp' },
-					{ name = 'doxygen' },
 				},
 			}
 			cmp.setup.filetype("timewarrior", {
@@ -319,7 +270,6 @@ require("lazy").setup({
 					{ "<C-n>",      ":cnext<cr>",          desc = "qflist next" },
 					{ "<C-p>",      ":cprev<cr>",          desc = "qflist prev" },
 					{ "<C-s>",      ":w<cr>",              desc = "save" },
-					{ "<leader>cd", ":Neogen<cr>",         desc = "generate doxygen" },
 					{ "<leader>e",  ":Neotree toggle<cr>", desc = "tree" },
 					{ "<leader>tb", ":TimewarriorStartPick<cr>", desc = "timew start" },
 					{ "<leader>td", ":TimewarriorToday<cr>", desc = "timew today" },
@@ -508,3 +458,7 @@ vim.diagnostic.config({
 		source = "if_many"
 	},
 })
+vim.opt.foldenable     = false
+vim.opt.foldlevel      = 99
+vim.opt.foldlevelstart = 99
+
