@@ -5,6 +5,7 @@ local o = vim.o
 g.mapleader = ' '
 g.maplocalleader = ' '
 g.virtTextShow = true
+opt.termguicolors = true   -- must be set before colorscheme loads
 -- package manager
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 ---@diagnostic disable-next-line: undefined-field
@@ -17,11 +18,38 @@ local ft = {
 	dap = { cppdbg = { 'c', 'cpp' } },
 	fmt = { sh = { "shfmt" } },
 	lsp = { 'c', 'cpp', 'lua', 'python', 'sh' },
-	lsps = { 'bashls', 'clangd', 'lua_ls' },
+	lsps = { 'bashls', 'clangd', 'lua_ls', 'copilot' },
 	ts = { 'bash', 'c', 'cpp', 'jsonc', 'lua', 'python' },
 }
 -- plugins
 require("lazy").setup({
+	-- sidekick: Copilot NES + embedded AI CLI
+	{
+		'folke/sidekick.nvim',
+		cond = function() return vim.fn.executable('copilot-language-server') == 1 end,
+		event = "VeryLazy",
+		opts = {
+			cli = {
+				default = "copilot",  -- open Copilot CLI by default
+				mux = {
+					enabled = true,
+				},
+			},
+		},
+		keys = {
+			-- NES: navigate/apply Next Edit Suggestions (normal mode, falls back to <Tab>)
+			{ "<Tab>", function()
+				if not require("sidekick").nes_jump_or_apply() then return "<Tab>" end
+			end, expr = true, desc = "NES: goto/apply suggestion" },
+			-- CLI panel
+			{ "<C-.>",      function() require("sidekick.cli").toggle() end,                    mode = { "n", "t", "i", "x" }, desc = "Copilot: toggle" },
+			{ "<leader>aa", function() require("sidekick.cli").toggle() end,                    desc = "Copilot: toggle CLI" },
+			{ "<leader>as", function() require("sidekick.cli").select() end,                    desc = "Copilot: select CLI" },
+			{ "<leader>af", function() require("sidekick.cli").send({ msg = "{file}" }) end,    desc = "Copilot: send file" },
+			{ "<leader>av", function() require("sidekick.cli").send({ msg = "{selection}" }) end, mode = { "x" }, desc = "Copilot: send selection" },
+			{ "<leader>ap", function() require("sidekick.cli").prompt() end,                    mode = { "n", "x" }, desc = "Copilot: prompt library" },
+		},
+	},
 	-- git
 	{
 		'lewis6991/gitsigns.nvim',
@@ -96,7 +124,7 @@ require("lazy").setup({
 		lazy = false,
 		build = ":TSUpdate",
 		config = function()
-			require("nvim-treesitter").setup({})
+			require("nvim-treesitter").setup()
 			-- Start highlighting explicitly
 			vim.api.nvim_create_autocmd("FileType", {
 				group = vim.api.nvim_create_augroup("ts-auto-start", {}),
@@ -139,7 +167,7 @@ require("lazy").setup({
 				{
 					backends = { "treesitter" },
 					on_attach = function(bufnr)
-						kmap(bufnr, 'n', '<leader>a', '<cmd>AerialToggle!<CR>', {})
+						kmap(bufnr, 'n', '<leader>az', '<cmd>AerialToggle!<CR>', {})
 						kmap(bufnr, 'n', '{', '<cmd>AerialPrev<CR>', {})
 						kmap(bufnr, 'n', '}', '<cmd>AerialNext<CR>', {})
 					end
@@ -228,6 +256,40 @@ require("lazy").setup({
 				lualine_x = { 'timewarrior' }
 			}
 		}
+	},
+	-- theme
+	{
+		'olimorris/onedarkpro.nvim',
+		priority = 1000,
+		config = function()
+			require('onedarkpro').setup({
+				options = { transparency = false },
+			})
+			local function apply_theme()
+				local ok, err = pcall(function()
+					if vim.o.background == 'dark' then
+						vim.cmd.colorscheme('onedark')
+					else
+						vim.cmd.colorscheme('onelight')
+					end
+				end)
+				if not ok then vim.notify('onedarkpro: ' .. err, vim.log.levels.WARN) end
+			end
+			apply_theme()
+			vim.api.nvim_create_autocmd('OptionSet', {
+				pattern = 'background',
+				callback = apply_theme,
+			})
+		end
+	},
+	{
+		'f-person/auto-dark-mode.nvim',
+		priority = 999,
+		opts = {
+			set_dark_mode  = function() vim.o.background = 'dark' end,
+			set_light_mode = function() vim.o.background = 'light' end,
+			update_interval = 3000,
+		},
 	},
 	-- misc
 	{
@@ -322,7 +384,6 @@ o.clipboard = 'unnamedplus'
 opt.swapfile = false
 o.undofile = true
 o.cmdheight = 1
--- opt.termguicolors = true
 o.showmode = false
 -- timeout stuff
 o.updatetime = 300
@@ -370,6 +431,34 @@ if g.neovide then
 end
 -- Auto commands
 local user_group = vim.api.nvim_create_augroup('UserCommands', { clear = true })
+-- Sync terminal pty size to its window on open and resize
+local function resize_terminal(buf)
+	vim.schedule(function()
+		if not vim.api.nvim_buf_is_valid(buf) then return end
+		if vim.bo[buf].buftype ~= 'terminal' then return end
+		local chan = vim.bo[buf].channel
+		if not chan or chan <= 0 then return end
+		local wins = vim.fn.win_findbuf(buf)
+		if #wins > 0 then
+			pcall(vim.fn.jobresize, chan,
+				vim.api.nvim_win_get_width(wins[1]),
+				vim.api.nvim_win_get_height(wins[1]))
+		end
+	end)
+end
+vim.api.nvim_create_autocmd('TermOpen', {
+	group = user_group,
+	callback = function(ev) resize_terminal(ev.buf) end,
+})
+vim.api.nvim_create_autocmd('WinResized', {
+	group = user_group,
+	callback = function()
+		for _, buf in ipairs(vim.v.event and vim.v.event.windows and
+			vim.tbl_map(vim.api.nvim_win_get_buf, vim.v.event.windows) or {}) do
+			resize_terminal(buf)
+		end
+	end,
+})
 vim.api.nvim_create_autocmd('TextYankPost', {
 	desc = 'Highlight on yank',
 	callback = function()
