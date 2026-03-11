@@ -174,7 +174,7 @@ require("lazy").setup({
 		cmd = 'ToggleTerm',
 		keys = {
 			{ '<A-t>',     ":ToggleTerm<cr>", desc = "toggle terminal" },
-			{ '<leader>t', ":ToggleTerm<cr>", desc = "toggle terminal" },
+			{ '<leader>T', ":ToggleTerm<cr>", desc = "toggle terminal" },
 		}
 	},
 	{
@@ -272,9 +272,9 @@ require("lazy").setup({
 		opts = {
 			options = { globalstatus = true, component_separators = '', section_separators = '' },
 			extensions = { 'aerial', 'fugitive', 'toggleterm', 'quickfix' },
-			sections = { 
+			sections = {
 				lualine_c = { 'hostname', { 'filename', path = 1 } },
-				lualine_x = { 'timewarrior' } 
+				lualine_x = { 'timewarrior' }
 			}
 		}
 	},
@@ -307,6 +307,7 @@ require("lazy").setup({
 			wk.add({
 				{
 					mode = { "n" }, --normal mode
+					{ "\\b",":let &background=(&background==#'dark'?'light':'dark')<cr>",desc="toggle background" },
 					{ "<A-down>",   ":wincmd j<cr>",       desc = "window down" },
 					{ "<A-left>",   ":wincmd h<cr>",       desc = "window left" },
 					{ "<A-right>",  ":wincmd l<cr>",       desc = "window right" },
@@ -320,6 +321,9 @@ require("lazy").setup({
 					{ "<C-s>",      ":w<cr>",              desc = "save" },
 					{ "<leader>cd", ":Neogen<cr>",         desc = "generate doxygen" },
 					{ "<leader>e",  ":Neotree toggle<cr>", desc = "tree" },
+					{ "<leader>tb", ":TimewarriorStartPick<cr>", desc = "timew start" },
+					{ "<leader>td", ":TimewarriorToday<cr>", desc = "timew today" },
+					{ "<leader>te", ":TimewarriorStop<cr>", desc = "timew stop" },
 				},
 				{
 					mode = { "i" }, --insert mode
