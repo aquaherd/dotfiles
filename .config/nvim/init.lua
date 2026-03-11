@@ -19,8 +19,9 @@ local ft = {
 	fmt = { sh = { "shfmt" } },
 	lsp = { 'c', 'cpp', 'lua', 'python', 'sh' },
 	lsps = { 'bashls', 'clangd', 'lua_ls', 'copilot' },
-	ts = { 'bash', 'c', 'cpp', 'jsonc', 'lua', 'python' },
+	ts = { 'bash', 'sh', 'c', 'cpp', 'jsonc', 'lua', 'python' },
 }
+local ts_parsers = { 'bash', 'c', 'cpp', 'jsonc', 'lua', 'python', 'query' }
 -- plugins
 require("lazy").setup({
 	-- sidekick: Copilot NES + embedded AI CLI
@@ -122,19 +123,33 @@ require("lazy").setup({
 		"nvim-treesitter/nvim-treesitter",
 		branch = "main",
 		lazy = false,
-		build = ":TSUpdate",
+		build = function()
+			vim.cmd("TSUpdate " .. table.concat(ts_parsers, " "))
+		end,
 		config = function()
 			require("nvim-treesitter").setup()
+			vim.treesitter.language.register("bash", "sh")
 			-- Start highlighting explicitly
 			vim.api.nvim_create_autocmd("FileType", {
 				group = vim.api.nvim_create_augroup("ts-auto-start", {}),
-				callback = function(ctx) pcall(vim.treesitter.start, ctx.buf) end,
+				callback = function(ctx)
+					local lang = vim.bo[ctx.buf].filetype == "sh" and "bash" or nil
+					pcall(vim.treesitter.start, ctx.buf, lang)
+					if vim.bo[ctx.buf].filetype == "sh" then
+						vim.bo[ctx.buf].syntax = "sh"
+					end
+				end,
 			})
 			-- Indent / fold (optional)
 			vim.api.nvim_create_autocmd("FileType", {
 				group = vim.api.nvim_create_augroup("ts-indent", {}),
-				callback = function()
-					vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				callback = function(ctx)
+					if vim.tbl_contains({ "c", "cpp" }, vim.bo[ctx.buf].filetype) then
+						vim.bo[ctx.buf].indentexpr = ""
+						vim.bo[ctx.buf].cindent = true
+						return
+					end
+					vim.bo[ctx.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 				end,
 			})
 			vim.wo.foldmethod = "expr"
@@ -241,7 +256,14 @@ require("lazy").setup({
 	{
 		'stevearc/conform.nvim',
 		ft = vim.tbl_keys(ft.fmt),
-		opts = { formatters_by_ft = { ft.fmt } }
+		opts = {
+			formatters_by_ft = ft.fmt,
+			default_format_opts = { lsp_format = "fallback" },
+		},
+		init = function()
+			-- make = / =% / =G use conform (which uses LSP for lua/c/cpp)
+			vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+		end,
 	},
 	-- status
 	{
@@ -253,7 +275,7 @@ require("lazy").setup({
 			extensions = { 'aerial', 'fugitive', 'toggleterm', 'quickfix' },
 			sections = {
 				lualine_c = { 'hostname', { 'filename', path = 1 } },
-				lualine_x = { 'timewarrior' }
+				-- lualine_x = { 'timewarrior' }
 			}
 		}
 	},
@@ -479,13 +501,15 @@ vim.api.nvim_create_autocmd('VimLeave', {
 vim.api.nvim_create_autocmd('LspAttach', {
 	group = user_group,
 	callback = function(args)
+		-- re-assert conform's formatexpr; vim.lsp.set_defaults() overrides it on every attach
+		vim.bo[args.buf].formatexpr = "v:lua.require'conform'.formatexpr()"
 		local nset = function(keys, func, desc)
 			vim.keymap.set('n', keys, func, { buffer = args.buf, silent = true, desc = desc })
 		end
 		nset('gD', vim.lsp.buf.declaration, 'LSP: goto declaration')
 		nset('gd', vim.lsp.buf.definition, 'LSP: goto definition')
 		nset('grQ', vim.diagnostic.setqflist, 'diagnostic setqflist')
-		nset('grf', function() require 'conform'.format({ lsp_fallback = true }); end, 'Format (buffer)')
+		nset('grf', function() require 'conform'.format({ lsp_format = "fallback" }); end, 'Format (buffer)')
 		nset('grh', vim.diagnostic.open_float, 'diagnostic float')
 		nset('grq',
 			function()
