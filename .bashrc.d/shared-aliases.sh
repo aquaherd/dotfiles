@@ -73,6 +73,7 @@ cdgw() {
 	fi
 }
 
-if test -d .cargo/bin; then
+if test -d ~/.cargo/bin; then
 	PATH="$HOME/.cargo/bin:$PATH"
+	export PATH
 fi
