@@ -307,6 +307,12 @@ require("lazy").setup({
 	{
 		'f-person/auto-dark-mode.nvim',
 		priority = 999,
+		cond = function()
+			if vim.fn.has("linux") == 1 or vim.fn.has("bsd") == 1 then
+				return vim.fn.executable('dbus-send') == 1
+			end
+			return true -- windows and macos have desktop anyway
+		end,
 		opts = {
 			set_dark_mode  = function() vim.o.background = 'dark' end,
 			set_light_mode = function() vim.o.background = 'light' end,
@@ -314,6 +320,10 @@ require("lazy").setup({
 		},
 	},
 	-- misc
+	{
+		'aquaherd/timewarrior.nvim',
+		cond = function() return vim.fn.executable('timew') == 1 end,
+	},
 	{
 		'norcalli/nvim-colorizer.lua',
 		config = true,
