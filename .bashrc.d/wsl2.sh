@@ -11,7 +11,7 @@ fi
 if ! grep -q microsoft /proc/version; then
 	return
 fi
-echo "wsl..."
+# echo "wsl..."
 # PATH fixups
 LOCAL_BIN=$HOME/.local/bin
 if ! [[ $PATH =~ $LOCAL_BIN ]]; then
