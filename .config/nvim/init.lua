@@ -9,7 +9,7 @@ opt.termguicolors = true   -- must be set before colorscheme loads
 -- package manager
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 ---@diagnostic disable-next-line: undefined-field
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
 	vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git",
 		"--branch=stable", lazypath, })
 end
@@ -24,33 +24,6 @@ local ft = {
 local ts_parsers = { 'bash', 'c', 'cpp', 'jsonc', 'lua', 'python', 'query' }
 -- plugins
 require("lazy").setup({
-	-- sidekick: Copilot NES + embedded AI CLI
-	{
-		'folke/sidekick.nvim',
-		cond = function() return vim.fn.executable('copilot-language-server') == 1 end,
-		event = "VeryLazy",
-		opts = {
-			cli = {
-				default = "copilot",  -- open Copilot CLI by default
-				mux = {
-					enabled = true,
-				},
-			},
-		},
-		keys = {
-			-- NES: navigate/apply Next Edit Suggestions (normal mode, falls back to <Tab>)
-			{ "<Tab>", function()
-				if not require("sidekick").nes_jump_or_apply() then return "<Tab>" end
-			end, expr = true, desc = "NES: goto/apply suggestion" },
-			-- CLI panel
-			{ "<C-.>",      function() require("sidekick.cli").toggle() end,                    mode = { "n", "t", "i", "x" }, desc = "Copilot: toggle" },
-			{ "<leader>aa", function() require("sidekick.cli").toggle() end,                    desc = "Copilot: toggle CLI" },
-			{ "<leader>as", function() require("sidekick.cli").select() end,                    desc = "Copilot: select CLI" },
-			{ "<leader>af", function() require("sidekick.cli").send({ msg = "{file}" }) end,    desc = "Copilot: send file" },
-			{ "<leader>av", function() require("sidekick.cli").send({ msg = "{selection}" }) end, mode = { "x" }, desc = "Copilot: send selection" },
-			{ "<leader>ap", function() require("sidekick.cli").prompt() end,                    mode = { "n", "x" }, desc = "Copilot: prompt library" },
-		},
-	},
 	-- git
 	{
 		'lewis6991/gitsigns.nvim',
@@ -194,6 +167,59 @@ require("lazy").setup({
 			require("lualine").setup(current_config)
 		end
 	},
+	{
+		"carlos-algms/agentic.nvim",
+		cond = function() return vim.fn.executable('copilot') == 1 end,
+		opts = {
+			provider = "copilot-acp", -- setting the name here is all you need to get started
+		},
+		-- these are just suggested keymaps; customize as desired
+		keys = {
+			{
+				"<C-\\>",
+				function() require("agentic").toggle() end,
+				mode = { "n", "v", "i" },
+				desc = "Toggle Agentic Chat"
+			},
+			{
+				"<C-'>",
+				function() require("agentic").add_selection_or_file_to_context() end,
+				mode = { "n", "v" },
+				desc = "Add file or selection to Agentic to Context"
+			},
+			{
+				"<C-,>",
+				function() require("agentic").new_session() end,
+				mode = { "n", "v", "i" },
+				desc = "New Agentic Session"
+			},
+			{
+				"<A-i>r", -- ai Restore
+				function()
+					require("agentic").restore_session()
+				end,
+				desc = "Agentic Restore session",
+				silent = true,
+				mode = { "n", "v", "i" },
+			},
+			{
+				"<leader>ad", -- ai Diagnostics
+				function()
+					require("agentic").add_current_line_diagnostics()
+				end,
+				desc = "Add current line diagnostic to Agentic",
+				mode = { "n" },
+			},
+			{
+				"<leader>aD", -- ai all Diagnostics
+				function()
+					require("agentic").add_buffer_diagnostics()
+				end,
+				desc = "Add all buffer diagnostics to Agentic",
+				mode = { "n" },
+			},
+		},
+	},
 	-- lsp
 	{ 'j-hui/fidget.nvim', ft = ft.lsp, config = true },
 	{
@@ -275,7 +301,7 @@ require("lazy").setup({
 			extensions = { 'aerial', 'fugitive', 'toggleterm', 'quickfix' },
 			sections = {
 				lualine_c = { 'hostname', { 'filename', path = 1 } },
-				-- lualine_x = { 'timewarrior' }
+				lualine_y = { 'progress', 'timewarrior' }
 			}
 		}
 	},
@@ -325,6 +351,12 @@ require("lazy").setup({
 		cond = function() return vim.fn.executable('timew') == 1 end,
 	},
 	{
+		"minamorl/nvim-clean-paste",
+		keys = {
+			{ 'p', ":lua require('nvim-clean-paste').custom_paste()<cr>", desc = "git changes" },
+		},
+	},
+	{
 		'norcalli/nvim-colorizer.lua',
 		config = true,
 		cmd = 'ColorizerToggle',
@@ -365,6 +397,7 @@ require("lazy").setup({
 					{ "<C-p>",      ":cprev<cr>",          desc = "qflist prev" },
 					{ "<C-s>",      ":w<cr>",              desc = "save" },
 					{ "<leader>e",  ":Neotree toggle<cr>", desc = "tree" },
+					{ "<leader>t", nil, desc = "timew" },
 					{ "<leader>tb", ":TimewarriorStartPick<cr>", desc = "timew start" },
 					{ "<leader>td", ":TimewarriorToday<cr>", desc = "timew today" },
 					{ "<leader>te", ":TimewarriorStop<cr>", desc = "timew stop" },
