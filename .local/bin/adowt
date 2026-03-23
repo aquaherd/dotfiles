@@ -1,0 +1,359 @@
+#!/usr/bin/env python3
+"""
+adowt — Azure DevOps Worktree picker.
+
+Queries ADO for work items assigned to you (Active/In Progress; Task, Bug, User Story),
+lets you pick one with fzf, then runs:
+
+    wt switch --create tasks/v<ver>-<id>-<title-slug>
+
+Auth: set AZURE_DEVOPS_PAT env var, or add to ~/.config/adowt/config:
+    [auth]
+    pat = <your-token>
+"""
+
+import argparse
+import configparser
+import json
+import os
+import re
+import subprocess
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+from base64 import b64encode
+from pathlib import Path
+
+CONFIG_FILE = Path.home() / ".config" / "adowt" / "config"
+
+# ---------------------------------------------------------------------------
+# Config / Auth
+# ---------------------------------------------------------------------------
+
+def load_config() -> configparser.ConfigParser:
+    cfg = configparser.ConfigParser()
+    if CONFIG_FILE.exists():
+        cfg.read(CONFIG_FILE)
+    return cfg
+
+
+def get_pat(cfg: configparser.ConfigParser) -> str:
+    pat = os.environ.get("AZURE_DEVOPS_PAT", "").strip()
+    if not pat:
+        pat = cfg.get("auth", "pat", fallback="").strip()
+    if not pat:
+        die(
+            "Azure DevOps PAT not found.\n"
+            "Set the AZURE_DEVOPS_PAT environment variable, or add it to "
+            f"{CONFIG_FILE}:\n\n"
+            "  [auth]\n"
+            "  pat = <your-personal-access-token>\n"
+        )
+    return pat
+
+
+def auth_header(pat: str) -> dict:
+    token = b64encode(f":{pat}".encode()).decode()
+    return {"Authorization": f"Basic {token}"}
+
+# ---------------------------------------------------------------------------
+# Git helpers
+# ---------------------------------------------------------------------------
+
+def git(*args, cwd: str | None = None) -> str:
+    result = subprocess.run(
+        ["git", *args],
+        capture_output=True, text=True, cwd=cwd,
+    )
+    if result.returncode != 0:
+        die(f"git {' '.join(args)} failed:\n{result.stderr.strip()}")
+    return result.stdout.strip()
+
+
+def find_repo_root(start: str) -> str:
+    """Walk up from *start* to find a .git dir or bare repo config."""
+    p = Path(start).resolve()
+    for candidate in [p, *p.parents]:
+        # worktree: .git is a file
+        git_path = candidate / ".git"
+        if git_path.exists():
+            return str(candidate)
+        # bare repo: has HEAD + config + refs
+        if (candidate / "HEAD").exists() and (candidate / "config").exists() and (candidate / "refs").exists():
+            return str(candidate)
+    die(f"Could not find a git repository starting from {start}")
+
+
+def parse_remote_url(url: str) -> tuple[str, str, str]:
+    """
+    Parse org/project/repo from an Azure DevOps remote URL.
+
+    SSH:   git@ssh.dev.azure.com:v3/org/project/repo
+    HTTPS: https://org@dev.azure.com/org/project/_git/repo
+           https://dev.azure.com/org/project/_git/repo
+    """
+    url = url.strip()
+
+    # SSH format
+    m = re.match(r"git@ssh\.dev\.azure\.com:v3/([^/]+)/([^/]+)/([^/]+?)(?:\.git)?$", url)
+    if m:
+        return m.group(1), m.group(2), m.group(3)
+
+    # HTTPS format
+    m = re.match(r"https://(?:[^@]+@)?dev\.azure\.com/([^/]+)/([^/]+)/_git/([^/]+?)(?:\.git)?$", url)
+    if m:
+        return m.group(1), m.group(2), m.group(3)
+
+    die(
+        f"Unsupported remote URL format: {url!r}\n"
+        "Expected Azure DevOps SSH or HTTPS URL."
+    )
+
+
+def get_ado_coords(repo_root: str) -> tuple[str, str, str]:
+    url = git("remote", "get-url", "origin", cwd=repo_root)
+    return parse_remote_url(url)
+
+
+def get_version_prefix(repo_root: str, override: str | None) -> str:
+    """
+    Derive 'v500' from worktrunk.default-branch = releases/v5.0.0.
+    Strip the path prefix, extract the version digits, remove dots.
+    """
+    if override:
+        return override
+
+    raw = git("config", "worktrunk.default-branch", cwd=repo_root)
+    # e.g. releases/v5.0.0  →  v5.0.0
+    version_part = raw.split("/")[-1]  # v5.0.0
+    # Remove leading 'v', strip dots, re-add 'v'
+    digits = version_part.lstrip("v").replace(".", "")
+    return f"v{digits}"
+
+# ---------------------------------------------------------------------------
+# ADO REST API
+# ---------------------------------------------------------------------------
+
+def ado_request(url: str, headers: dict, data: dict | None = None) -> dict:
+    body = json.dumps(data).encode() if data is not None else None
+    req = urllib.request.Request(
+        url,
+        data=body,
+        headers={
+            **headers,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+        method="POST" if body is not None else "GET",
+    )
+    try:
+        with urllib.request.urlopen(req) as resp:
+            return json.loads(resp.read())
+    except urllib.error.HTTPError as exc:
+        body_text = exc.read().decode(errors="replace")
+        die(f"ADO API error {exc.code} for {url}:\n{body_text}")
+
+
+def fetch_work_items(org: str, project: str, headers: dict) -> list[dict]:
+    wiql = {
+        "query": (
+            "SELECT [System.Id] "
+            "FROM WorkItems "
+            "WHERE [System.AssignedTo] = @Me "
+            "AND [System.WorkItemType] IN ('Task', 'Bug', 'User Story') "
+            "AND [System.State] IN ('Active', 'In Progress') "
+            "ORDER BY [System.ChangedDate] DESC"
+        )
+    }
+    wiql_url = (
+        f"https://dev.azure.com/{urllib.parse.quote(org)}/"
+        f"{urllib.parse.quote(project)}/_apis/wit/wiql?api-version=7.0"
+    )
+    result = ado_request(wiql_url, headers, data=wiql)
+    items = result.get("workItems", [])
+    if not items:
+        return []
+
+    ids = ",".join(str(i["id"]) for i in items)
+    fields = "System.Id,System.Title,System.WorkItemType,System.State"
+    batch_url = (
+        f"https://dev.azure.com/{urllib.parse.quote(org)}/"
+        f"{urllib.parse.quote(project)}/_apis/wit/workitems"
+        f"?ids={ids}&fields={fields}&api-version=7.0"
+    )
+    batch = ado_request(batch_url, headers)
+    return batch.get("value", [])
+
+# ---------------------------------------------------------------------------
+# fzf picker
+# ---------------------------------------------------------------------------
+
+def pick_with_fzf_tty(items: list[dict]) -> dict | None:
+    """Run fzf interactively using /dev/tty, return selected item or None."""
+    if not items:
+        return None
+
+    id_map: dict[str, dict] = {}
+    lines = []
+    for item in items:
+        f = item["fields"]
+        wid   = str(f["System.Id"])
+        wtype = f.get("System.WorkItemType", "?")
+        state = f.get("System.State", "?")
+        title = f.get("System.Title", "(no title)")
+        id_map[wid] = item
+        lines.append(f"{wid}\t{wtype:<14}{state:<14}{title}")
+
+    fzf_input = "\n".join(lines)
+
+    try:
+        with open("/dev/tty", "w") as tty_out:
+            proc = subprocess.run(
+                [
+                    "fzf",
+                    "--delimiter=\t",
+                    "--with-nth=1..",
+                    f"--header={'ID':<8}{'Type':<14}{'State':<14}Title",
+                    "--prompt=Select work item> ",
+                    "--height=40%",
+                    "--layout=reverse",
+                ],
+                input=fzf_input,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=tty_out,
+            )
+    except FileNotFoundError:
+        die("fzf not found. Please install fzf: https://github.com/junegunn/fzf")
+
+    if proc.returncode == 130 or proc.returncode != 0:
+        return None
+
+    selected = proc.stdout.strip()
+    if not selected:
+        return None
+
+    selected_id = selected.split("\t")[0].strip()
+    return id_map.get(selected_id)
+
+# ---------------------------------------------------------------------------
+# Branch name
+# ---------------------------------------------------------------------------
+
+def slugify(text: str) -> str:
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9]+", "-", text)
+    text = text.strip("-")
+    return text
+
+
+def truncate_slug(slug: str, prefix: str, min_len: int = 45, max_len: int = 55) -> str:
+    available = max_len - len(prefix)
+    if available <= 0:
+        die(f"Branch prefix is too long to fit within {max_len} characters: {prefix}")
+
+    if len(prefix) + len(slug) <= max_len:
+        return slug
+
+    candidates = []
+    cut = 0
+    while True:
+        cut = slug.find("-", cut)
+        if cut == -1:
+            break
+        if cut <= available:
+            candidates.append(slug[:cut])
+        cut += 1
+
+    for candidate in reversed(candidates):
+        if len(prefix) + len(candidate) >= min_len:
+            return candidate
+
+    truncated = slug[:available].rstrip("-")
+    if truncated:
+        return truncated
+
+    return slug[:available]
+
+
+def make_branch_name(version_prefix: str, work_item: dict) -> str:
+    f = work_item["fields"]
+    wid = str(f["System.Id"])
+    title = f.get("System.Title", "work-item")
+    slug = slugify(title)
+    prefix = f"tasks/{version_prefix}-{wid}-"
+    slug = truncate_slug(slug, prefix)
+    return f"{prefix}{slug}"
+
+# ---------------------------------------------------------------------------
+# Utilities
+# ---------------------------------------------------------------------------
+
+def die(msg: str) -> None:
+    print(f"adowt: error: {msg}", file=sys.stderr)
+    sys.exit(1)
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        prog="adowt",
+        description="Pick an Azure DevOps work item and create a worktree branch.",
+    )
+    parser.add_argument(
+        "--dry-run", "-n",
+        action="store_true",
+        help="Print the wt command without executing it.",
+    )
+    parser.add_argument(
+        "--repo",
+        default=None,
+        metavar="PATH",
+        help="Path to the git repo (default: current directory).",
+    )
+    parser.add_argument(
+        "--version",
+        default=None,
+        metavar="PREFIX",
+        help="Override the version prefix (e.g. v500). Default: derived from worktrunk.default-branch.",
+    )
+    args = parser.parse_args()
+
+    repo_start = args.repo or os.getcwd()
+    repo_root = find_repo_root(repo_start)
+
+    cfg = load_config()
+    pat = get_pat(cfg)
+    headers = auth_header(pat)
+
+    org, project, _repo = get_ado_coords(repo_root)
+    version_prefix = get_version_prefix(repo_root, args.version)
+
+    print(f"Fetching work items from {org}/{project} …", file=sys.stderr)
+    items = fetch_work_items(org, project, headers)
+
+    if not items:
+        print("No active work items found assigned to you.", file=sys.stderr)
+        sys.exit(0)
+
+    selected = pick_with_fzf_tty(items)
+    if selected is None:
+        print("No item selected.", file=sys.stderr)
+        sys.exit(0)
+
+    branch = make_branch_name(version_prefix, selected)
+    cmd = ["wt", "switch", "--create", branch]
+
+    if args.dry_run:
+        print(" ".join(cmd))
+    else:
+        print(f"Running: {' '.join(cmd)}", file=sys.stderr)
+        result = subprocess.run(cmd, cwd=repo_root)
+        sys.exit(result.returncode)
+
+
+if __name__ == "__main__":
+    main()
