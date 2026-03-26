@@ -14,11 +14,12 @@ if not vim.uv.fs_stat(lazypath) then
 		"--branch=stable", lazypath, })
 end
 vim.opt.rtp:prepend(lazypath)
+local is_mac = vim.fn.has("mac") == 1
 local ft = {
 	dap = { cppdbg = { 'c', 'cpp' } },
 	fmt = { sh = { "shfmt" } },
-	lsp = { 'c', 'cpp', 'lua', 'python', 'sh' },
-	lsps = { 'bashls', 'clangd', 'lua_ls', 'copilot' },
+	lsp = vim.list_extend({ 'c', 'cpp', 'lua', 'python', 'sh' }, is_mac and { 'swift' } or {}),
+	lsps = vim.list_extend({ 'bashls', 'clangd', 'lua_ls', 'copilot' }, is_mac and { 'sourcekit' } or {}),
 	ts = { 'bash', 'sh', 'c', 'cpp', 'jsonc', 'lua', 'python' },
 }
 local ts_parsers = { 'bash', 'c', 'cpp', 'jsonc', 'lua', 'python', 'query' }
@@ -106,11 +107,12 @@ require("lazy").setup({
 			vim.api.nvim_create_autocmd("FileType", {
 				group = vim.api.nvim_create_augroup("ts-auto-start", {}),
 				callback = function(ctx)
-					local lang = vim.bo[ctx.buf].filetype == "sh" and "bash" or nil
-					pcall(vim.treesitter.start, ctx.buf, lang)
+					local lang = nil
 					if vim.bo[ctx.buf].filetype == "sh" then
+						lang = "bash"
 						vim.bo[ctx.buf].syntax = "sh"
 					end
+					pcall(vim.treesitter.start, ctx.buf, lang)
 				end,
 			})
 			-- Indent / fold (optional)
@@ -160,11 +162,6 @@ require("lazy").setup({
 						kmap(bufnr, 'n', '}', '<cmd>AerialNext<CR>', {})
 					end
 				})
-			local lualine_require = require("lualine_require")
-			local modules = lualine_require.lazy_require({ config_module = "lualine.config" })
-			local current_config = modules.config_module.get_config()
-			current_config.sections.lualine_c = { 'hostname', { 'filename', path = 1 }, 'aerial' }
-			require("lualine").setup(current_config)
 		end
 	},
 	{
@@ -300,7 +297,7 @@ require("lazy").setup({
 			options = { globalstatus = true, component_separators = '', section_separators = '' },
 			extensions = { 'aerial', 'fugitive', 'toggleterm', 'quickfix' },
 			sections = {
-				lualine_c = { 'hostname', { 'filename', path = 1 } },
+				lualine_c = { 'hostname', { 'filename', path = 1 }, 'aerial' },
 				lualine_y = { 'progress', 'timewarrior' }
 			}
 		}
@@ -518,8 +515,8 @@ vim.api.nvim_create_autocmd('TermOpen', {
 vim.api.nvim_create_autocmd('WinResized', {
 	group = user_group,
 	callback = function()
-		for _, buf in ipairs(vim.v.event and vim.v.event.windows and
-			vim.tbl_map(vim.api.nvim_win_get_buf, vim.v.event.windows) or {}) do
+		local windows = vim.v.event and vim.v.event.windows or {}
+		for _, buf in ipairs(vim.tbl_map(vim.api.nvim_win_get_buf, windows)) do
 			resize_terminal(buf)
 		end
 	end,
@@ -567,7 +564,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
 						vim.diagnostic.config().virtual_lines,
 				});
 			end, 'toggle hints')
-		nset('gS', function() vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end, 'toggle diagnostic')
+		nset('gS', function()
+			if vim.diagnostic.is_enabled() then
+				vim.diagnostic.enable(false)
+			else
+				vim.diagnostic.enable()
+			end
+		end, 'toggle diagnostic')
 		local cmp = require('cmp')
 		local sources = cmp.get_config().sources
 		for i = #sources, 1, -1 do

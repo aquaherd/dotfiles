@@ -21,5 +21,6 @@ return {
 				}
 			}
 		})
+		client.notify('workspace/didChangeConfiguration', { settings = client.settings })
 	end
 }
