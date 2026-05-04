@@ -185,7 +185,7 @@ require("lazy").setup({
 				desc = "Add file or selection to Agentic to Context"
 			},
 			{
-				"<C-,>",
+				"<leader>an",
 				function() require("agentic").new_session() end,
 				mode = { "n", "v", "i" },
 				desc = "New Agentic Session"

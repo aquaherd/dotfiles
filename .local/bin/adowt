@@ -3,9 +3,10 @@
 adowt — Azure DevOps Worktree picker.
 
 Queries ADO for work items assigned to you (Active/In Progress; Task, Bug, User Story),
-lets you pick one with fzf, then runs:
+lets you pick one with fzf, then either:
 
-    wt switch --create tasks/v<ver>-<id>-<title-slug>
+  • switches to the existing worktree branch if the work item already has one, or
+  • creates a new branch, pushes it, and associates it with the work item.
 
 Auth: set AZURE_DEVOPS_PAT env var, or add to ~/.config/adowt/config:
     [auth]
@@ -17,6 +18,7 @@ import configparser
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 import urllib.error
@@ -61,12 +63,12 @@ def auth_header(pat: str) -> dict:
 # Git helpers
 # ---------------------------------------------------------------------------
 
-def git(*args, cwd: str | None = None) -> str:
+def git(*args, cwd: str | None = None, check: bool = True) -> str:
     result = subprocess.run(
         ["git", *args],
         capture_output=True, text=True, cwd=cwd,
     )
-    if result.returncode != 0:
+    if check and result.returncode != 0:
         die(f"git {' '.join(args)} failed:\n{result.stderr.strip()}")
     return result.stdout.strip()
 
@@ -135,17 +137,25 @@ def get_version_prefix(repo_root: str, override: str | None) -> str:
 # ADO REST API
 # ---------------------------------------------------------------------------
 
-def ado_request(url: str, headers: dict, data: dict | None = None) -> dict:
+def ado_request(
+    url: str,
+    headers: dict,
+    data: dict | list | None = None,
+    method: str | None = None,
+    content_type: str = "application/json",
+) -> dict:
     body = json.dumps(data).encode() if data is not None else None
+    if method is None:
+        method = "POST" if body is not None else "GET"
     req = urllib.request.Request(
         url,
         data=body,
         headers={
             **headers,
-            "Content-Type": "application/json",
+            "Content-Type": content_type,
             "Accept": "application/json",
         },
-        method="POST" if body is not None else "GET",
+        method=method,
     )
     try:
         with urllib.request.urlopen(req) as resp:
@@ -184,6 +194,78 @@ def fetch_work_items(org: str, project: str, headers: dict) -> list[dict]:
     )
     batch = ado_request(batch_url, headers)
     return batch.get("value", [])
+
+
+def get_repo_info(org: str, project: str, repo_name: str, headers: dict) -> dict:
+    """Return the ADO Git repository object (contains id, project.id, etc.)."""
+    url = (
+        f"https://dev.azure.com/{urllib.parse.quote(org)}/"
+        f"{urllib.parse.quote(project)}/_apis/git/repositories/"
+        f"{urllib.parse.quote(repo_name)}?api-version=7.0"
+    )
+    return ado_request(url, headers)
+
+
+def get_work_item_branch(
+    org: str, project: str, work_item_id: int, headers: dict,
+) -> str | None:
+    """
+    If the work item has a linked Git branch, return its ref name
+    (e.g. 'tasks/v500-1234-slug').  Otherwise return None.
+    """
+    url = (
+        f"https://dev.azure.com/{urllib.parse.quote(org)}/"
+        f"{urllib.parse.quote(project)}/_apis/wit/workitems/{work_item_id}"
+        f"?$expand=relations&api-version=7.0"
+    )
+    wi = ado_request(url, headers)
+    for rel in wi.get("relations", []) or []:
+        artifact_url = rel.get("url", "")
+        # Branch artifacts: vstfs:///Git/Ref/{projectId}/{repoId}/GB{encodedRef}
+        m = re.match(r"vstfs:///Git/Ref/[^/]+/[^/]+/GB(.+)$", artifact_url)
+        if m:
+            return urllib.parse.unquote(m.group(1))
+    return None
+
+
+def associate_branch(
+    org: str,
+    project: str,
+    work_item_id: int,
+    project_id: str,
+    repo_id: str,
+    branch: str,
+    headers: dict,
+) -> None:
+    """Add an ArtifactLink (Git branch) relation to the work item."""
+    encoded_ref = urllib.parse.quote(branch, safe="")
+    artifact_uri = f"vstfs:///Git/Ref/{project_id}/{repo_id}/GB{encoded_ref}"
+
+    patch_url = (
+        f"https://dev.azure.com/{urllib.parse.quote(org)}/"
+        f"{urllib.parse.quote(project)}/_apis/wit/workitems/{work_item_id}"
+        f"?api-version=7.0"
+    )
+    patch_body = [
+        {
+            "op": "add",
+            "path": "/relations/-",
+            "value": {
+                "rel": "ArtifactLink",
+                "url": artifact_uri,
+                "attributes": {
+                    "name": "Branch",
+                },
+            },
+        }
+    ]
+    ado_request(
+        patch_url,
+        headers,
+        data=patch_body,
+        method="PATCH",
+        content_type="application/json-patch+json",
+    )
 
 # ---------------------------------------------------------------------------
 # fzf picker
@@ -294,6 +376,27 @@ def die(msg: str) -> None:
     print(f"adowt: error: {msg}", file=sys.stderr)
     sys.exit(1)
 
+
+def run_wt(cmd: list[str], cwd: str, dry_run: bool) -> None:
+    """Run a wt command through bash -ic (for shell integration)."""
+    if dry_run:
+        print(" ".join(cmd))
+        return
+    print(f"Running: {' '.join(cmd)}", file=sys.stderr)
+    shell_cmd = " ".join(shlex.quote(c) for c in cmd)
+    result = subprocess.run(["bash", "-ic", shell_cmd], cwd=cwd)
+    if result.returncode != 0:
+        sys.exit(result.returncode)
+
+
+def branch_exists_locally(branch: str, repo_root: str) -> bool:
+    """Check whether a branch ref already exists locally."""
+    result = subprocess.run(
+        ["git", "rev-parse", "--verify", f"refs/heads/{branch}"],
+        capture_output=True, cwd=repo_root,
+    )
+    return result.returncode == 0
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -301,7 +404,7 @@ def die(msg: str) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="adowt",
-        description="Pick an Azure DevOps work item and create a worktree branch.",
+        description="Pick an Azure DevOps work item and switch to (or create) a worktree branch.",
     )
     parser.add_argument(
         "--dry-run", "-n",
@@ -329,7 +432,7 @@ def main() -> None:
     pat = get_pat(cfg)
     headers = auth_header(pat)
 
-    org, project, _repo = get_ado_coords(repo_root)
+    org, project, repo_name = get_ado_coords(repo_root)
     version_prefix = get_version_prefix(repo_root, args.version)
 
     print(f"Fetching work items from {org}/{project} …", file=sys.stderr)
@@ -344,15 +447,52 @@ def main() -> None:
         print("No item selected.", file=sys.stderr)
         sys.exit(0)
 
-    branch = make_branch_name(version_prefix, selected)
-    cmd = ["wt", "switch", "--create", branch]
+    wid = selected["fields"]["System.Id"]
+    title = selected["fields"].get("System.Title", "(no title)")
 
-    if args.dry_run:
-        print(" ".join(cmd))
-    else:
-        print(f"Running: {' '.join(cmd)}", file=sys.stderr)
-        result = subprocess.run(cmd, cwd=repo_root)
-        sys.exit(result.returncode)
+    # ── Check for an existing branch link on the work item ────────────
+    print(f"Checking work item {wid} for linked branches …", file=sys.stderr)
+    existing_branch = get_work_item_branch(org, project, wid, headers)
+
+    if existing_branch:
+        print(
+            f"Work item {wid} already has branch: {existing_branch}",
+            file=sys.stderr,
+        )
+        if branch_exists_locally(existing_branch, repo_root):
+            run_wt(["wt", "switch", existing_branch], repo_root, args.dry_run)
+        else:
+            # Branch exists on remote but not locally — fetch, then switch/create
+            if not args.dry_run:
+                print(f"Fetching origin/{existing_branch} …", file=sys.stderr)
+                git("fetch", "origin", existing_branch, cwd=repo_root)
+            run_wt(
+                ["wt", "switch", "--create", existing_branch],
+                repo_root, args.dry_run,
+            )
+        sys.exit(0)
+
+    # ── No linked branch — create, push, associate ────────────────────
+    branch = make_branch_name(version_prefix, selected)
+    print(f"No linked branch found. Creating: {branch}", file=sys.stderr)
+
+    # Preflight: make sure we can resolve repo IDs before doing any git work.
+    repo_info = get_repo_info(org, project, repo_name, headers)
+    project_id = repo_info["project"]["id"]
+    repo_id = repo_info["id"]
+
+    run_wt(["wt", "switch", "--create", branch], repo_root, args.dry_run)
+
+    if not args.dry_run:
+        print(f"Pushing {branch} to origin …", file=sys.stderr)
+        git("push", "-u", "origin", branch, cwd=repo_root)
+
+        print(f"Associating branch with work item {wid} …", file=sys.stderr)
+        associate_branch(org, project, wid, project_id, repo_id, branch, headers)
+        print(
+            f"✓ Branch {branch} linked to work item {wid}: {title}",
+            file=sys.stderr,
+        )
 
 
 if __name__ == "__main__":
