@@ -95,7 +95,7 @@ mkdir -p "${OUTPUT_DIR}/${LABEL}"
 cp "${WORK_DIR}/build/bin/nvim" "${OUTPUT_DIR}/${LABEL}/nvim"
 strip "${OUTPUT_DIR}/${LABEL}/nvim"
 cp "${WORK_DIR}/build/nvim-linux-${PACKAGE_ARCH}.deb" "${OUTPUT_DIR}/${LABEL}/"
-cp "${WORK_DIR}/build/nvim-linux-${PACKAGE_ARCH}.deb" "~/Downloads/nvim-linux-${LABEL}-${PACKAGE_ARCH}.deb"
+cp "${WORK_DIR}/build/nvim-linux-${PACKAGE_ARCH}.deb" "${HOME}/Downloads/nvim-${LABEL}-${PACKAGE_ARCH}.deb"
 
 # --- Verify ---
 echo ""
