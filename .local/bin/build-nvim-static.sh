@@ -17,6 +17,8 @@ set -euo pipefail
 REPO_DIR=$(pwd)
 TAG=${1:-}
 OUTPUT_DIR="${REPO_DIR}/static-builds"
+PACKAGE_ARCH=$(uname -m)
+[[ "$PACKAGE_ARCH" == aarch64 ]] && PACKAGE_ARCH=arm64
 
 # Toolchain file lives in /tmp for the duration of this script.
 TOOLCHAIN="/tmp/nvim-musl-toolchain-$$.cmake"
@@ -84,10 +86,16 @@ cmake -S "${WORK_DIR}" -B "${WORK_DIR}/build" -G Ninja \
     -D STATIC_BUILD=1
 cmake --build "${WORK_DIR}/build"
 
+# --- Package DEB ---
+echo "==> Packaging Debian package..."
+cmake --build "${WORK_DIR}/build" --target package
+
 # --- Save and strip output ---
 mkdir -p "${OUTPUT_DIR}/${LABEL}"
 cp "${WORK_DIR}/build/bin/nvim" "${OUTPUT_DIR}/${LABEL}/nvim"
 strip "${OUTPUT_DIR}/${LABEL}/nvim"
+cp "${WORK_DIR}/build/nvim-linux-${PACKAGE_ARCH}.deb" "${OUTPUT_DIR}/${LABEL}/"
+cp "${WORK_DIR}/build/nvim-linux-${PACKAGE_ARCH}.deb" "~/Downloads/nvim-linux-${LABEL}-${PACKAGE_ARCH}.deb"
 
 # --- Verify ---
 echo ""
@@ -97,3 +105,4 @@ ldd "${OUTPUT_DIR}/${LABEL}/nvim" 2>&1 || true
 "${OUTPUT_DIR}/${LABEL}/nvim" --version | head -1
 echo ""
 echo "==> Saved to: ${OUTPUT_DIR}/${LABEL}/nvim"
+echo "==> Saved DEB to: ${OUTPUT_DIR}/${LABEL}/nvim-linux-${PACKAGE_ARCH}.deb"
