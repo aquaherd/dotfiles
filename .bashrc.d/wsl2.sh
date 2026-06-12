@@ -74,3 +74,6 @@ fi
 if [ -n "$DISPLAY" ] && command -v xrdb > /dev/null; then
 	xrdb -query | grep -q . || xrdb -merge ~/.Xresources
 fi
+
+__wt_cwd() { printf '\e]9;9;"%s"\e\\' "$PWD"; }
+PROMPT_COMMAND="__wt_cwd${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
