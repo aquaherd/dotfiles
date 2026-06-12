@@ -77,3 +77,8 @@ if test -d ~/.cargo/bin; then
 	PATH="$HOME/.cargo/bin:$PATH"
 	export PATH
 fi
+
+__foot_cwd() {                                                
+   printf '\e]7;file://%s%s\a' "${HOSTNAME:-$(hostname)}" "$PWD"
+}
+PROMPT_COMMAND="__foot_cwd${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
