@@ -81,4 +81,7 @@ fi
 __foot_cwd() {                                                
    printf '\e]7;file://%s%s\a' "${HOSTNAME:-$(hostname)}" "$PWD"
 }
-PROMPT_COMMAND="__foot_cwd${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+if [[ -z "WAYLAND_DISPLAY" ]]; then
+  PROMPT_COMMAND="__foot_cwd${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+fi
+
