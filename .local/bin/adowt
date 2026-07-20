@@ -26,6 +26,7 @@ import urllib.parse
 import urllib.request
 from base64 import b64encode
 from pathlib import Path
+from typing import NoReturn
 
 CONFIG_FILE = Path.home() / ".config" / "adowt" / "config"
 
@@ -402,7 +403,7 @@ def make_branch_name(version_prefix: str, work_item: dict) -> str:
 # Utilities
 # ---------------------------------------------------------------------------
 
-def die(msg: str) -> None:
+def die(msg: str) -> NoReturn:
     print(f"adowt: error: {msg}", file=sys.stderr)
     sys.exit(1)
 
