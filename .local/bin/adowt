@@ -75,6 +75,16 @@ def git(*args, cwd: str | None = None, check: bool = True) -> str:
 
 def find_repo_root(start: str) -> str:
     """Walk up from *start* to find a .git dir or bare repo config."""
+    # Prefer git's own resolver to correctly handle worktrees, submodules,
+    # and alternate git-dir setups.
+    result = subprocess.run(
+        ["git", "-C", start, "rev-parse", "--show-toplevel"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0:
+        return result.stdout.strip()
+
     p = Path(start).resolve()
     for candidate in [p, *p.parents]:
         # worktree: .git is a file
@@ -84,7 +94,10 @@ def find_repo_root(start: str) -> str:
         # bare repo: has HEAD + config + refs
         if (candidate / "HEAD").exists() and (candidate / "config").exists() and (candidate / "refs").exists():
             return str(candidate)
-    die(f"Could not find a git repository starting from {start}")
+    die(
+        f"Could not find a git repository starting from {start}\n"
+        "Run this command from inside a repository, or pass --repo /path/to/repo."
+    )
 
 
 def parse_remote_url(url: str) -> tuple[str, str, str]:
@@ -159,7 +172,24 @@ def ado_request(
     )
     try:
         with urllib.request.urlopen(req) as resp:
-            return json.loads(resp.read())
+            raw_body = resp.read()
+            text_body = raw_body.decode(errors="replace")
+            content_type = (resp.headers.get("Content-Type") or "").lower()
+
+            if "json" not in content_type:
+                preview = text_body.strip()[:500] or "(empty response body)"
+                die(
+                    f"ADO API returned non-JSON content for {url} "
+                    f"(Content-Type: {content_type or 'unknown'}):\n{preview}"
+                )
+
+            try:
+                return json.loads(text_body)
+            except json.JSONDecodeError:
+                preview = text_body.strip()[:500] or "(empty response body)"
+                die(
+                    f"ADO API returned invalid JSON for {url}:\n{preview}"
+                )
     except urllib.error.HTTPError as exc:
         body_text = exc.read().decode(errors="replace")
         die(f"ADO API error {exc.code} for {url}:\n{body_text}")
@@ -397,6 +427,82 @@ def branch_exists_locally(branch: str, repo_root: str) -> bool:
     )
     return result.returncode == 0
 
+
+def branch_exists_on_remote(branch: str, repo_root: str) -> bool:
+    """Check whether origin has refs/heads/<branch>."""
+    result = subprocess.run(
+        ["git", "ls-remote", "--exit-code", "--heads", "origin", f"refs/heads/{branch}"],
+        capture_output=True,
+        text=True,
+        cwd=repo_root,
+    )
+    if result.returncode == 0:
+        return True
+    if result.returncode == 2:
+        return False
+    die(f"Failed to query remote branch {branch}:\n{result.stderr.strip()}")
+    return False
+
+
+def next_incremental_branch_name(base_branch: str, repo_root: str) -> str:
+    """
+    Return an incremented branch candidate:
+      tasks/v500-1234-foo -> tasks/v500-1234-foo-2, -3, ...
+    """
+    i = 2
+    while True:
+        candidate = f"{base_branch}-{i}"
+        if (
+            not branch_exists_locally(candidate, repo_root)
+            and not branch_exists_on_remote(candidate, repo_root)
+        ):
+            return candidate
+        i += 1
+
+
+def prompt_remote_branch_choice(branch: str, suggested_new_branch: str) -> str:
+    """
+    Ask user how to handle an existing remote branch.
+    Returns one of: "remote", "new", "cancel".
+    """
+    try:
+        with open("/dev/tty", "r") as tty_in, open("/dev/tty", "w") as tty_out:
+            while True:
+                print(
+                    f"Remote branch already exists: {branch}\n"
+                    "Choose an action:\n"
+                    f"  1. Use remote branch for the worktree ({branch})\n"
+                    f"  2. Create a new branch from base ({suggested_new_branch})\n"
+                    "  3. Cancel worktree creation",
+                    file=tty_out,
+                )
+                tty_out.write("Enter choice [1-3]: ")
+                tty_out.flush()
+                choice = tty_in.readline().strip()
+                if choice == "1":
+                    return "remote"
+                if choice == "2":
+                    return "new"
+                if choice == "3":
+                    return "cancel"
+                print("Invalid choice. Please enter 1, 2, or 3.", file=tty_out)
+    except OSError as exc:
+        die(f"Unable to prompt for remote-branch handling: {exc}")
+
+
+def prepare_local_branch_from_remote(branch: str, repo_root: str, dry_run: bool) -> None:
+    """Ensure a local branch exists and tracks origin/<branch>."""
+    if branch_exists_locally(branch, repo_root):
+        return
+    if dry_run:
+        print(f"git fetch origin {branch}")
+        print(f"git branch --track {branch} origin/{branch}")
+        return
+    print(f"Fetching origin/{branch} …", file=sys.stderr)
+    git("fetch", "origin", branch, cwd=repo_root)
+    print(f"Creating local tracking branch {branch} …", file=sys.stderr)
+    git("branch", "--track", branch, f"origin/{branch}", cwd=repo_root)
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -461,20 +567,71 @@ def main() -> None:
         )
         if branch_exists_locally(existing_branch, repo_root):
             run_wt(["wt", "switch", existing_branch], repo_root, args.dry_run)
-        else:
-            # Branch exists on remote but not locally — fetch, then switch/create
+            sys.exit(0)
+
+        if branch_exists_on_remote(existing_branch, repo_root):
+            suggested = next_incremental_branch_name(existing_branch, repo_root)
+            choice = prompt_remote_branch_choice(existing_branch, suggested)
+            if choice == "cancel":
+                print("Cancelled worktree creation.", file=sys.stderr)
+                sys.exit(0)
+            if choice == "remote":
+                prepare_local_branch_from_remote(existing_branch, repo_root, args.dry_run)
+                run_wt(["wt", "switch", existing_branch], repo_root, args.dry_run)
+                sys.exit(0)
+            branch = suggested
+            print(f"Creating new branch from base: {branch}", file=sys.stderr)
+
+            # Preflight: make sure we can resolve repo IDs before doing any git work.
+            repo_info = get_repo_info(org, project, repo_name, headers)
+            project_id = repo_info["project"]["id"]
+            repo_id = repo_info["id"]
+
+            run_wt(["wt", "switch", "--create", branch], repo_root, args.dry_run)
+
             if not args.dry_run:
-                print(f"Fetching origin/{existing_branch} …", file=sys.stderr)
-                git("fetch", "origin", existing_branch, cwd=repo_root)
-            run_wt(
-                ["wt", "switch", "--create", existing_branch],
-                repo_root, args.dry_run,
-            )
+                print(f"Pushing {branch} to origin …", file=sys.stderr)
+                git("push", "-u", "origin", branch, cwd=repo_root)
+
+                print(f"Associating branch with work item {wid} …", file=sys.stderr)
+                associate_branch(org, project, wid, project_id, repo_id, branch, headers)
+                print(
+                    f"✓ Branch {branch} linked to work item {wid}: {title}",
+                    file=sys.stderr,
+                )
+            sys.exit(0)
+
+        # Linked branch exists only on work item relation (not local/remote): create it.
+        run_wt(["wt", "switch", "--create", existing_branch], repo_root, args.dry_run)
         sys.exit(0)
 
     # ── No linked branch — create, push, associate ────────────────────
     branch = make_branch_name(version_prefix, selected)
     print(f"No linked branch found. Creating: {branch}", file=sys.stderr)
+
+    if branch_exists_on_remote(branch, repo_root):
+        suggested = next_incremental_branch_name(branch, repo_root)
+        choice = prompt_remote_branch_choice(branch, suggested)
+        if choice == "cancel":
+            print("Cancelled worktree creation.", file=sys.stderr)
+            sys.exit(0)
+        if choice == "remote":
+            prepare_local_branch_from_remote(branch, repo_root, args.dry_run)
+            run_wt(["wt", "switch", branch], repo_root, args.dry_run)
+
+            if not args.dry_run:
+                repo_info = get_repo_info(org, project, repo_name, headers)
+                project_id = repo_info["project"]["id"]
+                repo_id = repo_info["id"]
+                print(f"Associating branch with work item {wid} …", file=sys.stderr)
+                associate_branch(org, project, wid, project_id, repo_id, branch, headers)
+                print(
+                    f"✓ Branch {branch} linked to work item {wid}: {title}",
+                    file=sys.stderr,
+                )
+            sys.exit(0)
+        branch = suggested
+        print(f"Creating new branch from base: {branch}", file=sys.stderr)
 
     # Preflight: make sure we can resolve repo IDs before doing any git work.
     repo_info = get_repo_info(org, project, repo_name, headers)
