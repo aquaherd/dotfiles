@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# Start with the latest view
+git fetch --prune
 # Build a map of full branch ref -> worktree path
 get_worktree_map() {
     declare -gA branch_to_worktree=()

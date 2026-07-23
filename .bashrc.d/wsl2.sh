@@ -1,4 +1,13 @@
 #!/bin/bash
+
+# development environment
+if test -d ~/x-tools; then
+	# export LX_WORK_DIR=~/x-tools/workspace
+	# export LX_TOOLS_DIR=~/x-tools/tools
+	export LX_DOWNLOAD_DIR=~/x-tools/downloads
+	# export LX_BUILD_DIR=~/x-tools/__build
+fi
+
 # Sanity checks
 if [[ -n "$container" ]]; then
 	return
