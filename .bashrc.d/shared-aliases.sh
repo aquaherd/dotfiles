@@ -1,4 +1,7 @@
 #!/bin/bash
+if [[ "$(uname)" == "Darwin" ]]; then
+	return
+fi
 alias cdgr='cd $(git rev-parse --show-toplevel||echo .)'
 alias cfg='git --git-dir=$HOME/.cfg --work-tree=$HOME '
 alias tws='git --git-dir=$HOME/.tws --work-tree=$HOME/.timewarrior '

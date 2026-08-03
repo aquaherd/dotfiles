@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ "$(uname)" == "Darwin" ]]; then
+	return
+fi
+
 # development environment
 if test -d ~/x-tools; then
 	# export LX_WORK_DIR=~/x-tools/workspace

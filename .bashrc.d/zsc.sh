@@ -1,3 +1,6 @@
+if [[ "$(uname)" == "Darwin" ]]; then
+	return
+fi
 if grep -q microsoft /proc/version; then
 	return
 fi
