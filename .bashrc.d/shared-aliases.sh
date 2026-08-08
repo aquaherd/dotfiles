@@ -1,7 +1,4 @@
 #!/bin/bash
-if [[ "$(uname)" == "Darwin" ]]; then
-	return
-fi
 alias cdgr='cd $(git rev-parse --show-toplevel||echo .)'
 alias cfg='git --git-dir=$HOME/.cfg --work-tree=$HOME '
 alias tws='git --git-dir=$HOME/.tws --work-tree=$HOME/.timewarrior '
@@ -11,6 +8,9 @@ alias drop='ssh-add -d - < ~/.ssh/encr.txt'
 alias quitall='pkill -u $USER -f -HUP '\''\[mux\]'\'''
 alias rnvim='nvim --remote-ui --server 127.0.0.1:8192 '
 
+if [[ "$(uname)" == "Darwin" ]]; then
+	return
+fi
 colors() {
 	for i in {0..255}; do
 		printf "\x1b[38;5;%sm%03d " "${i}" "${i}"
@@ -84,7 +84,7 @@ fi
 __foot_cwd() {                                                
    printf '\e]7;file://%s%s\a' "${HOSTNAME:-$(hostname)}" "$PWD"
 }
-if [[ -z "$WAYLAND_DISPLAY" ]] || [ "$TERM_PROGRAM" = "vscode" ]; then
+if ! [[ -z "$WAYLAND_DISPLAY" ]] || [ "$TERM_PROGRAM" = "vscode" ]; then
   PROMPT_COMMAND="__foot_cwd${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
 fi
 
