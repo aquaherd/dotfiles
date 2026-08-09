@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Pipe tmux buffer to system clipboard.
+# Tries native clipboard first, falls back to OSC 52 for remote/terminal-only sessions.
+# Reads selection from stdin.
+
+# Read entire stdin before doing anything (avoid SIGPIPE races)
+CONTENT=$(cat)
+
+[ -z "$CONTENT" ] && exit 0
+
+# --- 1. Wayland ---
+if [ -n "$WAYLAND_DISPLAY" ] && command -v wl-copy >/dev/null 2>&1; then
+    printf '%s' "$CONTENT" | wl-copy
+    exit 0
+fi
+
+# --- 2. X11 ---
+if [ -n "$DISPLAY" ] && command -v xclip >/dev/null 2>&1; then
+    printf '%s' "$CONTENT" | xclip -in -selection clipboard
+    exit 0
+fi
+
+# --- 3. OSC 52 fallback (remote/terminal, e.g. mosh/ssh into Blink) ---
+B64=$(printf '%s' "$CONTENT" | base64 -w0)
+CLIENT_TTY=$(tmux display -p '#{client_tty}' 2>/dev/null)
+
+if [ -n "$B64" ] && [ -n "$CLIENT_TTY" ] && [ -w "$CLIENT_TTY" ]; then
+    # ST terminator (\033\\) for Blink / modern terminal compatibility
+    printf '\033]52;c;%s\033\\' "$B64" > "$CLIENT_TTY"
+    exit 0
+fi
+
+exit 1

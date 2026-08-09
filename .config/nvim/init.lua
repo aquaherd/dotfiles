@@ -443,6 +443,100 @@ require("lazy").setup({
 o.mouse = 'a'
 o.title = true
 o.clipboard = 'unnamedplus'
+
+-- Use OSC 52 clipboard provider only when no native display is available
+-- (i.e., SSH/mosh from Blink). On local Wayland/X11/macOS/Windows, Neovim's
+-- default provider (wl-copy, xclip, pbcopy, win32yank) handles it.
+local has_display = vim.env.WAYLAND_DISPLAY ~= nil or vim.env.DISPLAY ~= nil
+if not has_display then
+  local osc52 = require('vim.ui.clipboard.osc52')
+
+  if vim.env.TMUX ~= nil then
+    -- Inside tmux: nvim_ui_send gets blocked by tmux passthrough, so write
+    -- OSC 52 directly to the client TTY (same approach as ~/.local/bin/tmux-osc52)
+    local function write_osc52(seq)
+      local handle = io.popen('tmux display -p "#{client_tty}" 2>/dev/null')
+      if handle then
+        local tty = handle:read('*a'):gsub('%s+', '')
+        handle:close()
+        if tty ~= '' then
+          local f = io.open(tty, 'w')
+          if f then f:write(seq) f:close() end
+        end
+      end
+    end
+
+    local function copy_via_tty(reg)
+      local clip = reg == '+' and 'c' or 'p'
+      return function(lines)
+        local text = table.concat(lines, '\n')
+        write_osc52('\027]52;' .. clip .. ';' .. vim.base64.encode(text) .. '\027\\')
+      end
+    end
+
+    local function paste_via_tty(reg)
+      local clip = reg == '+' and 'c' or 'p'
+      return function()
+        local contents = nil
+        local id = vim.api.nvim_create_autocmd('TermResponse', {
+          callback = function(ev)
+            local encoded = ev.data.sequence:match('\027%]52;%w?;([A-Za-z0-9+/=]*)')
+            if encoded then
+              contents = vim.base64.decode(encoded)
+              return true
+            end
+          end,
+        })
+
+        write_osc52('\027]52;' .. clip .. ';?\027\\')
+
+        local ok, res = vim.wait(1000, function() return contents ~= nil end)
+        if res == -1 then
+          vim.api.nvim_echo({{'Waiting for OSC 52 response from the terminal. Press Ctrl-C to interrupt...'}}, false, {})
+          ok, res = vim.wait(9000, function() return contents ~= nil end)
+        end
+
+        if not ok then
+          vim.api.nvim_del_autocmd(id)
+          if res == -1 then
+            vim.notify('Timed out waiting for clipboard response', vim.log.levels.WARN)
+          elseif res == -2 then
+            vim.api.nvim_echo({{''}}, false, {})
+          end
+          return 0
+        end
+
+        vim.api.nvim_del_autocmd(id)
+        return vim.split(assert(contents), '\n')
+      end
+    end
+
+    vim.g.clipboard = {
+      name = 'OSC 52 (tmux tty)',
+      copy = {
+        ['+'] = copy_via_tty('+'),
+        ['*'] = copy_via_tty('*'),
+      },
+      paste = {
+        ['+'] = paste_via_tty('+'),
+        ['*'] = paste_via_tty('*'),
+      },
+    }
+  else
+    -- Direct SSH/mosh (no tmux): built-in OSC 52 works fine
+    vim.g.clipboard = {
+      name = 'OSC 52',
+      copy = {
+        ['+'] = osc52.copy('+'),
+        ['*'] = osc52.copy('*'),
+      },
+      paste = {
+        ['+'] = osc52.paste('+'),
+        ['*'] = osc52.paste('*'),
+      },
+    }
+  end
+end
 opt.swapfile = false
 o.undofile = true
 o.cmdheight = 1
