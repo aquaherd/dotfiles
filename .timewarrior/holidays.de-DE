@@ -1,27 +1,41 @@
 # Holiday data provided by holidata.net
-#   Generated 2025-06-30T15:25:23
+#   Generated 2026-08-13T23:30:02+02:00
+#   https://holidata.net/de-DE/2026.json, https://holidata.net/de-DE/2027.json
+#   Region: BY (Bayern)
 
 define holidays:
   de-DE:
-    2025_01_01 = Neujahr
-    2025_01_06 = Heilige drei Könige
-    2025_03_08 = Internationaler Frauentag
-    2025_04_18 = Karfreitag
-    2025_04_20 = Ostern
-    2025_04_21 = Ostermontag
-    2025_05_01 = Erster Maifeiertag
-    2025_05_29 = Christi Himmelfahrt
-    2025_06_08 = Pfingstsonntag
-    2025_06_09 = Pfingstmontag
-    2025_06_19 = Fronleichnam
-    2025_08_15 = Mariä Himmelfahrt
-    2025_09_20 = Weltkindertag
-    2025_10_03 = Tag der Deutschen Einheit
-    2025_10_31 = Reformationstag
-    2025_11_01 = Allerheiligen
-    2025_11_19 = Buß- und Bettag
-    2025_12_24 = Heilig Abend
-    2025_12_25 = Weihnachtstag
-    2025_12_26 = Zweiter Weihnachtstag
-    2025_12_31 = Silvester
-
+    2026_01_01 = Neujahr
+    2026_01_06 = Heilige drei Könige
+    2026_04_03 = Karfreitag
+    2026_04_05 = Ostern
+    2026_04_06 = Ostermontag
+    2026_05_01 = Erster Maifeiertag
+    2026_05_14 = Christi Himmelfahrt
+    2026_05_24 = Pfingstsonntag
+    2026_05_25 = Pfingstmontag
+    2026_06_04 = Fronleichnam
+    2026_08_15 = Mariä Himmelfahrt
+    2026_10_03 = Tag der Deutschen Einheit
+    2026_11_01 = Allerheiligen
+    2026_12_24 = Heilig Abend
+    2026_12_25 = Weihnachtstag
+    2026_12_26 = Zweiter Weihnachtstag
+    2026_12_31 = Silvester
+    2027_01_01 = Neujahr
+    2027_01_06 = Heilige drei Könige
+    2027_03_26 = Karfreitag
+    2027_03_28 = Ostern
+    2027_03_29 = Ostermontag
+    2027_05_01 = Erster Maifeiertag
+    2027_05_06 = Christi Himmelfahrt
+    2027_05_16 = Pfingstsonntag
+    2027_05_17 = Pfingstmontag
+    2027_05_27 = Fronleichnam
+    2027_08_15 = Mariä Himmelfahrt
+    2027_10_03 = Tag der Deutschen Einheit
+    2027_11_01 = Allerheiligen
+    2027_12_24 = Heilig Abend
+    2027_12_25 = Weihnachtstag
+    2027_12_26 = Zweiter Weihnachtstag
+    2027_12_31 = Silvester
