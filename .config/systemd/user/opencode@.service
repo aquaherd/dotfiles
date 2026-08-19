@@ -1,0 +1,15 @@
+[Unit]
+Description=OpenCode serve (%i)
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=%h/.config/opencode/%i.env
+ExecStart=/usr/local/bin/opencode serve --mdns --mdns-domain opencode-%I.local
+Restart=always
+RestartSec=5s
+StartLimitInterval=5min
+StartLimitBurst=5
+
+[Install]
+WantedBy=default.target
