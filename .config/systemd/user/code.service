@@ -1,9 +1,0 @@
-[Unit]
-Description=Remote VSCode service
-
-[Service]
-ExecStart=code tunnel
-WorkingDirectory=/home/z003tnse
-
-[Install]
-WantedBy=default.target
