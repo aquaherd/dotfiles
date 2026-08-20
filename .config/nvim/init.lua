@@ -22,7 +22,10 @@ local ft = {
 	lsps = vim.list_extend({ 'bashls', 'clangd', 'lua_ls', 'copilot' }, is_mac and { 'sourcekit' } or {}),
 	ts = { 'bash', 'sh', 'c', 'cpp', 'jsonc', 'lua', 'python' },
 }
-local ts_parsers = { 'bash', 'c', 'cpp', 'jsonc', 'lua', 'python', 'query' }
+-- vimdoc/markdown: nvim 0.12's ftplugin auto-starts treesitter for help/markdown/lua/query
+-- files, so missing parsers there would abort the FileType chain (and LSP attach) too.
+-- (jsonc has no own parser on the main branch; json parser covers .jsonc via a register below.)
+local ts_parsers = { 'bash', 'c', 'cpp', 'json', 'lua', 'markdown', 'python', 'query', 'vimdoc' }
 -- plugins
 require("lazy").setup({
 	-- git
@@ -97,12 +100,16 @@ require("lazy").setup({
 		"nvim-treesitter/nvim-treesitter",
 		branch = "main",
 		lazy = false,
-		build = function()
-			vim.cmd("TSUpdate " .. table.concat(ts_parsers, " "))
-		end,
+		-- lazy.nvim only loads the plugin before `:`-prefixed builds, not plain functions.
+		-- Without the `:`, TSInstall doesn't exist yet during install and the build silently
+		-- fails => no parsers => nvim 0.12's ftplugin then aborts the FileType chain (and
+		-- with it, vim.lsp.enable's attach autocmd) on every buffer.
+		-- Use TSInstall (not TSUpdate: with `missing=true` it only touches already-installed parsers).
+		build = ":TSInstall " .. table.concat(ts_parsers, " "),
 		config = function()
 			require("nvim-treesitter").setup()
 			vim.treesitter.language.register("bash", "sh")
+			vim.treesitter.language.register("json", "jsonc") -- .json is mapped to filetype jsonc
 			-- Start highlighting explicitly
 			vim.api.nvim_create_autocmd("FileType", {
 				group = vim.api.nvim_create_augroup("ts-auto-start", {}),
@@ -166,9 +173,20 @@ require("lazy").setup({
 	},
 	{
 		"carlos-algms/agentic.nvim",
-		cond = function() return vim.fn.executable('copilot') == 1 end,
+		cond = function()
+			return vim.fn.executable('goose') == 1
+				or vim.fn.executable('opencode') == 1
+				or vim.fn.executable('pi-acp') == 1
+				or vim.fn.executable('copilot') == 1
+		end,
 		opts = {
-			provider = "copilot-acp", -- setting the name here is all you need to get started
+			-- Default ACP provider. goose, opencode, pi and copilot all speak the
+			-- Agent Client Protocol; switch between them with <leader>as.
+			provider = "goose-acp",
+			provider_switcher = {
+				-- only list providers whose CLI is actually installed
+				hide_unhealthy_providers = true,
+			},
 		},
 		-- these are just suggested keymaps; customize as desired
 		keys = {
@@ -189,6 +207,18 @@ require("lazy").setup({
 				function() require("agentic").new_session() end,
 				mode = { "n", "v", "i" },
 				desc = "New Agentic Session"
+			},
+			{
+				"<leader>as",
+				function() require("agentic").switch_provider() end,
+				mode = { "n", "v", "i" },
+				desc = "Switch Agentic provider (goose/opencode/pi/copilot)"
+			},
+			{
+				"<leader>ap",
+				function() require("agentic").new_session_with_provider() end,
+				mode = { "n", "v", "i" },
+				desc = "New Agentic session with provider picker"
 			},
 			{
 				"<A-i>r", -- ai Restore
@@ -422,6 +452,9 @@ require("lazy").setup({
 	},
 },
 	{
+		rocks = {
+			enabled = false,
+		},
 		performance = {
 			rtp = {
 				disabled_plugins = {
