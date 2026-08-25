@@ -1,0 +1,172 @@
+#!/bin/sh
+# bootstrap — bring up these dotfiles on a fresh machine and install the base
+# toolchain (Neovim, ripgrep, fzf, fd, zoxide). Idempotent; safe to re-run.
+#
+# The OS flavor (debian, alpine, macos-macports) is auto-detected and dispatched
+# to .local/lib/install/<flavor>.sh. Add a new OS by dropping a new file there.
+#
+# Usage:
+#   bootstrap [--skip-clone] [--skip-checkout] [--with-extra]
+#             [--flavor NAME] [--remote URL] [--source DIR] [--list-flavors]
+
+set -eu
+
+GIT_DIR="${DOTFILES_GIT_DIR:-$HOME/.cfg}"
+WORK_TREE="${DOTFILES_WORK_TREE:-$HOME}"
+REMOTE="${DOTFILES_REMOTE:-git@github.com:aquaherd/dotfiles.git}"
+INSTALL_DIR="$WORK_TREE/.local/lib/install"
+SOURCE=""
+FLAVOR="${DOTFILES_FLAVOR:-}"
+SKIP_CLONE=0
+SKIP_CHECKOUT=0
+WITH_EXTRA=0
+
+log()  { printf '%s\n' "==> $*"; }
+warn() { printf '%s\n' "!! $*" >&2; }
+die()  { printf '%s\n' "xx $*" >&2; exit 1; }
+has()  { command -v "$1" >/dev/null 2>&1; }
+cfg()  { git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" "$@"; }
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [options]
+
+Options:
+  --skip-clone      Do not clone the bare repo (assume $GIT_DIR exists)
+  --skip-checkout   Do not run the work-tree checkout
+  --with-extra      Also run .local/lib/install/extra.sh
+  --flavor NAME     Force a flavor (debian, alpine, macos-macports, ...)
+  --remote URL      Clone from URL instead of $REMOTE
+  --source DIR      Seed ~/.cfg from an existing checkout at DIR
+  --list-flavors    List available flavor sub-scripts and exit
+  -h, --help        Show this help
+EOF
+}
+
+list_flavors() {
+  log "available flavors:"
+  for f in "$INSTALL_DIR"/*.sh; do
+    [ -e "$f" ] || continue
+    case "$(basename "$f")" in common.sh|extra.sh) continue ;; esac
+    printf '  %s\n' "$(basename "$f" .sh)"
+  done
+}
+
+detect_flavor() {
+  [ -n "$FLAVOR" ] && { printf '%s\n' "$FLAVOR"; return 0; }
+  case "$(uname -s)" in
+    Darwin) printf 'macos-macports\n'; return 0 ;;
+  esac
+  if [ -r /etc/os-release ]; then
+    . /etc/os-release
+    case "${ID:-}" in
+      debian|ubuntu|raspbian|pop|linuxmint) printf 'debian\n' ;;
+      alpine) printf 'alpine\n' ;;
+      *)
+        case "${ID_LIKE:-}" in
+          *debian*) printf 'debian\n' ;;
+          *alpine*) printf 'alpine\n' ;;
+          *) printf 'unknown\n' ;;
+        esac
+        ;;
+    esac
+  else
+    printf 'unknown\n'
+  fi
+}
+
+wire_bashrc() {
+  local bashrc="$WORK_TREE/.bashrc" marker
+  marker="##### dotfiles: source ~/.bashrc.d #####"
+  grep -Fq "$marker" "$bashrc" 2>/dev/null && return 0
+  [ -d "$WORK_TREE/.bashrc.d" ] || mkdir -p "$WORK_TREE/.bashrc.d"
+  {
+    echo
+    echo "$marker"
+    echo '# Load modular shell snippets from ~/.bashrc.d/*.sh'
+    echo 'if [ -d "$HOME/.bashrc.d" ]; then'
+    echo '  for f in "$HOME"/.bashrc.d/*.sh; do'
+    echo '    [ -r "$f" ] && . "$f"'
+    echo '  done'
+    echo 'fi'
+    echo "$marker"
+  } >> "$bashrc"
+  log "wired ~/.bashrc.d into $bashrc"
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --skip-clone) SKIP_CLONE=1 ;;
+    --skip-checkout) SKIP_CHECKOUT=1 ;;
+    --with-extra) WITH_EXTRA=1 ;;
+    --flavor) FLAVOR="${2:?missing flavor}"; shift ;;
+    --flavor=*) FLAVOR="${1#*=}" ;;
+    --remote) REMOTE="${2:?missing URL}"; shift ;;
+    --remote=*) REMOTE="${1#*=}" ;;
+    --source) SOURCE="${2:?missing DIR}"; shift ;;
+    --source=*) SOURCE="${1#*=}" ;;
+    --list-flavors) list_flavors; exit 0 ;;
+    -h|--help) usage; exit 0 ;;
+    *) die "unknown option: $1 (try --help)" ;;
+  esac
+  shift
+done
+
+# --- repo bootstrap ---------------------------------------------------------
+has git || die "git is required; install it first"
+
+if [ ! -d "$GIT_DIR" ]; then
+  [ "$SKIP_CLONE" -eq 1 ] && die "--skip-clone given but $GIT_DIR does not exist"
+  log "cloning bare repo into $GIT_DIR"
+  if [ -n "$SOURCE" ]; then
+    git clone --bare "$SOURCE" "$GIT_DIR"
+  elif ! git clone --bare "$REMOTE" "$GIT_DIR"; then
+    warn "clone via $REMOTE failed; trying https fallback"
+    git clone --bare "https://github.com/aquaherd/dotfiles.git" "$GIT_DIR"
+  fi
+fi
+
+cfg config --local status.showUntrackedFiles no
+
+if [ "$SKIP_CHECKOUT" -eq 0 ]; then
+  log "checking out dotfiles into $WORK_TREE"
+  if cfg checkout >/dev/null 2>&1; then
+    log "work tree already up to date"
+  else
+    # First checkout onto a non-empty $HOME: back up conflicting files, then
+    # retry. Re-runs are no-ops because checkout then succeeds immediately.
+    bak="$WORK_TREE/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+    mkdir -p "$bak"
+    warn "existing files would be overwritten; backing up to $bak"
+    cfg ls-tree -r --name-only HEAD | while IFS= read -r f; do
+      [ -e "$WORK_TREE/$f" ] || continue
+      mkdir -p "$bak/$(dirname "$f")"
+      mv "$WORK_TREE/$f" "$bak/$f" 2>/dev/null || true
+      printf '%s\n' "  backed up $f"
+    done
+    cfg checkout
+  fi
+fi
+
+[ -d "$INSTALL_DIR" ] || die "no install scripts found at $INSTALL_DIR"
+
+# --- flavor detection + dispatch -------------------------------------------
+FLAVOR="$(detect_flavor)"
+export FLAVOR
+[ "$FLAVOR" != "unknown" ] || die "could not detect OS flavor; pass --flavor"
+
+wire_bashrc
+
+FLAVOR_SCRIPT="$INSTALL_DIR/$FLAVOR.sh"
+[ -f "$FLAVOR_SCRIPT" ] || die "no sub-script for flavor '$FLAVOR' ($FLAVOR_SCRIPT); use --list-flavors"
+log "installing for flavor: $FLAVOR"
+sh "$FLAVOR_SCRIPT"
+
+if [ "$WITH_EXTRA" -eq 1 ]; then
+  EXTRA_SCRIPT="$INSTALL_DIR/extra.sh"
+  [ -f "$EXTRA_SCRIPT" ] || die "extra.sh not found"
+  log "installing extra tier"
+  sh "$EXTRA_SCRIPT"
+fi
+
+log "done. Start a new shell (or \`source ~/.bashrc\`) to pick up changes."
