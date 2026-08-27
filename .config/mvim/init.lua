@@ -1,10 +1,16 @@
 -- Plugin manager: native `vim.pack` (Neovim 0.12+)
 -- Manages plugins in stdpath('data')/site/pack/core/opt.
 -- Run `:restart` after changing specs, `vim.pack.update()` to update.
-vim.pack.add({
+-- zk-nvim is only loaded when the `zk` CLI is available.
+local has_zk = vim.fn.executable('zk') == 1
+
+local plugins = {
 	{ src = 'https://github.com/echasnovski/mini.nvim' },
-	{ src = 'https://github.com/zk-org/zk-nvim' },
-})
+}
+if has_zk then
+	table.insert(plugins, { src = 'https://github.com/zk-org/zk-nvim' })
+end
+vim.pack.add(plugins)
 
 -- Early setup
 vim.g.mapleader = ' '       -- default
@@ -116,19 +122,22 @@ require('GitWorktrees')
 require('mini.surround').setup()
 
 -- Non-minis
-require("zk").setup({
-	picker = "select",
-	lsp = { -- `config` is passed to `vim.lsp.start(config)`
-		config = {
-			name = "zk",
-			cmd = { "zk", "lsp" },
-			filetypes = { "markdown" },
+-- zk (configured only when the `zk` CLI is available)
+if has_zk then
+	require("zk").setup({
+		picker = "select",
+		lsp = { -- `config` is passed to `vim.lsp.start(config)`
+			config = {
+				name = "zk",
+				cmd = { "zk", "lsp" },
+				filetypes = { "markdown" },
+			},
+			auto_attach = {
+				enabled = true,
+			},
 		},
-		auto_attach = {
-			enabled = true,
-		},
-	},
-})
+	})
+end
 
 -- LSP
 vim.lsp.enable({ 'clangd', 'bashls', 'lua_ls' })
