@@ -193,7 +193,7 @@ require("lazy").setup({
 			{
 				"<C-\\>",
 				function() require("agentic").toggle() end,
-				mode = { "n", "v", "i" },
+				mode = { "n", "v"},
 				desc = "Toggle Agentic Chat"
 			},
 			{
@@ -205,19 +205,19 @@ require("lazy").setup({
 			{
 				"<leader>an",
 				function() require("agentic").new_session() end,
-				mode = { "n", "v", "i" },
+				mode = { "n", "v"},
 				desc = "New Agentic Session"
 			},
 			{
 				"<leader>as",
 				function() require("agentic").switch_provider() end,
-				mode = { "n", "v", "i" },
+				mode = { "n", "v"},
 				desc = "Switch Agentic provider (goose/opencode/pi/copilot)"
 			},
 			{
 				"<leader>ap",
 				function() require("agentic").new_session_with_provider() end,
-				mode = { "n", "v", "i" },
+				mode = { "n", "v"},
 				desc = "New Agentic session with provider picker"
 			},
 			{
@@ -227,7 +227,7 @@ require("lazy").setup({
 				end,
 				desc = "Agentic Restore session",
 				silent = true,
-				mode = { "n", "v", "i" },
+				mode = { "n", "v"},
 			},
 			{
 				"<leader>ad", -- ai Diagnostics
