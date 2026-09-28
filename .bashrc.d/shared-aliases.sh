@@ -7,7 +7,9 @@ alias quit='ssh -O exit '
 alias drop='ssh-add -d - < ~/.ssh/encr.txt'
 alias quitall='pkill -u $USER -f -HUP '\''\[mux\]'\'''
 alias rnvim='nvim --remote-ui --server 127.0.0.1:8192 '
-
+if command -v tmux > /dev/null; then
+	alias lmux='tmux new-session -A -s main'
+fi
 if [[ "$(uname)" == "Darwin" ]]; then
 	return
 fi
