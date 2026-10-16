@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 EnvironmentFile=%h/.config/opencode/%i.env
-ExecStart=/usr/local/bin/opencode serve --mdns --mdns-domain opencode-%I.local
+ExecStart=%h/.local/bin/opencode serve --mdns --mdns-domain opencode-%I.local
 Restart=always
 RestartSec=5s
 StartLimitInterval=5min
