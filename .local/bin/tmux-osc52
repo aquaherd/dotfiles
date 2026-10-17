@@ -26,7 +26,7 @@ CLIENT_TTY=$(tmux display -p '#{client_tty}' 2>/dev/null)
 
 if [ -n "$B64" ] && [ -n "$CLIENT_TTY" ] && [ -w "$CLIENT_TTY" ]; then
     # ST terminator (\033\\) for Blink / modern terminal compatibility
-    printf '\033]52;c;%s\033\\' "$B64" > "$CLIENT_TTY"
+    printf '\033]52;c;%s\007' "$B64" > "$CLIENT_TTY"
     exit 0
 fi
 
