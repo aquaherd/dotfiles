@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Print a one-time OpenCode pairing link (and QR) for the OpenChamber-managed
+# OpenCode server. Links expire after 5 minutes.
+#
+# Usage: opencode-pair-lan [host]
+#   host  Address the link advertises, e.g. rocky.fritz.box or rocky.local.
+#         Defaults to $OPENCODE_PAIR_HOST, then to the LAN IPv4 address.
+#         Pair with a name so the app survives an IP change.
+set -euo pipefail
+
+PORT="${OPENCODE_PORT:-4096}"
+ENV_FILE="$HOME/.config/openchamber/startup.env"
+QR_MODULE="$HOME/.local/lib/node_modules/@openchamber/web/node_modules/qrcode-terminal"
+
+PASSWORD="${OPENCODE_SERVER_PASSWORD:-}"
+if [ -z "$PASSWORD" ] && [ -r "$ENV_FILE" ]; then
+  PASSWORD=$(grep -m1 '^OPENCODE_SERVER_PASSWORD=' "$ENV_FILE" | cut -d= -f2- | tr -d '"')
+fi
+if [ -z "$PASSWORD" ]; then
+  echo "No OpenCode server password found (set OPENCODE_SERVER_PASSWORD)." >&2
+  exit 1
+fi
+
+LAN_IP=$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}')
+if [ -z "$LAN_IP" ]; then
+  LAN_IP=$(hostname -I | awk '{print $1}')
+fi
+
+# Prefer a stable name over an address that changes with the network. iOS ATS
+# allows plain HTTP to .local names (NSAllowsLocalNetworking) but not to fully
+# qualified names like host.example.com, so default to the mDNS name when Avahi
+# is publishing one.
+PAIR_HOST="${1:-${OPENCODE_PAIR_HOST:-}}"
+if [ -z "$PAIR_HOST" ] && systemctl is-active --quiet avahi-daemon 2>/dev/null; then
+  PAIR_HOST="$(hostname -s).local"
+fi
+HOST="${PAIR_HOST:-$LAN_IP}"
+
+CODE=$(curl -fsS -u "opencode:$PASSWORD" -X POST "http://127.0.0.1:$PORT/api/pair" \
+  | python3 -c 'import sys, json; print(json.load(sys.stdin)["code"])')
+
+LINK="http://$HOST:$PORT/auth/connect/$CODE"
+
+echo "OpenCode pairing link (one-time use, expires in 5 minutes):"
+echo
+echo "  $LINK"
+echo
+
+if [ -e "$QR_MODULE" ]; then
+  node -e 'require(process.argv[1]).generate(process.argv[2], { small: true })' "$QR_MODULE" "$LINK"
+else
+  echo "(QR skipped: qrcode-terminal not found)"
+fi
