@@ -65,4 +65,6 @@ install_neovim_tarball() {
   mv "$src" "$dest"
   ln -sfn "$dest/bin/nvim" "$bindir/nvim"
   log "installed $dest/bin/nvim -> $bindir/nvim"
+  rm -rf "$tmp"
+  trap - EXIT
 }

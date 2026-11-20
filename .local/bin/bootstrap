@@ -7,7 +7,8 @@
 #
 # Usage:
 #   bootstrap [--skip-clone] [--skip-checkout] [--with-extra]
-#             [--flavor NAME] [--remote URL] [--source DIR] [--list-flavors]
+#             [--desktop sway|i3] [--flavor NAME] [--remote URL]
+#             [--source DIR] [--list-flavors]
 
 set -eu
 
@@ -20,6 +21,7 @@ FLAVOR="${DOTFILES_FLAVOR:-}"
 SKIP_CLONE=0
 SKIP_CHECKOUT=0
 WITH_EXTRA=0
+DESKTOP=""
 
 log()  { printf '%s\n' "==> $*"; }
 warn() { printf '%s\n' "!! $*" >&2; }
@@ -35,6 +37,7 @@ Options:
   --skip-clone      Do not clone the bare repo (assume $GIT_DIR exists)
   --skip-checkout   Do not run the work-tree checkout
   --with-extra      Also run .local/lib/install/extra.sh
+  --desktop NAME    Install the Sway or i3 desktop bundle (Debian/Alpine only)
   --flavor NAME     Force a flavor (debian, alpine, macos-macports, ...)
   --remote URL      Clone from URL instead of $REMOTE
   --source DIR      Seed ~/.cfg from an existing checkout at DIR
@@ -99,6 +102,8 @@ while [ $# -gt 0 ]; do
     --skip-clone) SKIP_CLONE=1 ;;
     --skip-checkout) SKIP_CHECKOUT=1 ;;
     --with-extra) WITH_EXTRA=1 ;;
+    --desktop) DESKTOP="${2:?missing desktop name}"; shift ;;
+    --desktop=*) DESKTOP="${1#*=}" ;;
     --flavor) FLAVOR="${2:?missing flavor}"; shift ;;
     --flavor=*) FLAVOR="${1#*=}" ;;
     --remote) REMOTE="${2:?missing URL}"; shift ;;
@@ -111,6 +116,18 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+
+case "$DESKTOP" in
+  ""|sway|i3) ;;
+  *) die "unknown desktop '$DESKTOP' (expected sway or i3)" ;;
+esac
+
+FLAVOR="$(detect_flavor)"
+[ "$FLAVOR" != "unknown" ] || die "could not detect OS flavor; pass --flavor"
+if [ -n "$DESKTOP" ] && [ "$FLAVOR" = "macos-macports" ]; then
+  die "desktop installation is supported only on Debian and Alpine"
+fi
+export FLAVOR DESKTOP
 
 # --- repo bootstrap ---------------------------------------------------------
 has git || die "git is required; install it first"
@@ -150,11 +167,7 @@ fi
 
 [ -d "$INSTALL_DIR" ] || die "no install scripts found at $INSTALL_DIR"
 
-# --- flavor detection + dispatch -------------------------------------------
-FLAVOR="$(detect_flavor)"
-export FLAVOR
-[ "$FLAVOR" != "unknown" ] || die "could not detect OS flavor; pass --flavor"
-
+# --- flavor dispatch --------------------------------------------------------
 wire_bashrc
 
 FLAVOR_SCRIPT="$INSTALL_DIR/$FLAVOR.sh"

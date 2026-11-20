@@ -10,7 +10,7 @@ pkill -f 'sshfs -o reconnect win'
 if test -f "$hostpath"; then
     read -r host < "$hostpath" || die "no host set"
     rm -f "$hostpath"
-    ssh -qO exit "$host" || echo "did not quit"
+    ssh -qO exit "${host}.labnet.local" || echo "did not quit"
     echo "exit session $host"
 fi
 echo "OK"

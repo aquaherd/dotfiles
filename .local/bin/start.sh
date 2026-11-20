@@ -40,7 +40,7 @@ if [ "${1:-}" = "--" ]; then
 	shift
 fi
 
-ssh -n "$host" \
+ssh -n "${host}.labnet.local" \
 	-o ServerAliveInterval=15 \
 	-L '127.0.0.1:2322:127.0.0.1:2222' \
 	-L '127.0.0.1:2323:192.168.184.40:23' \
@@ -53,8 +53,8 @@ ssh -n "$host" \
 
 pkill -f 'sshfs -o reconnect win'
 for d in Firmware Logfiles; do
-	echo "mounting ${host}:$d to \~/$d ..."
-	sshfs -o reconnect "${host}":$d ~/$d || exit $?
+	echo "mounting ${host}:$d to ~/$d ..."
+	sshfs -o reconnect "${host}.labnet.local":$d ~/$d || exit $?
 done
 
 echo "$host" >"$hostpath"

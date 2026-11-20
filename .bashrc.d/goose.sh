@@ -1,4 +1,3 @@
-# zoxide
 if command -v goose > /dev/null; then
-  eval "$(goose completion bash)"
+	source <(goose completion bash)
 fi
