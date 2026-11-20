@@ -1,5 +1,8 @@
 #!/bin/sh
 # Original: https://github.com/ErnyTech/Unified-Kernel-Image
+set -e
+
+MTP=${MTP:-}
 OS_RELEASE=$MTP/etc/os-release
 # shellcheck source=/etc/os-release
 . "$OS_RELEASE"
@@ -13,50 +16,69 @@ if [ ! -d /sys/firmware/efi ]; then
     exit 0
 fi
 
+if ! findmnt -rn -M /boot/efi -t vfat -O rw >/dev/null; then
+	echo "Cannot build EFI image: /boot/efi must be mounted read-write as vfat." >&2
+	exit 1
+fi
+
 CMDLINE="root=LABEL=$ID rw rootfstype=ext4 vsyscall=emulate quiet"
 VMLINUZ="$MTP/vmlinuz"
 INITRD="$MTP/initrd.img"
 STUB="$HOME/.local/lib/linuxx64.efi.stub"
 BMP="$HOME/.local/lib/$ID.bmp"
+set -- "$STUB"
 if [ -f "$BMP" ]; then
-	STUB="--add-section .splash=$BMP --change-section-vma .splash=0x40000 $STUB"
+	set -- --add-section ".splash=$BMP" --change-section-vma .splash=0x40000 "$STUB"
 	CMDLINE="$CMDLINE splash vt.handoff=7 gfxpayload=keep"
 fi
-echo "$CMDLINE" > /tmp/kernel-command-line.txt
 TARGET=/boot/efi/EFI/Linux/$ID.efi
-DISK=/dev/$(lsblk -no pkname /dev/disk/by-label/EF00)
-PART=$(stat -c '%T' "$(realpath /dev/disk/by-label/EF00)")
+ESP=$(findmnt -rn -M /boot/efi -o SOURCE)
+DISK=/dev/$(lsblk -dnro PKNAME "$ESP")
+PART=$(lsblk -dnro PARTN "$ESP")
+PARTUUID=$(lsblk -dnro PARTUUID "$ESP")
+if [ ! -b "$DISK" ] || [ -z "$PART" ] || [ -z "$PARTUUID" ]; then
+	echo "Cannot determine EFI disk and partition for $ESP." >&2
+	exit 1
+fi
 if [ ! -e "$VMLINUZ" ] || [ ! -e "$INITRD" ]; then
-	echo "Setup invalid $VMLINUZ / $INITRD"
+	echo "Setup invalid $VMLINUZ / $INITRD" >&2
 	exit 1
 fi
 
-if [ -e $TARGET ]; then
-	if test "$TARGET" -nt "$VMLINUZ" && test "$TARGET" -nt "$INITRD"; then
-		echo "$TARGET is already up-to-date."
-		exit 0
+EFI_ENTRIES=$(efibootmgr -v)
+WORKDIR=$(mktemp -d)
+ESP_TMP=
+cleanup()
+{
+	if [ -n "$ESP_TMP" ]; then
+		sudo rm -f -- "$ESP_TMP"
 	fi
-else
-	echo "Will update $TARGET"
-fi
-
-if [ -n "$MTP"  ]; then
-	cd "$MTP" || exit 2
-fi
+	rm -f -- "$WORKDIR/cmdline" "$WORKDIR/image.efi"
+	rmdir -- "$WORKDIR"
+}
+trap cleanup EXIT
+trap 'exit 1' HUP INT TERM
+printf '%s\n' "$CMDLINE" > "$WORKDIR/cmdline"
 
 echo "Building image for $PRETTY_NAME disk $DISK part $PART"
-sudo chmod +r "$VMLINUZ" "$INITRD"
-# shellcheck disable=SC2086
-objcopy \
+sudo objcopy \
     --add-section .osrel="$OS_RELEASE" --change-section-vma .osrel=0x20000 \
-    --add-section .cmdline="/tmp/kernel-command-line.txt" --change-section-vma .cmdline=0x30000 \
+    --add-section .cmdline="$WORKDIR/cmdline" --change-section-vma .cmdline=0x30000 \
     --add-section .linux="$VMLINUZ" --change-section-vma .linux=0x2000000 \
     --add-section .initrd="$INITRD" --change-section-vma .initrd=0x3000000 \
-    $STUB "/tmp/$ID.efi" || ( echo FAIL && exit 1 )
+    "$@" "$WORKDIR/image.efi"
 
-sudo cp -vu /tmp/$ID.efi $TARGET && rm /tmp/$ID.efi
+sudo mkdir -p -- "$(dirname "$TARGET")"
+ESP_TMP=$(sudo mktemp "$TARGET.XXXXXX")
+sudo install -m 0644 "$WORKDIR/image.efi" "$ESP_TMP"
+sudo cmp "$WORKDIR/image.efi" "$ESP_TMP"
+sudo sync -f "$ESP_TMP"
+sudo mv -f -- "$ESP_TMP" "$TARGET"
+ESP_TMP=
+sudo sync -f /boot/efi
 
-if efibootmgr | cut -d' ' -f 2 | grep -q $ID; then
+if printf '%s\n' "$EFI_ENTRIES" | grep -Fi -- "$PARTUUID" |
+	grep -Fiq -- "File(\\EFI\\Linux\\$ID.efi)"; then
 	echo "EFI entry already present"
 else
 	echo "Add EFI entry for $ID"
