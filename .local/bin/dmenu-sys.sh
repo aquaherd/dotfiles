@@ -140,17 +140,77 @@ closeall()
 }
 
 # requires an efi where each kernel is booted directly
+# selectable boot targets: "name\tbootnum" (internal; num is "-" for setup)
+boot_entries()
+{
+	{
+	sudo efibootmgr | while IFS= read -r line; do
+		case $line in
+			Boot0*) : ;;
+			*) continue ;;
+		esac
+		num=$(printf '%s\n' "$line" | sed -n 's/^Boot\([0-9A-F]\{4\}\).*/\1/p')
+		# firmware shows all distro entries with the same label, so derive
+		# the name from the loader path instead: \EFI\<ID>\loader.efi for
+		# vendor chains, \EFI\Linux\<ID>.efi for efistub UKIs. The firmware
+		# may print paths in upper or lower case, so parse the lowercased
+		# line: "debian uki", "alpine grub", "setup", ...
+		lc=$(printf '%s\n' "$line" | tr 'A-Z' 'a-z')
+		fpath=$(printf '%s\n' "$lc" |
+			sed -n 's/.*file(\\efi\\\([^\\]*\)\\\([^)]*\)).*/\1|\2/p')
+		if [ -n "$fpath" ]; then
+			dir=${fpath%%|*}
+			file=${fpath#*|}
+			base=$(printf '%s\n' "$file" | sed 's/.*\\//; s/\.efi$//')
+			case $dir in
+				linux)	name="$base uki";;
+				boot)	name="fallback $base";;
+				*)	case $file in
+						grubx64.efi)	name="$dir grub";;
+						shimx64.efi)	name="$dir shim (secure boot)";;
+						mmx64.efi)	name="$dir mok";;
+						*)		name="$dir $base";;
+					esac;;
+			esac
+		else
+			name=$(printf '%s\n' "$line" |
+				sed -n 's/^Boot[0-9A-F]\{4\}\*//p' | cut -f1 | sed 's/^[[:space:]]*//')
+		fi
+		printf '%s\t%s\n' "$name" "$num"
+	done
+	printf '%s\t%s\n' setup -
+	}
+}
+
+# dmenu items are the bare names; the tab-separated boot number never
+# reaches the UI (dmenu renders tabs as garbage glyphs)
 ask_boot()
 {
-	sudo efibootmgr | grep Boot0 | sed 's/ /\t/g' | cut -f2 | ask 'boot:' || die ask_boot
+	boot_entries | cut -f1 | sort | ask 'boot:' || die ask_boot
 }
 
 boot()
 {
-	res=$(ask_boot)
-	next=$(efibootmgr|grep "$res"|cut -c5-8)
-	sudo efibootmgr -n "$next" || die boot "$next"
-	closeall "$ctl" reboot
+	res=$(ask_boot) || return
+	case $res in
+		setup*)	setup;;
+		*)
+			next=$(boot_entries | awk -F'\t' -v n="$res" '$1 == n {print $2}')
+			[ -n "$next" ] || die boot 'no entry selected'
+			sudo efibootmgr -n "$next" || die boot "$next"
+			closeall "$ctl" reboot;;
+	esac
+}
+
+# enter UEFI setup on next boot (writes the OsIndications EFI variable;
+# this Insyde/ASRock firmware honours it even though it does not
+# advertise the OsIndicationsSupported flag). Falls back to a hint if
+# systemd/logind refuses (e.g. support disabled in firmware).
+setup()
+{
+	if ! sudo systemctl reboot --firmware-setup; then
+		notify-send -i error 'Firmware does not support reboot-to-setup — press DEL during POST'
+	fi
 }
 
 reload_bspwm()
