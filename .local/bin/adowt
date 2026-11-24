@@ -8,6 +8,8 @@ lets you pick one with fzf, then either:
   • switches to the existing worktree branch if the work item already has one, or
   • creates a new branch, pushes it, and associates it with the work item.
 
+With --pr, pick an active pull request or specify its ID to switch to its source branch.
+
 Auth: set AZURE_DEVOPS_PAT env var, or add to ~/.config/adowt/config:
     [auth]
     pat = <your-token>
@@ -237,6 +239,38 @@ def get_repo_info(org: str, project: str, repo_name: str, headers: dict) -> dict
     return ado_request(url, headers)
 
 
+def get_pull_request(
+    org: str, project: str, repo_name: str, pr_id: int, headers: dict,
+) -> dict:
+    url = (
+        f"https://dev.azure.com/{urllib.parse.quote(org)}/"
+        f"{urllib.parse.quote(project)}/_apis/git/repositories/"
+        f"{urllib.parse.quote(repo_name)}/pullRequests/{pr_id}?api-version=7.0"
+    )
+    return ado_request(url, headers)
+
+
+def fetch_pull_requests(org: str, project: str, repo_name: str, headers: dict) -> list[dict]:
+    url = (
+        f"https://dev.azure.com/{urllib.parse.quote(org)}/"
+        f"{urllib.parse.quote(project)}/_apis/git/repositories/"
+        f"{urllib.parse.quote(repo_name)}/pullRequests"
+    )
+    pull_requests = []
+    page_size = 100
+    while True:
+        query = urllib.parse.urlencode({
+            "searchCriteria.status": "active",
+            "$top": page_size,
+            "$skip": len(pull_requests),
+            "api-version": "7.0",
+        })
+        page = ado_request(f"{url}?{query}", headers)["value"]
+        pull_requests.extend(page)
+        if len(page) < page_size:
+            return pull_requests
+
+
 def get_work_item_branch(
     org: str, project: str, work_item_id: int, headers: dict,
 ) -> str | None:
@@ -302,7 +336,7 @@ def associate_branch(
 # fzf picker
 # ---------------------------------------------------------------------------
 
-def pick_with_fzf_tty(items: list[dict]) -> dict | None:
+def pick_with_fzf_tty(items: list[dict], prompt: str = "Select work item> ") -> dict | None:
     """Run fzf interactively using /dev/tty, return selected item or None."""
     if not items:
         return None
@@ -328,7 +362,7 @@ def pick_with_fzf_tty(items: list[dict]) -> dict | None:
                     "--delimiter=\t",
                     "--with-nth=1..",
                     f"--header={'ID':<8}{'Type':<14}{'State':<14}Title",
-                    "--prompt=Select work item> ",
+                    f"--prompt={prompt}",
                     "--height=40%",
                     "--layout=reverse",
                 ],
@@ -504,14 +538,51 @@ def prepare_local_branch_from_remote(branch: str, repo_root: str, dry_run: bool)
     print(f"Creating local tracking branch {branch} …", file=sys.stderr)
     git("branch", "--track", branch, f"origin/{branch}", cwd=repo_root)
 
+
+def switch_pull_request(pr: dict, repo_root: str, dry_run: bool) -> None:
+    if pr.get("forkSource"):
+        die("Pull requests from forked repositories are not supported.")
+    source_ref = pr.get("sourceRefName", "")
+    if not source_ref.startswith("refs/heads/") or source_ref == "refs/heads/":
+        die("Pull request has no valid source branch.")
+    branch = source_ref.removeprefix("refs/heads/")
+    git("check-ref-format", source_ref, cwd=repo_root)
+    print(f"Pull request {pr['pullRequestId']}: {pr.get('title', '(no title)')}", file=sys.stderr)
+
+    if not branch_exists_locally(branch, repo_root):
+        if dry_run:
+            print(f"git fetch origin +{source_ref}:refs/remotes/origin/{branch}")
+        else:
+            git("fetch", "origin", f"+{source_ref}:refs/remotes/origin/{branch}", cwd=repo_root)
+    else:
+        expected = (pr.get("lastMergeSourceCommit") or {}).get("commitId")
+        actual = git("rev-parse", f"refs/heads/{branch}", cwd=repo_root)
+        if expected and actual != expected:
+            print(
+                f"Warning: local branch {branch} differs from the PR's last merge source commit; "
+                "it will not be updated automatically.",
+                file=sys.stderr,
+            )
+    run_wt(["wt", "switch", branch], repo_root, dry_run)
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
+def positive_int(value: str) -> int:
+    try:
+        number = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError("must be a positive integer")
+    if number <= 0:
+        raise argparse.ArgumentTypeError("must be a positive integer")
+    return number
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="adowt",
-        description="Pick an Azure DevOps work item and switch to (or create) a worktree branch.",
+        description="Switch to an Azure DevOps work item or pull request worktree.",
     )
     parser.add_argument(
         "--dry-run", "-n",
@@ -530,16 +601,57 @@ def main() -> None:
         metavar="PREFIX",
         help="Override the version prefix (e.g. v500). Default: derived from worktrunk.default-branch.",
     )
+    parser.add_argument(
+        "--pr",
+        nargs="?",
+        const=0,
+        type=positive_int,
+        metavar="ID",
+        help="Pick an active pull request, or switch to the specified pull request ID.",
+    )
     args = parser.parse_args()
 
     repo_start = args.repo or os.getcwd()
     repo_root = find_repo_root(repo_start)
+
+    if (Path(repo_root) / "HEAD").exists() and (Path(repo_root) / "refs").is_dir():
+        count = int(os.environ.get("GIT_CONFIG_COUNT", "0"))
+        os.environ[f"GIT_CONFIG_KEY_{count}"] = "safe.bareRepository"
+        os.environ[f"GIT_CONFIG_VALUE_{count}"] = "all"
+        os.environ["GIT_CONFIG_COUNT"] = str(count + 1)
 
     cfg = load_config()
     pat = get_pat(cfg)
     headers = auth_header(pat)
 
     org, project, repo_name = get_ado_coords(repo_root)
+    if args.pr is not None:
+        if args.pr:
+            pr = get_pull_request(org, project, repo_name, args.pr, headers)
+        else:
+            print(f"Fetching active pull requests from {org}/{project}/{repo_name} …", file=sys.stderr)
+            prs = fetch_pull_requests(org, project, repo_name, headers)
+            if not prs:
+                print("No active pull requests found.", file=sys.stderr)
+                return
+            items = [
+                {"fields": {
+                    "System.Id": pr["pullRequestId"],
+                    "System.Title": pr.get("title", "(no title)"),
+                    "System.WorkItemType": "Pull request",
+                    "System.State": pr.get("status", "?"),
+                }}
+                for pr in prs
+            ]
+            selected = pick_with_fzf_tty(items, prompt="Select pull request> ")
+            if selected is None:
+                print("No pull request selected.", file=sys.stderr)
+                return
+            selected_id = selected["fields"]["System.Id"]
+            pr = next(pr for pr in prs if pr["pullRequestId"] == selected_id)
+        switch_pull_request(pr, repo_root, args.dry_run)
+        return
+
     version_prefix = get_version_prefix(repo_root, args.version)
 
     print(f"Fetching work items from {org}/{project} …", file=sys.stderr)
