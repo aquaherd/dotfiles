@@ -5,7 +5,13 @@ After=network.target
 [Service]
 Type=simple
 EnvironmentFile=%h/.config/opencode/%i.env
-ExecStart=/usr/bin/opencode serve --mdns --mdns-domain opencode-%I.local
+# OPENCODE_HOSTNAME/OPENCODE_PORT/OPENCODE_SERVER_PASSWORD come from
+# %h/.config/opencode/%i.env. Loopback default keeps the API off the public
+# interface; external access goes through Caddy (TLS). Native server password
+# is the access control.
+# NB: systemd's own ${} expansion cannot see EnvironmentFile vars, so a shell
+# performs the expansion at runtime (exec keeps opencode as main PID).
+ExecStart=/bin/sh -c 'exec %h/.opencode/bin/opencode serve --hostname "$${OPENCODE_HOSTNAME:-127.0.0.1}" --port "$${OPENCODE_PORT:?OPENCODE_PORT missing from %i.env}"'
 Restart=always
 RestartSec=5s
 StartLimitInterval=5min
