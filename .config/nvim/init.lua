@@ -477,86 +477,85 @@ o.mouse = 'a'
 o.title = true
 o.clipboard = 'unnamedplus'
 
--- Use OSC 52 clipboard provider only when no native display is available
--- (i.e., SSH/mosh from Blink). On local Wayland/X11/macOS/Windows, Neovim's
--- default provider (wl-copy, xclip, pbcopy, win32yank) handles it.
+-- Clipboard over SSH/mosh.
+--
+-- Copy: store the text in tmux's paste buffer and emit OSC 52 straight to the
+-- tmux client TTY, which mosh forwards to Alacritty. The direct write avoids
+-- depending on tmux's cached Ms capability (a stale Ms silently swallowed every
+-- copy); the tmux buffer is what paste reads.
+--
+-- Paste: never use an OSC 52 read query. mosh 1.4 only implements OSC 52
+-- *copy*; its terminal emulator has no query/reply path, and Alacritty denies
+-- OSC 52 reads by default (`terminal.osc52 = "OnlyCopy"`). Such a query is
+-- never answered, so Neovim blocks for 10s ("Waiting for OSC 52 response...").
+-- Read tmux's newest paste buffer instead: it is local, takes ~3ms and can never
+-- hang. To insert text copied outside the terminal, use the terminal's own
+-- paste key (Ctrl+Shift+V / Shift+Insert); it arrives as a bracketed paste and
+-- needs no clipboard provider at all.
 local has_display = vim.env.WAYLAND_DISPLAY ~= nil or vim.env.DISPLAY ~= nil
 if not has_display then
   local osc52 = require('vim.ui.clipboard.osc52')
 
   if vim.env.TMUX ~= nil then
-    -- Inside tmux: nvim_ui_send gets blocked by tmux passthrough, so write
-    -- OSC 52 directly to the client TTY (same approach as ~/.local/bin/tmux-osc52)
-    local function write_osc52(seq)
+    local function client_tty()
       local handle = io.popen('tmux display -p "#{client_tty}" 2>/dev/null')
-      if handle then
-        local tty = handle:read('*a'):gsub('%s+', '')
-        handle:close()
-        if tty ~= '' then
-          local f = io.open(tty, 'w')
-          if f then f:write(seq) f:close() end
-        end
+      if not handle then
+        return nil
       end
+      local tty = handle:read('*a'):gsub('%s+', '')
+      handle:close()
+      return tty ~= '' and tty or nil
     end
 
-    local function copy_via_tty(reg)
-      local clip = reg == '+' and 'c' or 'p'
-      return function(lines)
-        local text = table.concat(lines, '\n')
-        write_osc52('\027]52;' .. clip .. ';' .. vim.base64.encode(text) .. '\027\\')
+    local function tmux_copy(lines)
+      local text = table.concat(lines, '\n')
+      -- Keep tmux's paste buffer in sync: this is what `paste` reads below and
+      -- what `prefix ]` pastes.
+      vim.fn.system({ 'tmux', 'load-buffer', '-' }, text)
+      -- Emit OSC 52 straight to the tmux client TTY. Going through tmux depends
+      -- on its cached Ms capability, which can be stale after a config reload
+      -- and is also what silently broke copy before. This direct path is the
+      -- one that actually reaches Alacritty through mosh.
+      local tty = client_tty()
+      if tty then
+        local f = io.open(tty, 'w')
+        if f then
+          f:write('\027]52;c;' .. vim.base64.encode(text) .. '\027\\')
+          f:close()
+          return
+        end
       end
+      osc52.copy('+')(lines) -- fallback: normal OSC 52 through the pane
     end
 
-    local function paste_via_tty(reg)
-      local clip = reg == '+' and 'c' or 'p'
-      return function()
-        local contents = nil
-        local id = vim.api.nvim_create_autocmd('TermResponse', {
-          callback = function(ev)
-            local encoded = ev.data.sequence:match('\027%]52;%w?;([A-Za-z0-9+/=]*)')
-            if encoded then
-              contents = vim.base64.decode(encoded)
-              return true
-            end
-          end,
-        })
-
-        write_osc52('\027]52;' .. clip .. ';?\027\\')
-
-        local ok, res = vim.wait(1000, function() return contents ~= nil end)
-        if res == -1 then
-          vim.api.nvim_echo({{'Waiting for OSC 52 response from the terminal. Press Ctrl-C to interrupt...'}}, false, {})
-          ok, res = vim.wait(9000, function() return contents ~= nil end)
-        end
-
-        if not ok then
-          vim.api.nvim_del_autocmd(id)
-          if res == -1 then
-            vim.notify('Timed out waiting for clipboard response', vim.log.levels.WARN)
-          elseif res == -2 then
-            vim.api.nvim_echo({{''}}, false, {})
-          end
-          return 0
-        end
-
-        vim.api.nvim_del_autocmd(id)
-        return vim.split(assert(contents), '\n')
+    local function tmux_paste()
+      local lines = vim.fn.systemlist({ 'tmux', 'save-buffer', '-' })
+      if vim.v.shell_error ~= 0 then
+        return {}
       end
+      -- systemlist() drops the final newline; drop the empty line left over
+      -- from linewise buffers so a normal `p` does not paste a blank line.
+      if #lines > 0 and lines[#lines] == '' then
+        lines[#lines] = nil
+      end
+      return lines
     end
 
     vim.g.clipboard = {
-      name = 'OSC 52 (tmux tty)',
+      name = 'tmux (OSC 52 copy, buffer paste)',
       copy = {
-        ['+'] = copy_via_tty('+'),
-        ['*'] = copy_via_tty('*'),
+        ['+'] = tmux_copy,
+        ['*'] = tmux_copy,
       },
       paste = {
-        ['+'] = paste_via_tty('+'),
-        ['*'] = paste_via_tty('*'),
+        ['+'] = tmux_paste,
+        ['*'] = tmux_paste,
       },
     }
   else
-    -- Direct SSH/mosh (no tmux): built-in OSC 52 works fine
+    -- Straight SSH/mosh: the built-in provider is the best effort. It needs a
+    -- terminal that answers OSC 52 reads (e.g. Alacritty with
+    -- `terminal.osc52 = "CopyPaste"`); otherwise use the terminal paste key.
     vim.g.clipboard = {
       name = 'OSC 52',
       copy = {
