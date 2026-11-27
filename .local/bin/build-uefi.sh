@@ -24,16 +24,20 @@ fi
 CMDLINE="root=LABEL=$ID ro quiet splash"
 VMLINUZ="$MTP/vmlinuz"
 INITRD="$MTP/initrd.img"
-STUB=/usr/lib/systemd/boot/efi/linuxx64.efi.stub
+STUB="$MTP/usr/lib/systemd/boot/efi/linuxx64.efi.stub"
 [ -f "$STUB" ] || STUB=/usr/lib/systemd/boot/efi/linuxx64.efi.stub
 [ -f "$STUB" ] || STUB="$HOME/.local/lib/linuxx64.efi.stub"
 # Newer stubs are linked with a non-zero PE ImageBase; add_section VMAs
 # must sit above it or objcopy refuses ("section below image base").
 # Layout relative to ImageBase is unchanged since the 246 stub.
 BASE_HEX=$(objdump -p "$STUB" |
-	sed -n 's/^ImageBase[[:space:]]*0*\([0-9a-fA-F]*\)/\1/p')
+	sed -n 's/^ImageBase[[:space:]]*0*\([0-9a-fA-F][0-9a-fA-F]*\).*/\1/p')
+if [ -z "$BASE_HEX" ]; then
+	echo "Cannot determine ImageBase of $STUB" >&2
+	exit 1
+fi
 BASE=$((0x$BASE_HEX))
-VMA() { printf '0x%x' $(($BASE + $1)); }
+VMA() { printf '0x%x' $((BASE + $1)); }
 BMP="$HOME/.local/lib/$ID.bmp"
 set -- "$STUB"
 if [ -f "$BMP" ]; then
@@ -107,12 +111,12 @@ if ! sudo -n test -f "$DEFAULT_FILE"; then
 	exit 0
 fi
 sel=$(sudo -n cat -- "$DEFAULT_FILE" 2>/dev/null |
-	tr -d ' \t\r\n' | tr 'A-Z' 'a-z' |
+	tr -d ' \t\r\n' | tr '[:upper:]' '[:lower:]' |
 	sed -e 's|\\|/|g' -e 's|^/*||' -e 's|^efi/||')
 case $sel in
 	"$ID"|"$ID.efi")	sel="linux/$ID.efi";;
 esac
-FIRST_NUM=$(printf '%s\n' "$EFI_ENTRIES" | tr 'A-Z' 'a-z' |
+FIRST_NUM=$(printf '%s\n' "$EFI_ENTRIES" | tr '[:upper:]' '[:lower:]' |
 	awk -v sel="$sel" '
 		match($0, /file\([^)]*\)/) {
 			p = substr($0, RSTART + 5, RLENGTH - 6)

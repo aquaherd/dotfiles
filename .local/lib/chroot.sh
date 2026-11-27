@@ -1,3 +1,4 @@
+# shellcheck shell=dash
 chroot_mount() 
 {
 	sudo=""

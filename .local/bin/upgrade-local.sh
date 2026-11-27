@@ -9,7 +9,7 @@ for sudo in doas sudo; do
 	fi
 done
 export sudo
-# shellcheck source=/home/herd/.local/lib/chroot.sh
+# shellcheck source=/home/hakan/.local/lib/chroot.sh
 . ~/.local/lib/chroot.sh
 
 check_esp()
