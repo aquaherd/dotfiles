@@ -1,5 +1,6 @@
 #!/bin/bash 
-PATH+=:~/.local/bin
+# Prepend user binaries so the goose CLI wins over the desktop app's /usr/bin/goose
+PATH=~/.local/bin:$PATH
 # shellcheck source=../../.local/lib/dmenu-lib.sh
 . ~/.local/lib/dmenu-lib.sh
 autostart_common
